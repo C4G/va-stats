@@ -1,0 +1,37 @@
+pages/studentregistration.jsx
+  s_7b3f496e3fb7ff::t_339c8d8e57504a 280-283
+  s_7b3f496e3fb7ff::t_89ce801ee97bc7 423-424
+  s_7b3f496e3fb7ff::t_2ce072dc6cc8c7 425
+  s_7b3f496e3fb7ff::t_f7dff1749804c4 640-641
+  s_7b3f496e3fb7ff::t_e63be0b890666c 766-769
+  s_7b3f496e3fb7ff::t_0266154af93d8a 772,778-782,786-787,790
+  s_7b3f496e3fb7ff::t_d00b488a9eaae3 783-785
+  s_7b3f496e3fb7ff::t_777540b7d23ace 997-998,1002-1003
+  s_7b3f496e3fb7ff::t_0ad1b2aa71adbc 1416,1428-1429,1434
+  s_7b3f496e3fb7ff::t_e8cae4ea377bf4 650
+  s_7b3f496e3fb7ff::t_8fdacb9a248298 651
+  s_7b3f496e3fb7ff::t_c0fec263135c10 1455-1456
+  s_7b3f496e3fb7ff::t_9455643d910c16 2010-2011
+  s_7b3f496e3fb7ff::t_12912dddf07286 1426-1427
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "fc37250bc1f33dee341e5dd20135807c4e182e9c",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_7b3f496e3fb7ff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4ab6090d-c7c4-41e0-9f03-b59bcf72b24a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
