@@ -1,0 +1,24 @@
+styles/globals.css
+  s_7b3f496e3fb7ff::t_06cc0c1241b45c 211-212
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "f195db46ac4388c5ad2b0c5b9f2bb323d982816a",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_7b3f496e3fb7ff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4ab6090d-c7c4-41e0-9f03-b59bcf72b24a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
