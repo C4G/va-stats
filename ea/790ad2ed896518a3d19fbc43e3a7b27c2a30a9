@@ -1,0 +1,28 @@
+pages/studentregistration.jsx
+  s_fca0fd2147d2ca::t_7ddd8f48c5f02b 195
+  s_fca0fd2147d2ca::t_f388c94638b2a2 90-169
+  s_fca0fd2147d2ca::t_4a18ea37cdd7bc 19
+  s_fca0fd2147d2ca::t_38388eb83850b8 1041,1043
+  s_fca0fd2147d2ca::t_a29715a83277db 184-186
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "ea790ad2ed896518a3d19fbc43e3a7b27c2a30a9",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_fca0fd2147d2ca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ab60b4d9-c6b2-470a-be44-6cdb9430b2cf",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
