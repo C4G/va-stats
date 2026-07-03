@@ -1,0 +1,300 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.configPageShell {
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-start;
+}
+
+/* Match globals.css `nav` / `.nav__menu-list` banner: #c5e8cf */
+.sideNav {
+  flex-shrink: 0;
+  width: 210px;
+  position: sticky;
+  top: 0.5rem;
+  box-sizing: border-box;
+  border: 1px solid rgba(8, 100, 55, 0.18);
+  border-radius: 12px;
+  background: #c5e8cf;
+  padding: 0.75rem 0.65rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.sideNavList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sideNavButton {
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.65);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  font-weight: 500;
+  cursor: pointer;
+  color: #000;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.sideNavButton:hover {
+  background: #fff;
+  border-color: rgba(0, 0, 0, 0.16);
+  font-weight: 600;
+}
+
+.sideNavButton:focus-visible {
+  outline: 2px solid #1a1a1a;
+  outline-offset: 1px;
+}
+
+.sideNavButtonActive {
+  background: #fff;
+  font-weight: 600;
+  color: #000;
+  border-color: rgba(0, 0, 0, 0.22);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.configContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboardConfigSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+@media (max-width: 700px) {
+  .configPageShell {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .sideNav {
+    width: 100%;
+    position: static;
+    max-width: none;
+  }
+
+  .sideNavList {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .sideNavButton {
+    flex: 1;
+    min-width: min(148px, 100%);
+    text-align: center;
+  }
+}
+
+.card {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.splitLayout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.cardSectionTitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.cardHelpText {
+  margin: 0 0 14px;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+
+.optionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.optionLabel {
+  font-weight: 600;
+}
+
+.optionValue {
+  color: rgba(0, 0, 0, 0.7);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+}
+
+.input {
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  min-width: 220px;
+}
+
+.formRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.btnPrimary {
+  background: black;
+  color: white;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.btnDanger {
+  background: white;
+  color: #b00020;
+  border: 1px solid rgba(176, 0, 32, 0.6);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.btnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.helpText {
+  margin: 0 0 16px;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.batchStatusSection {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.rulesGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* One certification card: use full content width. Use .batchStatusPair (1fr 1fr) if you add a second card beside it. */
+.batchStatusLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.batchStatusPair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.batchStatusLayout .input,
+.batchStatusPair .input {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.rulesCardInner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+}
+
+.rulesLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.rulesRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .splitLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .batchStatusPair {
+    grid-template-columns: 1fr;
+  }
+
+  .rulesRow {
+    grid-template-columns: 1fr;
+  }
+}

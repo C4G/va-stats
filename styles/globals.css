@@ -1,0 +1,759 @@
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&display=swap");
+
+/* Below required for NextUI components */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Skip Link Accessibility === */
+.skip {
+  position: absolute !important;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  clip: auto;
+  overflow: visible;
+  background: #fff;
+  border: 2px solid #000;
+  z-index: 1000;
+  color: #000;
+  text-decoration: none;
+}
+
+/* === Layout Component Styles === */
+.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding-bottom: 4px;
+  background: white;
+}
+
+.navbar-container {
+  margin: 0;
+  padding: 0;
+}
+
+.page-main {
+  margin: 0 auto;
+  padding: 16px;
+  max-width: 1200px;
+}
+
+.page-main > h1 {
+  margin-top: 0;
+}
+
+/* === CSS Module vs Global Conflict Prevention === */
+
+/* Global layout rules - these should override any module styles */
+.page-header,
+.navbar-container,
+.page-main,
+.skip {
+  /* Force these to be global and override modules */
+}
+
+/* Prevent common layout conflicts */
+html,
+body,
+#__next {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Reset common problematic margins */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-block-start: 0;
+  margin-block-end: 0.5em;
+}
+
+main {
+  margin-top: 0 !important;
+}
+
+/* Ensure consistent spacing scale */
+:root {
+  --space-xs: 0.25rem; /* 4px */
+  --space-sm: 0.5rem; /* 8px */
+  --space-md: 1rem; /* 16px */
+  --space-lg: 1.5rem; /* 24px */
+  --space-xl: 2rem; /* 32px */
+}
+
+/*--- STUDENTREGISTRATION.JSX: EDUCATION DROPDOWN BEGINS (NEXTUI) ---*/
+/* Note: narrower visible area was attained
+    with a hack involving pushing the default
+    select box to a higher relative location
+    within its parent container above. 
+    Top border of parent container is the new
+    'top border' of the select input. Also, 
+    border colors had to be adjusted as needed. 
+    Education dropdown container and input. */
+
+/* .dropdowndiv {
+  border-color: orange;
+  border-width: 2px;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-top-color: black;
+  overflow: hidden;
+}
+
+.edu_qualifications {
+  border-color: black;
+  border-width: 2px;
+  height: 2.5em;
+  overflow: hidden;
+  position: relative;
+  top: -1em;
+} */
+/*--- STUDENTREGISTRATION.JSX: EDUCATION DROPDOWN ENDS (NEXTUI) ---*/
+
+.myDatePicker ::placeholder {
+  color: black;
+  font-size: small;
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* Student Registration page: date picker */
+.myDatePicker fieldset.MuiOutlinedInput-notchedOutline {
+  border: 2px solid black;
+}
+.myDatePicker .Mui-focused fieldset.MuiOutlinedInput-notchedOutline {
+  /* border-color: blue; */
+  /* outline-width: 5px; */
+  border: 3px solid blue;
+  /* font-size:xx-small; */
+  font-weight: 500;
+  opacity: 1;
+}
+
+/* MODAL FOR STUDENT REGISTRATION CONFIRMATION */
+.modal-wrapper {
+  width: 500px;
+  height: 600px;
+}
+
+.modal {
+  background: white;
+  height: 100%;
+  width: 100%;
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-body {
+  padding-top: 10px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 25px;
+}
+/* MODAL END */
+
+:root {
+  /* --off-white: #FAF9F6; */
+  --off-white: white;
+  /* --jet-black: #343434; */
+  --jet-black: black;
+  --button-text-light: var(--jet-black);
+  --button-border-light: var(--off-white);
+  --button-background-hover-light: var(--off-white);
+  --button-text-dark: var(--jet-black);
+  --button-border-dark: rgb(8, 127, 72, 0.7);
+  --button-background-hover-dark: rgb(8, 127, 72, 0.3);
+  --table-text: var(--jet-black);
+  --table-height-th: ----;
+  --left-override-th: ----;
+  --max-width: 1100px;
+  --border-radius: 12px;
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono",
+    "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+}
+
+html.main {
+  font-size: 2vw;
+}
+
+html,
+body {
+  min-height: 100vh;
+  color: #000000;
+  background: rgb(255, 255, 255);
+  margin: 0;
+  min-width: 320px;
+  padding: 0;
+  width: 100%;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    Fira Sans,
+    Droid Sans,
+    Helvetica Neue,
+    sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+  font-family: "Work Sans", sans-serif;
+}
+
+.autherrorcontainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  position: absolute;
+  top: 40%;
+  width: 100%;
+}
+
+.autherrortext {
+  position: relative;
+  left: 1em;
+  top: 3em;
+}
+
+.autherrorlink {
+  border: 2px solid black;
+}
+
+.nav__menu-list #text {
+  background-color: rgba(0, 255, 255, 1);
+}
+
+h1 {
+  font-size: 1.1em;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding-bottom: 4px;
+}
+
+/*-------------- NAV BAR STYLES BEGIN -------------*/
+/* This is the light green banner at the top of most pages. */
+nav {
+  align-items: center;
+  /* background-color: rgb(8, 127, 72); */
+  /* background-color: var(--vagreenlight-background); */
+  /* background-color: white; */
+  /* Very light green */
+  background-color: #c5e8cf;
+  color: #000;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 1em;
+}
+
+/* Navigation links except VISION-AID ACADEMY */
+.nav__menu-list {
+  background-color: #c5e8cf;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  min-height: calc(50vh - 60px);
+  max-height: calc(100vh - 60px);
+  padding: 24px 16px 16px 16px;
+  position: fixed;
+  overflow-y: auto;
+  overflow-x: hidden;
+  right: -288px;
+  row-gap: 12px;
+  top: 60px;
+  transition: all 0.2s;
+  width: 288px;
+}
+
+a.textlogo {
+  color: #000;
+  font-size: 25px;
+  font-weight: 700;
+  padding-left: 0rem; /* Reduce left padding to match grid spacing */
+}
+
+/* Below block does not work */
+/* a.textlogo:focus-visible 
+div:focus 
+div.title:focus 
+a:focus 
+a.navitem 
+h1:focus 
+h2:focus-visible 
+button:focus 
+{
+  outline: 2px solid blue;
+} */
+
+a.textlogo:focus-visible {
+  outline: 2px solid blue;
+}
+div:focus {
+  outline: 2px solid blue;
+}
+div.title:focus {
+  outline: 2px solid blue;
+}
+a:focus {
+  outline: 2px solid blue;
+}
+a.navitem {
+  outline: 2px solid blue;
+}
+h1:focus {
+  outline: 2px solid blue;
+}
+h2:focus {
+  outline: 2px solid blue;
+}
+button:focus {
+  outline: 2px solid blue;
+}
+/*-------------- NAV BAR STYLES END -------------*/
+
+.forminstruction {
+}
+
+/* ------------------- Hamburger menu --------------- */
+
+.nav__item {
+  color: #000;
+  font-size: larger;
+}
+.nav__item:hover {
+  /* color: #000; */
+  font-weight: bold;
+}
+
+.nav__menu-list.active {
+  right: 0;
+}
+
+link {
+  color: #000;
+}
+
+.nav__link {
+  color: #000;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.nav__link:hover {
+  font-weight: bold;
+}
+
+.loginbutton {
+  border: 1px solid black;
+}
+
+.center {
+  align-items: flex-start;
+  display: flex;
+  justify-content: center;
+  min-height: 600px;
+}
+
+footer {
+  align-items: center;
+  width: 100%;
+}
+
+footer a {
+  color: #000;
+  display: flex;
+  justify-content: center;
+  height: auto;
+}
+
+/* Mobile portrait view */
+@media screen and (max-width: 450px) {
+  /* Top nav bar */
+  nav {
+    width: 100vw;
+    z-index: 3;
+  }
+
+  .nav__menu-list a {
+    border: 0px solid cyan;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    position: relative;
+    max-height: 70px;
+    /* top: 1.5em; */
+    width: 60vw;
+  }
+
+  /* .btnlogout {
+    border: 3px solid red;
+    margin-top: 1em;
+    position: relative;
+    bottom: 0;
+  } */
+
+  main {
+    /* align-content: flex-start; */
+    align-content: space-between;
+    display: flex;
+    overflow-x: hidden;
+    padding-left: -2em;
+  }
+  footer {
+    border-color: transparent;
+    margin-top: 1em;
+  }
+}
+
+/* Logic to hide nav bar elements when navbar is not active */
+@media screen and (max-width: 768px) {
+  .hide {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .nav__menu-list {
+    position: unset;
+    flex-direction: row;
+    min-height: -moz-fit-content;
+    min-height: fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    column-gap: 24px;
+    align-items: center;
+  }
+  .nav__link::before {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 6px;
+    bottom: -16px;
+    left: 0;
+    background-color: black;
+    transition: all 0.2s;
+  }
+  .nav__link:hover::before {
+    width: 100%;
+  }
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu-item {
+  cursor: pointer;
+}
+
+.dropdown-menu-submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 160px;
+  /* background-color: #f9f9f9; */
+  background-color: white;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-menu:hover .dropdown-menu-submenu {
+  display: block;
+}
+
+.dropdown-menu-submenu a {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  /* color: #333; */
+  color: #000;
+}
+
+.dropdown-menu-submenu a:hover {
+  background-color: #f1f1f1;
+}
+
+::placeholder {
+  color: black;
+  font-style: italic;
+  /* font-size: larger; */
+  font-weight: 500;
+}
+
+/*------------------ TEST GLOBALS BEGIN ------------------*/
+:root {
+  --primary-glow: conic-gradient(
+    from 180deg at 50% 50%,
+    #16abff33 0deg,
+    #0885ff33 55deg,
+    #54d6ff33 120deg,
+    #0071ff33 160deg,
+    transparent 360deg
+  );
+  --secondary-glow: radial-gradient(rgba(255, 255, 255, 1));
+
+  --callout-rgb: 238, 240, 241;
+  --callout-border-rgb: 172, 175, 176;
+  --card-rgb: 180, 185, 188;
+  --card-border-rgb: 131, 134, 135;
+
+  /* ADDED FOR VA-STATS */
+  --buttonva-borderradius: 0.5rem;
+  --buttonva-fontsize: 1.1rem;
+  --buttonva-height: 1.5rem;
+  --buttonva-padding: 0 1rem;
+  --buttonva-width: auto;
+  --vagreenlight-background: #a8d181; /* rgb(168 209 129) */
+  --vagreenmedium-background: #3f7d3c; /* rgb(63,125,60) */
+  --vagreenmedium-background: rgb(63, 125, 60);
+  --vagreendark-background: #263f17;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-glow: radial-gradient(rgba(1, 65, 255, 0.4), rgba(1, 65, 255, 0));
+    --secondary-glow: linear-gradient(to bottom right, rgba(1, 65, 255, 0), rgba(1, 65, 255, 0), rgba(1, 65, 255, 0.3));
+    --callout-rgb: 20, 20, 20;
+    --callout-border-rgb: 108, 108, 108;
+    --card-rgb: 100, 100, 100;
+    --card-border-rgb: 200, 200, 200;
+  }
+}
+
+html,
+body {
+  background: white;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rag-amber {
+  background-color: #f44336 !important;
+}
+
+/*------------------- TEST GLOBALS END -------------------*/
+
+/*------------------- LAYOUT FIXES -------------------*/
+
+/* Remove default top margin from headings and prevent margin collapse */
+h1,
+h2 {
+  margin-block-start: 0;
+  margin-top: 0;
+}
+
+/* Prevent margin collapse with header */
+header {
+  padding-bottom: 4px;
+}
+
+/* Remove negative/relative positioning from main */
+main {
+  margin-top: 0;
+  position: static;
+  top: auto;
+}
+
+/* Safe approach: nav with no margin */
+nav {
+  margin: 0;
+  padding-block: 0;
+}
+
+/* Mobile navbar spacing */
+@media screen and (max-width: 768px) {
+  nav {
+    padding-top: 1rem; /* Add top padding for mobile */
+    padding-bottom: 1rem; /* Add bottom padding for mobile */
+  }
+}
+
+/* Remove problematic rules for medium width screens */
+@media screen and (min-width: 451px) and (max-width: 852px) {
+  nav {
+    height: auto;
+  }
+  main {
+    position: static;
+    top: auto;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/*------------------- LAYOUT FIXES END -------------------*/
+
+/* === Fix: remove unexpected gap under navbar === */
+
+/* 2) Main content containers: remove top spacing/relative positioning */
+.mainstudents,
+.mainbatches {
+  margin-top: 0 !important;
+  padding-top: 0 !important; /* Remove spacing */
+}
+
+/* Additional fix for users and courses pages (they also use mainstudents class) */
+
+/* Override media query rules that add margin-top back */
+@media (min-width: 768px) {
+  .mainstudents,
+  .mainbatches {
+    margin-top: 0 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mainstudents,
+  .mainbatches {
+    margin-top: 0 !important;
+  }
+}
+
+/* 3) Disable absolute positioning rules for containers in landscape */
+@media (min-width: 480px) and (max-width: 933px) {
+  .container {
+    position: static !important;
+    top: auto !important;
+  }
+}
+
+/* 4) Clean up additional top spacing/padding on titles and flex containers */
+.title {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.flex {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* 5) Use padding instead of margin for nav/header height (prevent margin collapse) */
+/* Note: header padding-bottom is already defined above */
+
+/* 6) Fix skip to main content link container spacing */
+.skip {
+  position: absolute !important;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  clip: auto;
+  overflow: visible;
+  background: #fff;
+  border: 2px solid #000;
+  z-index: 1000;
+}
+
+/* 7) Fix mynavbar container spacing */
+.mynavbar {
+  margin: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 0 !important; /* Ensure no bottom margin */
+}
+
+/* 8) Fix container spacing that might add top margin */
+.container {
+  margin-top: 0 !important;
+  margin-left: 0.5em !important;
+  margin-right: 0.5em !important;
+  margin-bottom: 0 !important;
+}
+
+/* === Global spacing fixes === */
+/* Prevent margin collapsing on all screen sizes */
+.container,
+.main,
+.mainstudents,
+.maincourses,
+.mainbatches,
+.mainWithNavbar {
+  display: flow-root; /* Create BFC → prevent margin-collapsing */
+  margin-top: 1rem; /* Add consistent top margin */
+  padding-top: 0.5rem; /* Add small padding for breathing room */
+}
+
+/* Prevent UA defaults from re-appearing */
+h1,
+h2,
+h3 {
+  margin-block-start: 0;
+}
+/* === END: Global mobile spacing fixes === */

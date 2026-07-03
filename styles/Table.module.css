@@ -1,0 +1,432 @@
+/* Highlight today's column in the attendance table */
+.highlightTodayColumnHeaderAttendance {
+  background-color: #c5e8cf;
+}
+
+.highlightTodayColumnCellAttendance {
+  background-color: #c5e8cf;
+}
+
+.notEditableHeader {
+  color: #888888;
+}
+
+.formRowSuccess {
+  background-color: #d4edda;
+}
+
+.formRowError {
+  background-color: #ff00001a;
+}
+
+.formCellError {
+  background-color: #ffd2d2;
+  box-shadow: inset 0 0 0 1px #bb2424;
+}
+
+.formCellChangedSinceLastValidation {
+  background-color: #ffffb8;
+  box-shadow: inset 0 0 0 1px #9b9e00;
+}
+
+.formHeaderOverflow,
+.formHeaderOverflow div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Add required red asterisk to required columns in Bulk Student Registration */
+.requiredHeader span[data-ref="eText"]::after {
+  content: " *";
+  color: red;
+}
+
+.formRowValid {
+  background-color: #d0e6ff;
+  /* border: 1px solid #0c76e0; */
+}
+
+.attendanceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.cancelAttendanceButton {
+  background-color: #e03e3e;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.1rem 0.3rem;
+  margin-left: 0.5rem;
+}
+
+.cancelAttendanceButton:hover {
+  background-color: #c52b2b;
+}
+
+/* Ensure action cell icons remain visible during virtualization */
+.va-actions-cell {
+  overflow: visible !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* THIS FILE HANDLES MANY DATA AND COLUMN ALIGNMENT ISSUES */
+
+.tableWrapper {
+  height: 100%;
+  width: 100%;
+  scroll-behavior: smooth;
+}
+
+/*------------- MAIN PAGES PANEL AND CONTENT BEGINS (TOP MENU) -------------*/
+/* .genericTableColumnHeaderAsc */
+/* 'ID' and black asc triangle */
+/* .mainstudents :nth-child(2) :nth-child(2) :nth-child(2) :nth-child(2)-genericTable :nth-child(1)-thead :nth-child(1)-tr :nth-child(1) :nth-child(1)-asc */
+/* .mainstudents :nth-child(2) :nth-child(2) :nth-child(2) :nth-child(2) :nth-child(1) :nth-child(1) :nth-child(1) :nth-child(1) .genericTableColumnHea1erAsc */
+
+.genericTable[title="Mainbatches"].td.stickyColTd > p {
+  border: 3px solid red;
+  float: left;
+  /*margin-left: -2em;*/
+}
+/*------------- MAIN PAGES PANEL AND CONTENT ENDS (TOP MENU) ---------------*/
+
+/*------------- BATCH GRADES PANEL AND CONTENT BEGINS -------------*/
+/* Grades PANEL */
+.genericTable[title="Grades"] {
+}
+/* 1st and 2nd grade column NAMES */
+.genericTable[title="Grades"] :nth-child(1) :nth-child(1) :nth-child(2) :nth-child(1) .genericTableColumnHeaderAsc,
+.genericTable[title="Grades"] :nth-child(1) :nth-child(1) :nth-child(3) :nth-child(1) .genericTableColumnHeaderAsc {
+  left: -1.8em;
+  position: relative;
+}
+/* 1st grade column PENCIL ICON */
+.genericTable[title="Grades"] :nth-child(1) :nth-child(1) :nth-child(2) :nth-child(2) {
+  float: left;
+}
+/*------------- BATCH GRADES PANEL AND CONTENT ENDS -------------*/
+
+.tableRow {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+.tableColumn {
+  float: left;
+  padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.tableRow::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.buttonContainer {
+  height: 430px;
+  padding: 25px;
+  position: relative;
+}
+
+.buttonCenter {
+  margin-left: -30px;
+  padding: 1px;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.ag-header-cell-menu-button {
+  opacity: 1 !important;
+}
+
+/*------- Table accessibility issue BEGINS -------*/
+/* Entire table, including headings and rows */
+.genericTable {
+  display: block;
+  max-height: 500px;
+  max-width: fit-content;
+  overflow-x: scroll;
+  position: sticky;
+  table-layout: fixed;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* .genericTable > tbody > tr 
+.stickyColTd {
+  border: 0px solid orange;
+}
+.stickyColTd :first-child {
+  border: 0px solid blue;
+}
+.stickyColTd :nth-child(2) {
+  border: 0px solid cyan;
+} */
+/*------- Table accessibility issue ENDS -------*/
+
+/* ---------- TABLE HEADER BEGINS --------- */
+/* Headings like 'Students List' */
+.genericTableHeader {
+  margin-bottom: 1em;
+}
+
+/* 'Attendance', 'Grades' */
+.genericTableHeader h2 {
+  margin-right: 0.5;
+}
+
+/* Search box with placeholder text */
+.tableSearch {
+  border: 2px solid black;
+  margin-left: 0.5em;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.tableSearch:focus {
+  border: 3px solid blue;
+}
+
+/* SPECIFIC BATCH PG: HEADING AREA WITH COL HDGS */
+.genericTable thead {
+  background-color: rgba(178, 178, 178, 255);
+  /* height: auto; */
+  height: 3em;
+  /* left: 10em;
+  margin-left: 0em; */
+  overflow-x: scroll;
+  /* padding-right: -10em; */
+  width: auto;
+}
+
+/* Basic styling */
+.genericTable th {
+  border: 0px solid blue;
+  color: var(--table-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  /* height: auto; */
+  /* height: 3em; */
+  padding: 0.2rem 0.2rem;
+  text-align: left;
+  text-transform: uppercase;
+  word-wrap: break-word;
+  z-index: 0;
+  position: sticky;
+  top: 0;
+  background-color: rgba(178, 178, 178, 255);
+}
+
+/* Rotation column heading styling */
+/* From: 
+https://www.bennadel.com/blog/4338-rotating-table-headers-with-css-transform.htm 
+position: absolute takes the element out of the 
+DOM flow, which is needed for the transform to
+look right (not sure if that's right).  */
+.rotatedth {
+  height: var(--table-height-th);
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  position: relative;
+  vertical-align: bottom;
+  width: auto;
+  min-width: 60px;
+}
+
+.rotatedthCol {
+  height: var(--table-height-th);
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  position: relative;
+  vertical-align: bottom;
+  width: auto;
+}
+
+/* FIRST COLUMN OF SPECIFIC BATCH ('Students' col) */
+/* .genericTable thead tr th:first-of-type {  
+  color: red;
+  height: 20vh;
+  /* left: 3em; 
+  margin-top: 1em;
+  margin-right: 10em;
+  position: relative;
+  top: 3em;
+  transform: rotate(70deg);
+  vertical-align: bottom;
+  /* width: 0.5em; 
+} */
+
+.rotatedthlabel {
+  bottom: 0px;
+  left: 1em;
+  margin-bottom: -0.3em;
+  position: absolute;
+  text-align: left;
+  transform: rotate(-70deg);
+  transform-origin: center left;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+/* The far right 'Actions' column heading */
+.actionscolheading {
+  border: 3px solid brown;
+  border-bottom: 0.7em solid transparent;
+  position: relative;
+  vertical-align: middle;
+  padding-right: 5px !important;
+  /* text-align:right !important; */
+}
+
+.stickyColTd {
+  position: sticky;
+  left: var(--left-override-th);
+  z-index: 1;
+  background-color: white;
+}
+
+.stickyColTh {
+  position: sticky;
+  left: var(--left-override-th);
+  z-index: 3 !important;
+  background-color: rgba(178, 178, 178, 255);
+}
+
+.studentNames {
+  min-width: 200px;
+}
+
+.csvbutton {
+  background-color: #087f48;
+  border: none;
+  border-radius: 0.2em;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  margin: 5px;
+  opacity: 0.8;
+  padding: 0.3em 0.2em;
+  position: relative;
+}
+
+/* ---------- TABLE HEADER ENDS --------- */
+
+.genericTable th .genericTable tbody tr {
+  width: 95%;
+}
+
+.genericTable td {
+  padding: 0.25rem;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 0.875rem;
+  color: var(--table-text);
+  border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+  width: auto;
+  word-wrap: break-word;
+  min-width: 50px;
+}
+
+.genericTable tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.tableWrapper::-webkit-scrollbar {
+  width: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(104, 140, 140, 0.3);
+  border-radius: 20px;
+  border: 6px solid transparent;
+}
+
+/* SECTION TO FIX COLUMN AND DATA ALIGNMENT ISSUES BEGINS */
+.genericTableColumnHeaderAsc {
+  display: flex;
+  align-items: flex-end;
+  padding-left: 1.8em; /* Aligns table data and col headings */
+}
+.genericTableColumnHeaderDesc {
+  display: flex;
+  align-items: flex-start;
+}
+.stickyColTh:nth-child(1) div:nth-child(1) {
+  left: -2em;
+  position: relative;
+}
+.stickyColTh:nth-child(2) div:nth-child(1) {
+  /* border: 3px solid blue; */
+  left: -2em;
+  position: relative;
+}
+/* SECTION TO FIX COLUMN AND DATA ALIGNMENT ISSUES ENDS */
+
+.actionItem {
+  cursor: pointer;
+  margin-right: 0.3rem;
+  margin-bottom: 5px;
+  float: left;
+}
+
+.genericTableHeader {
+  display: flex;
+  flex-direction: row;
+  /* align-items: inherit; */
+  align-items: left;
+  /* justify-content: space-between; */
+  position: sticky;
+  top: 0;
+  background-color: white;
+  margin-left: 0.1rem;
+  margin-right: 0.1rem;
+  word-wrap: break-word;
+  flex-wrap: wrap;
+}
+
+.editableInput {
+  border: 1px solid rgb(8, 127, 72, 0.7);
+  border-radius: 4px;
+  padding: 0.15rem;
+  width: 100%;
+}
+
+/*----------------- MEDIA QUERIES -----------------*/
+
+/* MOBILE LANDSCAPE */
+/* iPhone 14 Max Pro:  932x430; px ratio=3 */
+@media (min-width: 480px) and (max-width: 846px) {
+  .rotatedth {
+    height: var(--table-height-th);
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    position: relative;
+    vertical-align: bottom;
+    width: auto;
+    min-width: 60px;
+  }
+
+  .rotatedthCol {
+    height: var(--table-height-th);
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    position: relative;
+    vertical-align: bottom;
+    width: auto;
+  }
+}

@@ -1,0 +1,122 @@
+/* The navbar style */
+.navstudents {
+  z-index: 3;
+  position: relative;
+}
+
+/* 'Logged-in' text */
+.topRightText {
+  position: absolute;
+  line-height: 1.2;
+  white-space: nowrap;
+  font-size: 1rem;
+  /* 1rem required for accessibility */
+  /* Prevent overlapping by email address */
+  margin: 0; /* more space below */
+  padding: 4px 10px 0 10px;
+  right: 0.5rem;
+  top: 2px;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdown-menu-item {
+  cursor: pointer;
+}
+
+.dropdown-menu-submenu {
+  background-color: white;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  display: none;
+  left: 0;
+  min-width: 160px;
+  position: absolute;
+  top: 2em;
+}
+
+.dropdown-menu:hover .dropdown-menu-submenu {
+  display: block;
+}
+
+.dropdown-menu-submenu a {
+  color: #000;
+  display: block;
+  padding: 12px 16px; /* increase vertical padding for more spacing */
+  text-decoration: none;
+}
+
+.dropdown-menu-submenu a:hover {
+  background-color: white;
+}
+
+/* MEDIA QUERIES */
+
+/* Portrait */
+@media (max-width: 768px) {
+  /* 'Logged-in' text */
+  .topRightText {
+    /* font-size: 1rem; */
+    /* 1rem required for accessibility */
+    /* Prevent overlapping by email address */
+    position: static !important;
+    right: auto !important;
+    top: auto !important;
+    padding: 4px 4px;
+    display: block;
+    margin: 0 0 0px 0;
+    width: 100%;
+    text-align: center; /* center on mobile */
+    line-height: 1.2;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .dropdown-menu-submenu,
+  .navMenuList {
+    margin-top: 0; /* minimize gap above first button */
+  }
+
+  .navstudents {
+    padding-top: 2px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .navMenuList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0 !important;
+  }
+
+  /* remove top margin and padding for the first item (Registration) */
+  .navMenuList > li {
+    margin: 0;
+    padding: 0;
+  }
+  .navMenuList > li:first-child {
+    margin-top: 0;
+    padding-top: 0;
+  }
+  .navMenuList a {
+    padding: 6px 0;
+    line-height: 1.2;
+  }
+
+  .btnlogout {
+    position: static;
+    margin-top: 0px;
+    margin-left: 0; /* remove right-shift */
+    display: inline-flex; /* center content */
+    align-items: center;
+    justify-content: center;
+    padding: 4px 4px; /* balanced inner spacing */
+    line-height: 1;
+    box-sizing: border-box;
+    text-align: center;
+  }
+}

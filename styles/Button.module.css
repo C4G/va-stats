@@ -1,0 +1,57 @@
+/* Logout button top right of navbar */
+.genericButtonLight {
+  /* border: 2px solid var(--button-border-light); */
+  border: 2px solid black;
+  color: black;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0);
+  font-weight: 700;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.genericButtonLight:hover {
+  background: var(--button-background-hover-light);
+}
+
+.genericButtonDark {
+  border: 2px solid var(--button-border-dark);
+  align-items: center;
+  background: rgb(8, 127, 72, 0.7);
+  border-radius: 5px;
+  color: var(--button-text-dark);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.8rem;
+  /* PREV VAL: 1rem; */
+  margin-left: 0em;
+  /* PREV VAL: 2em; */
+  padding: 7px 12px;
+  /* PREV VAL: 0.7rem 1.2rem; */
+}
+
+.genericButtonDark:hover {
+  background: var(--button-background-hover-dark);
+}
+
+.buttonText {
+  padding-left: 0.5rem;
+}
+
+/* Page-specific styles */
+.btnnewbatchform {
+  position: relative;
+  left: 2em;
+}
+
+@media (max-width: 431px) {
+  .genericButtonLight,
+  .genericButtonLight:hover,
+  .genericButtonDark,
+  .genericButtonDark:hover {
+    margin-top: 20px;
+  }
+}

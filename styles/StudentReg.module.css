@@ -1,0 +1,919 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+/*--- STUDENTREGISTRATION.JSX: EDUCATION DROPDOWN BEGINS (NEXTUI) ---*/
+/* Note: narrower visible area was attained
+    with a hack involving pushing the default
+    select box to a higher relative location
+    within its parent container above.
+    Top border of parent container is the new
+    'top border' of the select input. Also,
+    border colors had to be adjusted as needed.
+    Education dropdown container and input. */
+
+.dropdowndiv {
+  /* border: 2px solid black;    */
+  /* border-color: orange;
+  border-width: 2px;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-top-color: black; */
+  overflow: hidden;
+  width: 60%;
+}
+.edu_details {
+  width: 100%;
+}
+/*--- STUDENTREGISTRATION.JSX: EDUCATION DROPDOWN ENDS (NEXTUI) ---*/
+
+/* Textbox tabbing focus border */
+/* .edu_qualifications:focus, */
+.txtboxdropdown:focus,
+.reginput:focus,
+.regtextareagoals:focus,
+.regtextareaimpair:focus,
+.inputcrschoice:focus,
+.btnsubmitcrschoice:focus,
+.btngetsfocus:focus,
+.btnradiocourse:focus,
+.btngetsfocus:focus {
+  outline: 2px solid blue;
+}
+
+.main {
+  border: 0px solid blue;
+  align-items: left;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  margin-top: 0em;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.title {
+  font-size: 1.9em;
+  font-weight: 200;
+  left: 0;
+  /* margin: 0.5em 0 0 0.3em; */
+  margin: 0em 0 0 0.3em;
+}
+
+.sregfieldset {
+  border-radius: 1em;
+  margin-top: 0.5em;
+  padding: 0 1em;
+  /* padding-right: 1em; */
+}
+
+.sregfieldsetlearn {
+  border-radius: 1em;
+  margin-bottom: 1em;
+  margin-top: -0.2em;
+  padding-right: 1em;
+}
+
+.sregfslegend {
+  font-size: x-large;
+  font-weight: 700;
+}
+
+.forminstruction {
+  font-size: 0.9em;
+  margin-top: 0.5em;
+  color: #666;
+}
+
+.sregfieldsetmedical {
+  border-radius: 1em;
+  margin-top: -0.2em;
+  padding-bottom: 1em;
+  padding-right: 1em;
+}
+
+.sregfslegendmedical {
+  font-size: x-large;
+  font-weight: 700;
+}
+
+.sregfieldsetcourses {
+  border-radius: 1em;
+  margin-top: 1em;
+  padding-right: 1em;
+}
+
+.studregcrsesinfo {
+  color: blue;
+  font-size: 1.2em;
+  font-weight: 500;
+  left: 0.5em;
+  position: relative;
+}
+
+.grid {
+  display: grid;
+  /* grid-template-columns: repeat(3, minmax(25%, auto)); */
+  grid-template-columns: repeat(3, minmax(33%, 100%));
+  height: auto;
+  margin-top: 0em;
+  max-width: 100%;
+  position: relative;
+  top: 2em;
+  /* width: var(--max-width); */
+  width: 100%;
+}
+
+.card {
+  border: 0.05rem solid black;
+  padding: 1rem 1rem 1rem 1rem;
+  border-radius: var(--border-radius);
+  /* background: rgba(var(--card-rgb), 0); */
+  background: white;
+  /* border: 1px solid rgba(var(--card-border-rgb), 0); */
+  font-weight: 500;
+  margin: 0rem 0.5rem;
+  text-align: left;
+  transition:
+    background 200ms,
+    border 200ms;
+}
+
+.regtable {
+  border-collapse: separate;
+  /* border-spacing: 0 15px; */
+  border-spacing: 0em 1em;
+}
+
+.regrow {
+  line-height: 2em;
+}
+
+.inputlabel {
+  padding-right: 0.5em;
+  text-align: right;
+  vertical-align: top;
+}
+/* Keep input & text top-aligned */
+.inputtd {
+  vertical-align: top;
+}
+.inputtd::placeholder {
+  opacity: 0.6;
+}
+.inputtdnarrow {
+  vertical-align: top;
+  width: 59%;
+}
+
+/* Right card items */
+.inputlabelmisc {
+  width: 50%;
+}
+.inputtdmisc {
+  width: 50%;
+}
+
+.requiredelement {
+  /* color: black; */
+  color: red;
+  font-size: 1.5em;
+  font-weight: 700;
+}
+
+.requiredelementlower {
+  color: red;
+  font-size: 1.5em;
+  font-weight: 700;
+  position: relative;
+  top: 0.3em;
+}
+
+/*
+Text inputs in student reg form.
+Does not include:
+- gender, employment, and vision dropdowns
+- choices: 1st, 2nd, 3rd
+- Vision impairment text area
+*/
+.reginput {
+  border: 2px solid black;
+  height: 1.8em;
+  width: 100%;
+  padding-left: 0.2em;
+}
+
+.regtextareagoals {
+  border: 2px solid black;
+  height: 6em;
+  width: 100%;
+  padding-left: 0.2em;
+  padding-top: 0.2em;
+}
+
+.regtextareaimpair {
+  border: 2px solid black;
+  height: 10em;
+  width: 100%;
+  padding-left: 0.2em;
+}
+
+.txtboxdropdown {
+  border: 2px solid black;
+  height: 1.8em;
+  width: 100%;
+}
+
+.tblchoosecourses {
+  border-collapse: separate;
+  border-spacing: 0.5em 1.2em;
+  margin-bottom: 1em;
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Course choice rows */
+.tdlblcrschoice {
+  vertical-align: top;
+  width: 27%;
+}
+
+.tdlblgoals {
+  text-align: right;
+  vertical-align: top;
+  width: 27%;
+}
+
+.fdsetlearning {
+  border: 2px solid black;
+  margin-top: 2em;
+}
+
+.tdsubmitcrschoice {
+  width: 27%;
+}
+
+/* Course choice input box with '1stchoice', etc. */
+.inputcrschoice {
+  background-color: white;
+  /* border-color: 1px solid black; */
+  border: 2px solid black;
+  height: 1.8em;
+  width: 100%;
+}
+
+.btnsubmitcrschoice {
+  border-radius: 0.4rem;
+  /* background-color: var(--vagreenlight-background); */
+  /* background-color: white; */
+  background-color: #c5e8cf;
+  border-color: black;
+  color: black;
+  font-size: 0.8em;
+  font-weight: 700;
+  padding: 0 0.2rem;
+  width: 100%;
+}
+
+.btncrsesresetdark {
+  border-radius: var(--buttonva-borderradius);
+  /* background-color: var(--vagreenmedium-background); */
+  background-color: var(--vagreendark-background);
+  border-color: transparent;
+  color: white;
+  float: right;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 2em;
+  margin-right: 0.5em;
+  text-align: center;
+  width: 30%;
+}
+
+.btnradiocourse {
+  outline: 2px solid #000;
+  /* accent-color: 2px solid #000; */
+  /* box-shadow: 2px solid #000; */
+}
+
+.capcoursewksht {
+  border-bottom: 1px solid black;
+  margin-bottom: 1em;
+}
+
+.h3courses {
+  margin-bottom: 1em;
+}
+
+.coursestip {
+  margin-bottom: 1em;
+  margin-left: 1.5em;
+  text-align: left;
+}
+
+.tblcoursewksht {
+  margin-top: 1em;
+  width: 100%;
+}
+
+.tblcrsabbrev {
+  vertical-align: top;
+}
+
+.inputlabelcourses {
+  padding-left: 0.3em;
+  padding-right: 0.7em;
+  text-align: left;
+  vertical-align: top;
+}
+
+.bottomrow {
+  display: flex;
+  flex-direction: row-reverse;
+  align-content: flex-end;
+  height: auto;
+  margin-top: 1em;
+  width: 95vw;
+}
+
+.tblmisc {
+  margin-bottom: 1em;
+}
+
+.btnsubmitcrschoice {
+  height: auto;
+}
+
+/* div containing form submit and form reset btns */
+.frmbtnblocksubres {
+  float: right;
+  height: 6em;
+  position: relative;
+  width: 11em;
+}
+
+/* Register student form buttons */
+.btnsubmit {
+  border-radius: var(--buttonva-borderradius);
+  /* background-color: var(--vagreenlight-background); */
+  background-color: var(--vagreendark-background);
+  border-color: transparent;
+  /* color: black; */
+  color: white;
+  display: block;
+  float: right;
+  font-size: var(--buttonva-fontsize);
+  font-weight: 700;
+  /* height: var(--buttonva-height); */
+  /* overflow: auto; */
+  padding: var(--buttonva-padding);
+  width: 8em;
+  height: 2.5em;
+  cursor: pointer;
+}
+.btnsubmit:hover {
+  background-color: var(--vagreenmedium-background); /* Light green on hover */
+}
+.btnreset {
+  border-radius: var(--buttonva-borderradius);
+  /* background-color: var(--vagreenmedium-background); */
+  /* background-color: var(--vagreendark-background); */
+  background-color: #7d1818;
+  border-color: transparent;
+  bottom: 0;
+  color: white;
+  font-size: var(--buttonva-fontsize);
+  font-weight: 700;
+  /* height: var(--buttonva-height); */
+  padding: var(--buttonva-padding);
+  position: absolute;
+  right: 0;
+  width: 8em;
+  height: 2.5em;
+  cursor: pointer;
+}
+.btnreset:hover {
+  background-color: rgb(244, 60, 60); /* Dark red on hover */
+}
+
+.btnregdropdown {
+  background-color: white;
+  color: black;
+}
+
+.tdregformbtns {
+  padding-top: 1em;
+  padding-right: -2em;
+  text-align: right;
+}
+
+.description {
+  align-items: inherit;
+  display: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  justify-content: inherit;
+  max-width: var(--max-width);
+  width: 100%;
+  z-index: 2;
+}
+
+.description a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.description p {
+  position: relative;
+  margin: 0;
+  padding: 1rem;
+  /* background-color: rgba(var(--callout-rgb), 0.5); */
+  background-color: white;
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+  border-radius: var(--border-radius);
+}
+
+.code {
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.card span {
+  display: inline-block;
+  transition: transform 200ms;
+}
+
+.card h2 {
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+}
+
+.card p {
+  margin: 0;
+  /* opacity: 0.6; */
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 30ch;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 4rem 0;
+}
+
+.center::before {
+  /* background: var(--secondary-glow); */
+  border-radius: 50%;
+  width: 480px;
+  height: 360px;
+  margin-left: -400px;
+}
+
+.center::after {
+  /* background: var(--primary-glow); */
+  width: 240px;
+  height: 180px;
+  z-index: -1;
+}
+
+.center::before,
+.center::after {
+  content: "";
+  left: 50%;
+  position: absolute;
+  filter: blur(45px);
+  transform: translateZ(0);
+}
+
+.logo {
+  position: relative;
+}
+
+/* Footer at bottom of new student registration form */
+.footernewreg {
+  align-items: center;
+  bottom: 0;
+  border-top: 1px solid #000;
+  display: flex;
+  flex: 1;
+  font-size: 1em;
+  justify-content: center;
+  left: 0;
+  margin: 2em 0;
+  /* margin-top: auto; */
+  /* To stick footer to bottom */
+}
+.detailsButton {
+  padding: 8px 16px;
+  margin-left: 8px;
+  margin-top: 10px;
+  background-color: var(--vagreendark-background);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.detailsButton:hover {
+  background-color: var(--vagreenmedium-background);
+}
+
+/* Enable hover only on non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover span:not(.requiredelement):not(.requiredelementlower) {
+    transform: translateX(4px);
+  }
+}
+
+@media (prefers-reduced-motion) {
+  .card:hover span {
+    transform: none;
+  }
+}
+
+/*-------------- MOBILE-PORTRAIT BEGINS -------------*/
+@media (max-width: 431px) {
+  .main {
+    margin-left: -1em;
+    padding-bottom: 1em;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    margin-bottom: 1em;
+    max-width: 431px;
+  }
+
+  .card {
+    border: 1px solid black;
+    margin-bottom: 2em;
+    margin-left: 0em;
+    margin-right: 2em;
+    width: 98vw;
+  }
+
+  .reginput {
+    padding-left: 1em;
+    width: 100%;
+  }
+
+  .txtboxdropdown {
+    width: 100%;
+  }
+
+  /* Dropdown button */
+  .btngenderdropdown {
+    z-index: 0;
+  }
+
+  /* Navbar */
+  .navstudents {
+    z-index: 5;
+  }
+}
+/*-------------- MOBILE-PORTRAIT ENDS -------------*/
+
+/*-------------- MOBILE-LANDSCAPE BEGINS? ---------*/
+@media (min-width: 480px) and (max-width: 853px) {
+  /* .content { */
+  .main {
+    margin-top: 7em;
+    padding: 0rem;
+  }
+  .grid {
+    font-size: 0.8em;
+    grid-template-columns: 1fr;
+    margin-left: -1em;
+    margin-top: 0em;
+    text-align: center;
+    width: 100%;
+  }
+
+  .card {
+    padding: 1rem 0.5rem;
+    padding-right: 1em;
+    width: 90vw;
+  }
+
+  .card h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .reginput {
+    margin-right: 0.5em;
+    width: 11em;
+  }
+
+  .txtboxdropdown {
+    width: 11em;
+  }
+
+  .regtextareagoals,
+  .regtextareaimpair {
+    width: 11em;
+  }
+
+  .center {
+    padding: 8rem 0 6rem;
+  }
+
+  .center::before {
+    transform: none;
+    height: 300px;
+  }
+
+  .description {
+    font-size: 0.8rem;
+  }
+
+  .description a {
+    padding: 1rem;
+  }
+
+  .description p,
+  .description div {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    width: 100%;
+  }
+
+  .description p {
+    align-items: center;
+    inset: 0 0 auto;
+    padding: 2rem 1rem 1.4rem;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid rgba(var(--callout-border-rgb), 0.25);
+    background: linear-gradient(to bottom, rgba(var(--background-start-rgb), 1), rgba(var(--callout-rgb), 0.5));
+    background-clip: padding-box;
+    /* backdrop-filter: blur(24px); */
+  }
+
+  .description div {
+    align-items: flex-end;
+    pointer-events: none;
+    inset: auto 0 0;
+    padding: 2rem;
+    height: 200px;
+    background: linear-gradient(to bottom, transparent 0%, rgb(var(--background-end-rgb)) 40%);
+    z-index: 1;
+  }
+}
+/*-------------- MOBILE-LANDSCAPE ENDS? ---------*/
+
+/* MOBILE-Tablet and Smaller Desktop */
+@media (min-width: 701px) and (max-width: 1120px) {
+  .grid {
+    display: flex;
+    grid-template-columns: repeat(2, 50%);
+    justify-content: center;
+  }
+  .card {
+    width: 30vw;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+/* Overlay for both modal and update form */
+.modalOverlay,
+.updateFormOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Content */
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+}
+
+/* Update Form Card */
+.updateFormCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal Summary (for Registration Details) */
+.modalSummary {
+  margin-top: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+}
+
+/* Modal Buttons */
+.modalButtons {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.modalButtons button {
+  flex: 1;
+  max-width: 150px;
+  padding: 0.6rem 1.2rem;
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modalButtons button:hover {
+  background-color: darkgreen;
+}
+
+/* Close Modal Button */
+.closeModalBtn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.closeModalBtn:hover {
+  color: #000;
+}
+
+/* Update Form Instructions */
+.updateFormInstruction {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Update Form Fields */
+.updateFormField {
+  margin-bottom: 1.5rem;
+}
+
+.updateFormField label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.updateFormField input,
+.updateFormField select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  height: 2.5em;
+}
+
+.updateFormField input:focus,
+.updateFormField select:focus {
+  border-color: var(--vagreendark-background);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 128, 0, 0.1);
+}
+
+/* Update Form Buttons */
+.updateFormButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Error Message */
+.errorMessage {
+  color: red;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Success Message */
+.successMessage {
+  color: green;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* Update Button */
+.updateButton {
+  background-color: var(--vagreendark-background);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.updateButton:hover {
+  background-color: var(--vagreenmedium-background);
+}
+
+.checkRowsButton {
+  background-color: var(--vagreendark-background);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.checkRowsButton:hover {
+  background-color: var(--vagreenmedium-background);
+}
+
+.checkRowsButton:disabled {
+  background-color: #ccc;
+  color: #333;
+  cursor: not-allowed;
+}
+
+.checkRowsButton:disabled:hover {
+  background-color: #ccc;
+  color: #333;
+}
+
+/* Bulk Registration Button */
+.bulkRegisterButton {
+  background-color: #0059be;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.bulkRegisterButton:hover {
+  background-color: #0177ff;
+}
+
+.bulkRegisterButton:disabled {
+  background-color: #ccc;
+  color: #333;
+  cursor: not-allowed;
+}
+
+.bulkRegisterButton:disabled:hover {
+  background-color: #ccc;
+  color: #333;
+}
+
+/* Button styling when in update mode */
+.btnupdate {
+  background-color: #4caf50 !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-weight: bold !important;
+}
+
+.btnupdate:hover {
+  background-color: #45a049 !important;
+}

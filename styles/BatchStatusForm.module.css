@@ -1,0 +1,149 @@
+.requiredelement {
+  color: red;
+}
+
+.warningtext {
+  color: red;
+  font-weight: 700;
+}
+
+.warningtextmild {
+  color: #ff746c; /* Pastel red */
+  font-weight: 500;
+}
+
+/* Form container */
+.bsfContainer {
+  border-radius: 5px;
+  background-color: white;
+  margin-top: -1em;
+  margin-bottom: 1em;
+  /*margin-right: -20em;*/
+  padding: 15px;
+  width: 40vw;
+}
+
+/* Form row: contains label and input */
+.bsfFormRow {
+  margin-bottom: 1em;
+  width: 100%;
+}
+
+.bsfInput[type="text"],
+.bsfSelect,
+.bsfTextarea {
+  border: 3px solid green;
+  width: 100%;
+  width: 75%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.bsfCol25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+
+/* All Batch Status form inputs */
+.bsfCol75 {
+  float: left;
+  margin-top: 6px;
+  width: 75%;
+}
+
+.bsfCol75remarks {
+  height: 6em;
+  float: left;
+  margin-top: 6px;
+  width: 75%;
+}
+
+.bsfLabel {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+.bsfInput[type="submit"] {
+  background-color: #04aa6d;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+
+.bsfInput[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* Clear floats after the columns */
+.bsfFormRow:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.bsfSubmit {
+  float: right;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  height: 2em;
+  margin-right: 3em;
+  margin-top: 5px;
+  padding: 0.5rem 0.5rem;
+  width: auto;
+}
+/* Suggestions List Styling */
+.suggestionsList {
+  list-style-type: none; /* Remove bullet points */
+  /* padding: 10px; */
+  margin-left: 89px;
+  margin-top: 6px; /* Add margin for spacing */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 150px; /* Limit height with scroll */
+  overflow-y: auto; /* Enable vertical scrolling if necessary */
+  background-color: #fff; /* White background */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  /* position: absolute; Position relative to the input field */
+  z-index: 1000; /*Ensure it stays on top*/
+  width: 75%; /* Match the input width */
+}
+
+.suggestionItem {
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px; /* Adjust font size for better readability */
+  color: #333;
+  transition: background-color 0.2s ease-in-out; /* Smooth hover effect */
+}
+
+.suggestionItem:hover {
+  background-color: #f0f0f0; /* Light gray background on hover */
+}
+
+.suggestionItem.active {
+  /* Style for active item */
+  background-color: #e0e0e0; /* Light gray for active or hovered item */
+  color: #000; /* Darker text color for readability */
+  outline: none; /* Remove focus outline */
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .suggestionsList,
+  .suggestionItem,
+  .bsfCol25,
+  .bsfCol75,
+  .bsfInput[type="submit"] {
+    width: 100%;
+    margin-top: 0;
+  }
+}
