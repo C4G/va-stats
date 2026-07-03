@@ -9,13 +9,11 @@ FROM base AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Declare build arguments for Next.js public variables
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
+# Declare build arguments for Next.js public variables (inlined at build time)
+ARG NEXT_PUBLIC_BASE_URL
 
 # Set environment variables from build args (baked into the client bundle)
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
 # Copy package files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./

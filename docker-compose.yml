@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-}
-        - NEXT_PUBLIC_VAPID_PUBLIC_KEY=${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-}
+        # NEXT_PUBLIC_* vars are inlined into the bundle at build time
+        - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-}
     ports:
       - "${APP_PORT:-3000}:3000"
     environment:
@@ -23,8 +23,9 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      # Public runtime config
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-}
+      # Public config (also passed as a build arg above, where it is inlined;
+      # kept here for the server-side runtime fallback)
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-}
     command: node server.js
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
