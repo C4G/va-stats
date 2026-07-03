@@ -1,0 +1,19 @@
+docker-compose.yml
+  s_411fe14fcdf36a::t_6eb132f4e56cf3 11-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "ec2ed3e6da90c6a5622a6db00de57daa49485b5b",
+  "prompts": {},
+  "sessions": {
+    "s_411fe14fcdf36a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e1a49da-51de-4677-92d4-fc36fb7a67e8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
