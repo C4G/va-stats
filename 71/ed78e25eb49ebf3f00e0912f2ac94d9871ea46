@@ -1,0 +1,24 @@
+utils/map-attendance-data-to-csv.ts
+  s_5bcfadc45f0a04::t_09056275578976 21,23,25,27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "71ed78e25eb49ebf3f00e0912f2ac94d9871ea46",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_5bcfadc45f0a04": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48bc7d3d-9ec7-41c2-b166-d74006a310a2",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
