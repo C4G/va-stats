@@ -1,0 +1,27 @@
+utils/export-to-csv.js
+  s_7d3fc6a7692a47::t_24b987a89de59f 4-10,19-26
+  s_7d3fc6a7692a47::t_0668f15fc06a41 32-39
+  s_7d3fc6a7692a47::t_46a4221dadeec1 45,47-70,72-81
+  s_7d3fc6a7692a47::t_efaf914c60e387 40-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "3f5d9d0050ed2253a94697bde8ed466b47c66f6a",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_7d3fc6a7692a47": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3d7d7c3f-af29-4742-ac9b-0cdd0e8b5eae",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
