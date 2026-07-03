@@ -8,8 +8,8 @@ services:
       args:
         # NEXT_PUBLIC_* vars are inlined into the bundle at build time
         - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-}
-    ports:
-      - "${APP_PORT:-3000}:3000"
+    expose:
+      - "3000"
     environment:
       # External MySQL database
       - MYSQL_HOST=${MYSQL_HOST}
