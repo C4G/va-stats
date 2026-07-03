@@ -1,0 +1,54 @@
+.dockerignore
+  s_a4bade05940b3e::t_22c3e1f15f693f 1-51
+pnpm-workspace.yaml
+  s_a4bade05940b3e::t_35129c4aaba486 1
+  s_a4bade05940b3e::t_1cf2cebb7fb19d 2-3
+  s_a4bade05940b3e::t_74bc2e41fd7e44 4-6
+  s_a4bade05940b3e::t_fd4db50e157f2a 7-8
+Dockerfile
+  s_a4bade05940b3e::t_1dbe821be335c0 1-2,4-9,12-18,20-21,23-27,30-58
+.github/workflows/ci.yaml
+  s_a4bade05940b3e::t_69a50d615d00ec 24
+  s_a4bade05940b3e::t_bcc4fa8135fbe9 1-23,25-85
+.gitignore
+  s_a4bade05940b3e::t_69a50d615d00ec 57-59
+.husky/pre-commit
+  s_a4bade05940b3e::t_26d57340953166 1
+example.env
+  s_a4bade05940b3e::t_7deca945ffa843 1-22
+.prettierignore
+  s_a4bade05940b3e::t_c0b4831040bb8d 3
+docker-compose.yml
+  s_a4bade05940b3e::t_5ff75c12894376 2-10,12,14-35
+package.json
+  s_a4bade05940b3e::t_3cb3593c724443 5-7
+next.config.js
+  s_a4bade05940b3e::t_41da5744e1653d 9
+pages/api/health.js
+  s_a4bade05940b3e::t_4525227ca102e1 1-9
+.npmrc
+  s_a4bade05940b3e::t_8f3739f79374f0 1-3
+pnpm-lock.yaml
+  s_a4bade05940b3e::t_7946d06b144f48 1-11508
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "3af0101621002bbe490d35edf4e10eb78e4a0efd",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_a4bade05940b3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebc190c7-2066-405b-b900-e4a665ccf24c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
