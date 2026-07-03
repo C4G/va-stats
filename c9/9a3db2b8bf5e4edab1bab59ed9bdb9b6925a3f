@@ -1,0 +1,439 @@
+.github/workflows/ci.yaml
+  s_a4bade05940b3e::t_8ac5abfd1bc4d7 1-85
+.gitignore
+  s_a4bade05940b3e::t_3c51fbc57ac32c 1-59
+pnpm-lock.yaml
+  s_a4bade05940b3e::t_b75c48f192f290 1-11508
+pnpm-workspace.yaml
+  s_a4bade05940b3e::t_a82e26a265a6bd 1-8
+styles/globals.css
+  s_7b3f496e3fb7ff::t_ac2628d2109124 1-759
+.dockerignore
+  s_a4bade05940b3e::t_07efccabe95935 1-51
+.eslintignore
+  s_a4bade05940b3e::t_3fc719b5845496 1-5
+.eslintrc.json
+  s_a4bade05940b3e::t_11d21c79cdce86 1-20
+.husky/pre-commit
+  s_a4bade05940b3e::t_8ff267eedf62cb 1
+.npmrc
+  s_a4bade05940b3e::t_32d691ce5cacf8 1-3
+.prettierignore
+  s_a4bade05940b3e::t_52030dcfc9365b 1-4
+.prettierrc.json
+  s_a4bade05940b3e::t_9c03b315e75c7b 1-7
+Dockerfile
+  s_a4bade05940b3e::t_f0e14330a6b32e 1-58
+Makefile
+  s_a4bade05940b3e::t_76e6e53b2079a8 1-60
+README.md
+  s_a4bade05940b3e::t_4f7cf11212c8fa 1-110
+c4g-dev-production-pipeline.md
+  s_a4bade05940b3e::t_f9d9098974cbb2 1-29
+components/AccessibleSelectCellEditor.jsx
+  s_a4bade05940b3e::t_64fa29b77e6725 1-96
+components/Button.jsx
+  s_a4bade05940b3e::t_4323b8cf062fe9 1-75
+components/ConfirmationModal.jsx
+  s_a4bade05940b3e::t_54d8c130f15d95 1-36
+components/DashboardSettingsPanel.jsx
+  s_a4bade05940b3e::t_02ee18518a8e68 1-126
+components/DataGrid.jsx
+  s_a4bade05940b3e::t_61d96c9ec55f86 1-102
+components/DropdownMenuPm.js
+  s_a4bade05940b3e::t_5f0b212c152de2 1-42
+components/DropdownMenuStaff.js
+  s_a4bade05940b3e::t_79c7e6f8aa513b 1-34
+components/GlobalSnackbar.jsx
+  s_a4bade05940b3e::t_ef552f60ea996f 1-34
+components/Layout.jsx
+  s_a4bade05940b3e::t_760c14c4b0e5ab 1-39
+components/NavItem.jsx
+  s_a4bade05940b3e::t_93e9f42ed2bdd2 1-35
+components/Navbar.jsx
+  s_a4bade05940b3e::t_7f8bebef641e13 1-239
+components/PageTitleWithUserGuideLink.jsx
+  s_a4bade05940b3e::t_8939ed2c0d97b9 1-66
+components/TelecallerRemarksModal.jsx
+  s_a4bade05940b3e::t_6422f2abf47a88 1-430
+components/TransferButtons.jsx
+  s_a4bade05940b3e::t_6dae95782781ac 1-56
+components/UpdateStudentForm.jsx
+  s_a4bade05940b3e::t_d000e9917deb24 1-173
+components/batches/BatchesActionsCell.jsx
+  s_a4bade05940b3e::t_9fcc89f9aa3128 1-52
+components/batches/BatchesDeleteCell.jsx
+  s_a4bade05940b3e::t_1cfd1d839e64e6 1-39
+components/batches/BatchesRosterCell.jsx
+  s_a4bade05940b3e::t_2a4d611a2baeca 1-39
+components/batches/RemarksActions.jsx
+  s_a4bade05940b3e::t_47c0b687631837 1-52
+components/batches/RemarksModal.jsx
+  s_a4bade05940b3e::t_baea02443ee277 1-372
+components/students/RemarksCellRenderer.jsx
+  s_a4bade05940b3e::t_5946fbdf9cf6e2 1-26
+components/students/StudentActionCell.jsx
+  s_a4bade05940b3e::t_86e7453e76d614 1-158
+components/students/StudentActionCellBulkRegistration.jsx
+  s_a4bade05940b3e::t_cb335b65538604 1-106
+components/students/StudentDeleteCell.jsx
+  s_a4bade05940b3e::t_82b106bfdc92eb 1-19
+components/students/TelecallerRemarksCellRenderer.jsx
+  s_a4bade05940b3e::t_48aa404076f002 1-26
+docker-compose.yml
+  s_a4bade05940b3e::t_753de3c480dd3a 1-35
+dreamhost-mtl/coursedetails.htm
+  s_a4bade05940b3e::t_c806697f731921 1-314
+dreamhost-mtl/coursedetails_files/filelist.xml
+  s_a4bade05940b3e::t_7780febe72141b 1-7
+dreamhost-mtl/coursedetails_files/sheet001.htm
+  s_a4bade05940b3e::t_629a3382ac4073 1-483
+dreamhost-mtl/coursedetails_files/stylesheet.css
+  s_a4bade05940b3e::t_8439bc90acf9cb 1-184
+dreamhost-mtl/coursedetails_files/tabstrip.htm
+  s_a4bade05940b3e::t_0e99447643cb4f 1-39
+example.env
+  s_a4bade05940b3e::t_f274e5570a4ef2 1-22
+jest.config.js
+  s_a4bade05940b3e::t_80f08bd685497c 1-34
+jest.setup.js
+  s_a4bade05940b3e::t_4578041da7fbbc 1-63
+jsconfig.json
+  s_a4bade05940b3e::t_57425cf46e61cf 1-9
+lib/db.js
+  s_a4bade05940b3e::t_8a658b1a4c8167 1-18
+migration-enrollment-status.sql
+  s_a4bade05940b3e::t_54d4abcb7c86f2 1-50
+next-env.d.ts
+  s_a4bade05940b3e::t_15a6a6e89574e4 1-5
+next.config.js
+  s_a4bade05940b3e::t_06ba5fad6e2ab1 1-32
+package.json
+  s_a4bade05940b3e::t_e552a521ce27bb 1-72
+pages/404.jsx
+  s_a4bade05940b3e::t_6bdec0322a5432 1-29
+pages/_app.jsx
+  s_a4bade05940b3e::t_c4da0387f3e652 1-36
+pages/_document.js
+  s_a4bade05940b3e::t_5416fefb11e773 1-60
+pages/api/addassignment.js
+  s_a4bade05940b3e::t_27e99e4db4495e 1-50
+pages/api/addremark.js
+  s_a4bade05940b3e::t_0dd6e1f0ace332 1-45
+pages/api/addstudenttobatch.js
+  s_a4bade05940b3e::t_1312897eda30de 1-169
+pages/api/audit/create.js
+  s_a4bade05940b3e::t_9ba2074b3499d9 1-42
+pages/api/audit/get.js
+  s_a4bade05940b3e::t_85eb9ad7136b3c 1-93
+pages/api/auth/[...nextauth].ts
+  s_a4bade05940b3e::t_11b1e016546621 1-114
+pages/api/batchcreate.js
+  s_a4bade05940b3e::t_fd0eda3cb32469 1-66
+pages/api/batches.js
+  s_a4bade05940b3e::t_30f98546bff705 1-27
+pages/api/bulkregcheckstudentduplicates.js
+  s_a4bade05940b3e::t_a7aae7d1274af7 1-83
+pages/api/bulkstudentapplication.js
+  s_a4bade05940b3e::t_b034084e26ce44 1-117
+pages/api/configurations/addDropdownOption.js
+  s_a4bade05940b3e::t_27d4a86e3051fa 1-24
+pages/api/configurations/batchStatusRules.js
+  s_a4bade05940b3e::t_7c6e943893fc6a 1-47
+pages/api/configurations/deleteDropdownOption.js
+  s_a4bade05940b3e::t_e3dcc712aba905 1-29
+pages/api/configurations/dropdownOptions.js
+  s_a4bade05940b3e::t_6e2bf6180fbcfe 1-16
+pages/api/countbatch.js
+  s_a4bade05940b3e::t_2bab22139c4bd7 1-18
+pages/api/countbatchesmonth.js
+  s_a4bade05940b3e::t_328000a92ebebf 1-20
+pages/api/countcourse.js
+  s_a4bade05940b3e::t_aed533ee1a6a46 1-19
+pages/api/countcoursesmonth.js
+  s_a4bade05940b3e::t_4cb69feb09c2e7 1-21
+pages/api/countenrollsmonth.js
+  s_a4bade05940b3e::t_7000831582eb14 1-22
+pages/api/countinstructorsmonth.js
+  s_a4bade05940b3e::t_1d3e84264a9fab 1-21
+pages/api/countleadsmonth.js
+  s_a4bade05940b3e::t_495dffb09bfa69 1-20
+pages/api/countstudent.js
+  s_a4bade05940b3e::t_7d9e4370eca9d9 1-19
+pages/api/counttasmonth.js
+  s_a4bade05940b3e::t_a606b64c4ab943 1-21
+pages/api/coursecreate.js
+  s_a4bade05940b3e::t_b2778a335707a5 1-50
+pages/api/deleteassignment.js
+  s_a4bade05940b3e::t_145acc841a6a74 1-16
+pages/api/deletebatch.js
+  s_a4bade05940b3e::t_bf3dca8ad8858e 1-32
+pages/api/deletecourse.js
+  s_a4bade05940b3e::t_7da0b7258642c0 1-34
+pages/api/deletestudent.js
+  s_a4bade05940b3e::t_81aa2d2743b9b2 1-22
+pages/api/deletestudentfrombatch.js
+  s_a4bade05940b3e::t_a7481479fc08e2 1-84
+pages/api/deleteuser.js
+  s_a4bade05940b3e::t_0ba8f4bf51e4c4 1-71
+pages/api/diag-host.js
+  s_a4bade05940b3e::t_1291b261bad4d3 1-7
+pages/api/dropdownDataPm.js
+  s_a4bade05940b3e::t_a9180eb4556e34 1-32
+pages/api/dropdownDataStaff.js
+  s_a4bade05940b3e::t_633057d19dacd5 1-32
+pages/api/getBatchesWithEnrollCount.js
+  s_a4bade05940b3e::t_7bff6e6c7683ac 1-77
+pages/api/getCoursesWithEnrollCount.js
+  s_a4bade05940b3e::t_7232e53ef1361b 1-34
+pages/api/getYearlyEnrollmentTrend.js
+  s_a4bade05940b3e::t_ba0124b0147afe 1-37
+pages/api/getbatchdetails.js
+  s_a4bade05940b3e::t_2f900273500bbf 1-176
+pages/api/getbatchesdata.js
+  s_a4bade05940b3e::t_5256103eda0be4 1-222
+pages/api/getbatchesreport.js
+  s_a4bade05940b3e::t_76e455e895abe8 1-44
+pages/api/getcoursesdata-test.js
+  s_a4bade05940b3e::t_1b0421bb0e2ecd 1-22
+pages/api/getcoursesdata.js
+  s_a4bade05940b3e::t_650d0fb5e95372 1-17
+pages/api/getdocumentsfee.js
+  s_a4bade05940b3e::t_7b7cc359f0fea1 1-51
+pages/api/getstudent.js
+  s_a4bade05940b3e::t_4e06b9ab7be1c0 1-114
+pages/api/getstudentdetails.js
+  s_a4bade05940b3e::t_fe56b05124a185 1-61
+pages/api/getstudentsdata.js
+  s_a4bade05940b3e::t_4071b0f647d7f2 1-123
+pages/api/getunassignedstudents.js
+  s_a4bade05940b3e::t_f07c57d9761640 1-52
+pages/api/getuserdata.js
+  s_a4bade05940b3e::t_03587d7ba59295 1-27
+pages/api/getusersdata.js
+  s_a4bade05940b3e::t_ee3c08efdc3a0e 1-40
+pages/api/health.js
+  s_a4bade05940b3e::t_010bf149f2c449 1-9
+pages/api/patchattendance.ts
+  s_a4bade05940b3e::t_cbec9764e77b4a 1-138
+pages/api/studentapplication.js
+  s_a4bade05940b3e::t_49066deef10bb7 1-77
+pages/api/telecaller-remarks/[id].js
+  s_a4bade05940b3e::t_6851462fbbee8d 1-120
+pages/api/telecaller-remarks/index.js
+  s_a4bade05940b3e::t_e0b98175df173b 1-113
+pages/api/updateassignment.js
+  s_a4bade05940b3e::t_7f55153021bb14 1-28
+pages/api/updatebatchattendance.js
+  s_a4bade05940b3e::t_23c7d78e0fa632 1-25
+pages/api/updatebatches.js
+  s_a4bade05940b3e::t_3a2b30622b0272 1-101
+pages/api/updatebatchstatus.js
+  s_a4bade05940b3e::t_1ddb7ebf6f94cc 1-47
+pages/api/updatecourse.js
+  s_a4bade05940b3e::t_0f2128c774e0a0 1-27
+pages/api/updatedocumentsfee.js
+  s_a4bade05940b3e::t_56e8558df6d0c1 1-43
+pages/api/updategrade.js
+  s_a4bade05940b3e::t_e94dffd70353ee 1-72
+pages/api/updatestudents.js
+  s_a4bade05940b3e::t_aa7d61805c0716 1-130
+pages/api/updateusers.js
+  s_a4bade05940b3e::t_eb8af0e4c7c495 1-242
+pages/api/usercreate.js
+  s_a4bade05940b3e::t_85c8da3198bf62 1-118
+pages/api/users.js
+  s_a4bade05940b3e::t_7f97ffcf6e4283 1-28
+pages/api/va-remarks/[id].js
+  s_a4bade05940b3e::t_c753479b50e913 1-105
+pages/api/va-remarks/index.js
+  s_a4bade05940b3e::t_5262a084207ada 1-95
+pages/batch/[id].jsx
+  s_a4bade05940b3e::t_bb97214032116f 1-3132
+pages/batches.jsx
+  s_a4bade05940b3e::t_af63ec966f0c42 1-1352
+pages/batchstatusform.html
+  s_a4bade05940b3e::t_a22b15f77df40d 1-126
+pages/bulkstudentregistration.jsx
+  s_a4bade05940b3e::t_53bcf815bb2c15 1-798
+pages/configurations.jsx
+  s_a4bade05940b3e::t_9a3428f225e640 1-856
+pages/coursedetails.jsx
+  s_a4bade05940b3e::t_86712a0873642b 1-22
+pages/courses.jsx
+  s_a4bade05940b3e::t_95cabb003057b4 1-672
+pages/dashboard-configurations.jsx
+  s_a4bade05940b3e::t_63ecbed6e2c098 1-45
+pages/default.jsx
+  s_a4bade05940b3e::t_c49bc8457af883 1-393
+pages/demo.jsx
+  s_a4bade05940b3e::t_da6cca9e8d6a40 1-73
+pages/index.html
+  s_a4bade05940b3e::t_718b6897022d33 1-8
+pages/index.jsx
+  s_a4bade05940b3e::t_f89b22a82055cd 1-84
+pages/logs.js
+  s_a4bade05940b3e::t_f37b46848e8fce 1-294
+pages/offline.html
+  s_a4bade05940b3e::t_04c2aca3442df5 1-5
+pages/reports.jsx
+  s_a4bade05940b3e::t_d09b5473f7e64d 1-741
+pages/student/[id].jsx
+  s_a4bade05940b3e::t_c616bc33f56fbb 1-375
+pages/studentregistration.jsx
+  s_a4bade05940b3e::t_5f2c19507b1c01 1-2137
+pages/students.jsx
+  s_a4bade05940b3e::t_0f2dae96514c9c 1-592
+pages/users.jsx
+  s_a4bade05940b3e::t_eb49548792d0b1 1-1112
+postcss.config.js
+  s_a4bade05940b3e::t_1e654b111c4f82 1-6
+prisma/schema.prisma
+  s_a4bade05940b3e::t_87a9458cf0f95a 1-6
+public/icons/cancel-icon.svg
+  s_a4bade05940b3e::t_c24c66dcb06cbd 1
+public/icons/delete-icon.svg
+  s_a4bade05940b3e::t_b93d661866e2ba 1
+public/icons/edit-icon.svg
+  s_a4bade05940b3e::t_38c38d0f3e531f 1
+public/icons/expand-up.svg
+  s_a4bade05940b3e::t_43fb3f98651a64 1-4
+public/icons/fillx-icon.svg
+  s_a4bade05940b3e::t_ec56902f94685b 1-13
+public/icons/google-logo.svg
+  s_a4bade05940b3e::t_481a593bc093ff 1-24
+public/icons/save-icon.svg
+  s_a4bade05940b3e::t_0a0ca4c966fd6a 1
+public/icons/sort-down-icon.svg
+  s_a4bade05940b3e::t_cc11f0c3256ac3 1-2
+public/icons/sort-up-icon.svg
+  s_a4bade05940b3e::t_940c4fa6d20b3e 1-2
+public/manifest-autogen.json
+  s_a4bade05940b3e::t_7e296908fc2594 1-43
+public/manifest.json
+  s_a4bade05940b3e::t_1881c9bc1f1c42 1-99
+public/next.svg
+  s_a4bade05940b3e::t_5072e602f72f85 1
+public/pwa-icon.svg
+  s_a4bade05940b3e::t_47eecc317f6445 1
+public/thirteen.svg
+  s_a4bade05940b3e::t_20190a225f69a3 1
+public/vercel.svg
+  s_a4bade05940b3e::t_bc822e5ab9f5c4 1
+"sql/Add TrainerPlusTelecaller Role.sql"
+  s_a4bade05940b3e::t_30ad3212529027 1-11
+sql/EditAdminRoles.sql
+  s_a4bade05940b3e::t_c966e1268737b8 1-29
+styles/BatchStatusForm.module.css
+  s_a4bade05940b3e::t_253bcba31b0ac1 1-149
+styles/Button.module.css
+  s_a4bade05940b3e::t_1dbad657eb69cc 1-57
+styles/Configurations.module.css
+  s_a4bade05940b3e::t_6656b923c5ae77 1-300
+styles/Home.module.css
+  s_a4bade05940b3e::t_2691dddab3ba37 1-2508
+styles/Navbar.module.css
+  s_a4bade05940b3e::t_c33198c1bc9de0 1-122
+styles/NotFound.module.css
+  s_a4bade05940b3e::t_e4dd8f3e619cdb 1-46
+styles/Reports.module.css
+  s_a4bade05940b3e::t_4da2290a2f730f 1-116
+styles/StudentReg.module.css
+  s_a4bade05940b3e::t_36f170ea6fa5ee 1-919
+styles/Table.module.css
+  s_a4bade05940b3e::t_26118ea360ea1e 1-432
+tailwind.config.js
+  s_a4bade05940b3e::t_b6c184fb92c659 1-15
+tsconfig.json
+  s_a4bade05940b3e::t_8b0c6bb1689a68 1-37
+utils/__tests__/sort-table.test.js
+  s_a4bade05940b3e::t_41cdbe406b8b1f 1-55
+utils/ag-grid-column-helpers.js
+  s_a4bade05940b3e::t_b8f32fc80258ec 1-141
+utils/auditLogger.js
+  s_a4bade05940b3e::t_7ef28203b74e5d 1-100
+utils/batch-data-helper.js
+  s_a4bade05940b3e::t_4289990f794731 1-81
+utils/batch-status-derived.js
+  s_a4bade05940b3e::t_98f9d15e5ccb8d 1-189
+utils/batch-status-rules-config.js
+  s_a4bade05940b3e::t_01426b1fac8f9f 1-143
+utils/batches/get-batches-columns-defs.js
+  s_a4bade05940b3e::t_0b2811171c8f81 1-355
+utils/configurations-access.js
+  s_a4bade05940b3e::t_eb302e4cbc4160 1-18
+utils/countries+states.json
+  s_a4bade05940b3e::t_d8f7d37b7bdce1 1-53843
+utils/course-days.ts
+  s_a4bade05940b3e::t_6b388efba18c21 1-185
+utils/csv-generation-helper.js
+  s_a4bade05940b3e::t_5ba1163fcd92b5 1-221
+utils/date-normalizers.js
+  s_a4bade05940b3e::t_8921ba0ebf0f55 1-121
+utils/dropdown-config.js
+  s_a4bade05940b3e::t_e0b0fb5f5a5a6b 1-185
+utils/enrollment.ts
+  s_a4bade05940b3e::t_0e9e4a128b03f5 1-15
+utils/export-to-csv.js
+  s_a4bade05940b3e::t_8250c088d85b4a 1-94
+utils/generate-batch-status-report.js
+  s_a4bade05940b3e::t_3e7ed59a10eaf3 1-205
+utils/get-courses-column-defs.js
+  s_a4bade05940b3e::t_998912737a0234 1-148
+utils/get-date-with-timezone-offset.js
+  s_a4bade05940b3e::t_7a8c71499e340a 1-26
+utils/get-row-style.ts
+  s_a4bade05940b3e::t_3019a3e080e591 1-21
+utils/get-users-columns-defs.js
+  s_a4bade05940b3e::t_8517017a980f6c 1-258
+utils/getApiBaseUrl.ts
+  s_a4bade05940b3e::t_59c04221c35ba5 1-14
+utils/grid-comparators.js
+  s_a4bade05940b3e::t_cf405e645662bc 1-37
+utils/map-attendance-data-to-csv.ts
+  s_a4bade05940b3e::t_5b442f024b8158 1-43
+utils/session-helpers.js
+  s_a4bade05940b3e::t_a69d960a21593d 1-55
+utils/sort-table.js
+  s_a4bade05940b3e::t_0353599b1ed634 1-51
+utils/students/convert-number-to-yes-no.ts
+  s_a4bade05940b3e::t_1a02dbd08c2149 1-17
+utils/students/search-and-update-student-data.js
+  s_a4bade05940b3e::t_a864291d021ddd 1-97
+utils/students/use-get-student-column-defs-bulk.js
+  s_a4bade05940b3e::t_24b557f6dfea20 1-606
+utils/students/use-get-student-column-defs.js
+  s_a4bade05940b3e::t_dcf1cb54d5454b 1-430
+utils/types/attendance.ts
+  s_a4bade05940b3e::t_e82de2d37b085f 1-26
+utils/types/date.ts
+  s_a4bade05940b3e::t_bf190cbd44eaaf 1-45
+utils/types/enrollment.ts
+  s_a4bade05940b3e::t_db4d7dfe1f7127 1-14
+utils/types/global.d.ts
+  s_a4bade05940b3e::t_395580a905b651 1-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "c99a3db2b8bf5e4edab1bab59ed9bdb9b6925a3f",
+  "prompts": {},
+  "sessions": {
+    "s_7b3f496e3fb7ff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4ab6090d-c7c4-41e0-9f03-b59bcf72b24a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    },
+    "s_a4bade05940b3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebc190c7-2066-405b-b900-e4a665ccf24c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
