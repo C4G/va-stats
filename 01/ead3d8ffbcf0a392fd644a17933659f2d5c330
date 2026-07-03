@@ -1,0 +1,24 @@
+example.env
+  s_a4bade05940b3e::t_a4c09ba1cff6b0 17-20
+Dockerfile
+  s_a4bade05940b3e::t_f0627c6dc737db 12-13,16
+docker-compose.yml
+  s_a4bade05940b3e::t_687223628424aa 26-28
+  s_a4bade05940b3e::t_402eb4644af4da 9-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.9",
+  "base_commit_sha": "01ead3d8ffbcf0a392fd644a17933659f2d5c330",
+  "prompts": {},
+  "sessions": {
+    "s_a4bade05940b3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebc190c7-2066-405b-b900-e4a665ccf24c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
