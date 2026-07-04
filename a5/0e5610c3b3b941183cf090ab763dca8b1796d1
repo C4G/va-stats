@@ -1,0 +1,19 @@
+Dockerfile
+  s_3f1d762215aec9::t_906f1e90b546d2 23-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a50e5610c3b3b941183cf090ab763dca8b1796d1",
+  "prompts": {},
+  "sessions": {
+    "s_3f1d762215aec9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a0b67643-2204-4991-9bec-434b0107d5f3",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
