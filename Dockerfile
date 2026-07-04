@@ -20,7 +20,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install dependencies (ignore-scripts skips husky's prepare hook;
 # native packages such as sharp ship prebuilt binaries so no build step is needed)
-RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    pnpm install --frozen-lockfile --ignore-scripts --store-dir=/pnpm/store
 
 # Copy source code
 COPY . .
