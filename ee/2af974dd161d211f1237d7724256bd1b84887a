@@ -1,0 +1,19 @@
+README.md
+  s_9ed3c795077c9c::t_1f9caa05bc96fb 46-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "ee2af974dd161d211f1237d7724256bd1b84887a",
+  "prompts": {},
+  "sessions": {
+    "s_9ed3c795077c9c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e233d5de-1dbb-435d-b14c-e437ff6a465c",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
