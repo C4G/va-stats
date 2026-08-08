@@ -56,9 +56,7 @@ jobs:
           MYSQL_USER: ci
           MYSQL_PASSWORD: ci
         run: |
-          # docker-compose.build.yml restores the `build:` key that the
-          # production file omits, so the PR is verified against an image built
-          # from this branch rather than the published :latest one.
+          # Build overlay, so the PR runs an image built from this branch.
           docker compose -f ./docker-compose.yml -f ./docker-compose.build.yml -p "va-stats-pr-${PR_NUMBER}" up --build -d
 
           echo "Waiting for the app to become healthy..."

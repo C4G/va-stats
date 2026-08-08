@@ -1,14 +1,5 @@
-# Local/CI build overlay.
-#
-# docker-compose.yml deliberately references the prebuilt GHCR image so the
-# deployment host never compiles the app. This file adds the `build:` key back
-# so the same image can be built from source:
-#
+# Adds the `build:` key that docker-compose.yml omits, for building locally:
 #   docker compose -f docker-compose.yml -f docker-compose.build.yml up --build -d
-#
-# The built image is tagged with the `image:` value from the base file, so the
-# stack runs exactly as it does in production. No build args are passed on
-# purpose — see the NEXT_PUBLIC_BASE_URL comment in Dockerfile.
 services:
   va-stats-app:
     build:

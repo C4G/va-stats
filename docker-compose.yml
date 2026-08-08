@@ -1,18 +1,5 @@
-# Production stack — deployed as a Coolify "Docker Compose" resource by both
-# va-stats-test and va-stats (production).
-#
-# The application service references a prebuilt GHCR image and deliberately has
-# no `build:` key: that is what stops the shared Coolify host from compiling the
-# app on every deploy. The image is produced by .github/workflows/publish.yaml
-# on every push to main.
-#
-# One image serves both environments. `IMAGE_TAG` selects which: va-stats-test
-# tracks `latest`, while production pins a specific commit SHA (set IMAGE_TAG in
-# the Coolify application's environment variables) so promoting to production is
-# an explicit choice of an already-tested image.
-#
-# To build the image locally (or in CI), overlay docker-compose.build.yml:
-#   docker compose -f docker-compose.yml -f docker-compose.build.yml up --build -d
+# Production stack for both va-stats-test and va-stats. No `build:` key on purpose
+# — publish.yaml builds the image; IMAGE_TAG picks which build each app runs.
 services:
   # Next.js application. The database is an external MySQL instance, so it is
   # NOT managed here — connection details are provided via environment variables.
@@ -33,9 +20,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      # Public config. Read at runtime, NOT baked into the image — see the
-      # comment in Dockerfile. This is what lets one image serve both
-      # va-stats-test and production, which have different origins.
+      # Read at runtime, not baked in — see Dockerfile.
       - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-}
     command: node server.js
     healthcheck:

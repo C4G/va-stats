@@ -1,16 +1,7 @@
 name: Publish Image
 
-# Builds the application image and pushes it to GHCR so the Coolify host pulls a
-# finished image instead of compiling it. Building on the shared server ties up
-# CPU and disk for every other application on the box; doing it here reduces a
-# deploy to a pull-and-restart.
-#
-# docker-compose.yml has no `build:` key on purpose — see the comment at the top
-# of that file.
-#
-# On push to main this deploys va-stats-test only. Production is promoted
-# manually: set IMAGE_TAG to the commit SHA published here on the `va-stats`
-# Coolify application and redeploy it.
+# Builds the image in CI so the shared Coolify host only pulls and restarts.
+# Push to main deploys va-stats-test; production is promoted by pinning IMAGE_TAG.
 
 on:
   push:
@@ -44,8 +35,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # No build-args: NEXT_PUBLIC_BASE_URL must stay unset at build time so the
-      # same image works against both origins. See Dockerfile.
+      # No build-args, so one image works against both origins. See Dockerfile.
       - name: Build and push app image
         uses: docker/build-push-action@v6
         with:
@@ -72,12 +62,8 @@ jobs:
             echo "on the \`va-stats\` Coolify application and redeploy it."
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Deploying from here (rather than letting Coolify redeploy on git push)
-      # avoids a race where Coolify pulls `:latest` before this workflow has
-      # finished pushing it. Coolify's own auto-deploy is switched off on
-      # va-stats-test for that reason. Skipped automatically until both values
-      # exist. The secret is surfaced through `env` because the `secrets` context
-      # is not available in a step-level `if:`.
+      # Deploy from here, not Coolify's git webhook (switched off), so it cannot
+      # pull `:latest` mid-push. Secrets need `env` because `if:` cannot see them.
       - name: Trigger Coolify deployment (va-stats-test)
         env:
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
