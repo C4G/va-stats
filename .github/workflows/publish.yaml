@@ -61,8 +61,8 @@ jobs:
           MYSQL_PASSWORD: smoke
           NEXTAUTH_SECRET: smoke-only-not-a-real-secret
           JWT_SECRET: smoke-only-not-a-real-secret
-          GOOGLE_CLIENT_ID: ''
-          GOOGLE_CLIENT_SECRET: ''
+          GOOGLE_CLIENT_ID: ""
+          GOOGLE_CLIENT_SECRET: ""
         run: |
           docker compose -f docker-compose.yml -p smoke up -d --pull always
 
