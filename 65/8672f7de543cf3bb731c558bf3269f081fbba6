@@ -1,0 +1,27 @@
+.github/workflows/ci.yaml
+  s_53a474ca97b154::t_a60bb9bc169480 59
+.github/workflows/publish.yaml
+  s_53a474ca97b154::t_d853bb8167fd86 3-4,38,65-66
+Dockerfile
+  s_53a474ca97b154::t_56b572ee6886d5 12-13
+docker-compose.build.yml
+  s_53a474ca97b154::t_278e2a7f57f7ff 1
+docker-compose.yml
+  s_53a474ca97b154::t_db8494c0e51bae 1-2,23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "658672f7de543cf3bb731c558bf3269f081fbba6",
+  "prompts": {},
+  "sessions": {
+    "s_53a474ca97b154": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee58e164-f392-4395-a68b-50db8a91b137",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
