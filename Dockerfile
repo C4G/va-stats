@@ -9,11 +9,18 @@ FROM base AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Declare build arguments for Next.js public variables (inlined at build time)
-ARG NEXT_PUBLIC_BASE_URL
-
-# Set environment variables from build args (baked into the client bundle)
-ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+# NEXT_PUBLIC_BASE_URL is deliberately NOT set here.
+#
+# Next.js only substitutes a NEXT_PUBLIC_* variable into the bundle when it is
+# present in the environment at build time. Leaving it unset keeps
+# `process.env.NEXT_PUBLIC_BASE_URL` in the compiled server output as a real
+# runtime lookup, so one published image picks up each environment's own origin
+# from Coolify — va-stats-test and production have different ones.
+#
+# This holds because the value is read on the server only (utils/auditLogger.js,
+# imported solely by pages/api/*). If it is ever read from client code it will be
+# undefined in the browser, and reintroducing the build arg to fix that would
+# re-break the shared image.
 
 # Copy package files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./

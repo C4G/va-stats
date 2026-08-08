@@ -41,11 +41,56 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deployment (Coolify + GHCR)
 
-This app is deployed on [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`.github/workflows/publish.yaml` runs on every push to `main` (and on manual
+dispatch). It builds the image, pushes `ghcr.io/c4g/va-stats:latest` and
+`:<commit-sha>`, then triggers a Coolify deployment of **va-stats-test**.
 
-Check out [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+`docker-compose.yml` references that published image and has **no `build:`
+key**, which is what keeps the shared Coolify host from compiling the
+application on every deploy — it only pulls and restarts. Coolify's own git
+auto-deploy is switched off so the workflow is the single trigger, which
+prevents Coolify from pulling `:latest` before the push has finished.
+
+### Environments
+
+| Environment             | Coolify app     | Image tag                                 |
+| ----------------------- | --------------- | ----------------------------------------- |
+| `va-stats-test.c4g.dev` | `va-stats-test` | `latest` (deployed automatically on main) |
+| `va-stats.c4g.dev`      | `va-stats`      | `IMAGE_TAG` pinned to a commit SHA        |
+
+**Promoting to production** is manual and explicit: set `IMAGE_TAG` to the
+commit SHA of a build already verified on va-stats-test in the `va-stats`
+application's Coolify environment variables, then redeploy it. Production then
+runs the exact image that was tested — no rebuild.
+
+### One image, two origins
+
+`NEXT_PUBLIC_BASE_URL` differs per environment, and Next.js normally inlines
+`NEXT_PUBLIC_*` variables at build time, which would tie an image to a single
+origin. The Dockerfile deliberately leaves the variable unset during the build:
+Next only substitutes `NEXT_PUBLIC_*` values that exist at build time, so
+`process.env.NEXT_PUBLIC_BASE_URL` survives in the compiled server output as a
+real runtime lookup and each environment supplies its own value through Coolify.
+
+This works only because the value is read server-side (`utils/auditLogger.js`,
+imported solely by `pages/api/*`). Reading it from client code would yield
+`undefined` in the browser — see the comment in the Dockerfile before changing
+this.
+
+### Required repository/organization configuration
+
+| Name               | Kind     | Purpose                                |
+| ------------------ | -------- | -------------------------------------- |
+| `COOLIFY_TOKEN`    | secret   | Coolify API token (organization-level) |
+| `COOLIFY_APP_UUID` | variable | UUID of the va-stats-test Coolify app  |
+
+### Building locally
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.build.yml up --build -d
+```
 
 ## Code modifications required when changing hosting provider
 
