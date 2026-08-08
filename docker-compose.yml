@@ -1,13 +1,10 @@
+# Production stack for both va-stats-test and va-stats. No `build:` key on purpose
+# — publish.yaml builds the image; IMAGE_TAG picks which build each app runs.
 services:
   # Next.js application. The database is an external MySQL instance, so it is
   # NOT managed here — connection details are provided via environment variables.
   va-stats-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        # NEXT_PUBLIC_* vars are inlined into the bundle at build time
-        - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-}
+    image: ghcr.io/c4g/va-stats:${IMAGE_TAG:-latest}
     expose:
       - "3000"
     environment:
@@ -23,8 +20,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      # Public config (also passed as a build arg above, where it is inlined;
-      # kept here for the server-side runtime fallback)
+      # Read at runtime, not baked in — see Dockerfile.
       - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL:-}
     command: node server.js
     healthcheck:

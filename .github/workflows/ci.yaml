@@ -56,7 +56,8 @@ jobs:
           MYSQL_USER: ci
           MYSQL_PASSWORD: ci
         run: |
-          docker compose -f ./docker-compose.yml -p "va-stats-pr-${PR_NUMBER}" up --build -d
+          # Build overlay, so the PR runs an image built from this branch.
+          docker compose -f ./docker-compose.yml -f ./docker-compose.build.yml -p "va-stats-pr-${PR_NUMBER}" up --build -d
 
           echo "Waiting for the app to become healthy..."
           for i in {1..60}; do
