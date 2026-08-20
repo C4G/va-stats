@@ -1,7 +1,6 @@
 // Mobile menu
 // import Navbar from '../components/Navbar';
 
-import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
 import "../styles/globals.css";
 
@@ -15,12 +14,8 @@ if (typeof window !== "undefined") {
   window.agGrid.licenseManager = window.agGrid.licenseManager || {};
 }
 
-const App = ({ Component, pageProps: { session, ...pageProps } }) => (
-  <SessionProvider
-    session={session}
-    refetchInterval={0} // Disable automatic refetch
-    refetchOnWindowFocus={false} // Disable refetch on window focus
-  >
+const App = ({ Component, pageProps }) => (
+  <>
     <Head>
       <meta name="theme-color" content="#ffffff" />
       <link rel="icon" href="/favicon.ico" />
@@ -30,7 +25,7 @@ const App = ({ Component, pageProps: { session, ...pageProps } }) => (
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
     </Head>
     <Component {...pageProps} />
-  </SessionProvider>
+  </>
 );
 
 export default App;

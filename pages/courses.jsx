@@ -8,7 +8,7 @@ may cause problems if changes are not tested thoroughly
 
 import Navbar from "@/components/Navbar";
 import styles from "@/styles/Home.module.css";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client-compat";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";

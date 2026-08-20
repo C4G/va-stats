@@ -1,12 +1,11 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { getServerSession } from "@/lib/server-auth";
 import { getRulesForCourse, mergeBatchStatusDerivedRules } from "@/utils/batch-status-derived";
 import { getBatchStatusDerivedRules, saveBatchStatusDerivedRules } from "@/utils/batch-status-rules-config";
 
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
-      const session = await getServerSession(req, res, authOptions);
+      const session = await getServerSession(req);
       if (!session?.user) {
         return res.status(401).json({ message: "Not authenticated" });
       }
@@ -23,7 +22,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      const session = await getServerSession(req, res, authOptions);
+      const session = await getServerSession(req);
       const userRole = session?.user?.role;
       const allowedRoles = new Set(["ADMINISTRATOR"]);
       if (!session || !allowedRoles.has(userRole)) {

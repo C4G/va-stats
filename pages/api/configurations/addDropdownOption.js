@@ -1,12 +1,11 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { getServerSession } from "@/lib/server-auth";
 import { upsertDropdownOption } from "@/utils/dropdown-config";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ message: "Method not allowed" });
 
   try {
-    const session = await getServerSession(req, res, authOptions);
+    const session = await getServerSession(req);
     const userRole = session?.user?.role;
 
     const allowedRoles = new Set(["ADMINISTRATOR"]);

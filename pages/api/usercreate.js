@@ -1,9 +1,8 @@
 /* This function is called from users.jsx (Staff link). */
 
 import { executeQuery } from "@/lib/db";
-import { getServerSession } from "next-auth/next";
+import { getServerSession } from "@/lib/server-auth";
 import { staffAuditLogger } from "../../utils/auditLogger";
-import { authOptions } from "./auth/[...nextauth]";
 
 // ---- Safe conversion utilities ----
 const toNull = (v) => (v === undefined || v === "" ? null : v);
@@ -34,15 +33,10 @@ export default async function handler(req, res) {
   try {
     let session = null;
     try {
-      session = await getServerSession(req, res, authOptions);
+      session = await getServerSession(req);
     } catch (sessionError) {
-      // Handle JWT decryption errors gracefully
-      if (sessionError.code === "ERR_JWE_DECRYPTION_FAILED") {
-        console.error("Session decryption failed, proceeding without session:", sessionError);
-        session = null;
-      } else {
-        throw sessionError;
-      }
+      console.error("Session lookup failed, proceeding without session:", sessionError);
+      session = null;
     }
 
     const performerEmail = session?.user?.email || null;

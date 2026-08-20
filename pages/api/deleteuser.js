@@ -1,7 +1,6 @@
 import { executeQuery } from "@/lib/db";
-import { getServerSession } from "next-auth/next";
+import { getServerSession } from "@/lib/server-auth";
 import { staffAuditLogger } from "../../utils/auditLogger";
-import { authOptions } from "./auth/[...nextauth]";
 
 export default async function deleteUser(req, res) {
   if (req.method !== "POST") {
@@ -9,7 +8,7 @@ export default async function deleteUser(req, res) {
   }
 
   try {
-    const session = await getServerSession(req, res, authOptions);
+    const session = await getServerSession(req);
     const { id } = req.body;
 
     if (!id) {

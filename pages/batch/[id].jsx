@@ -20,7 +20,7 @@ import { getUserEmail } from "@/utils/session-helpers";
 import { sortTable } from "@/utils/sort-table";
 import { isClassDay, normalizeDateString, findMostRecentClassDate } from "@/utils/course-days";
 import { generateBatchStatusReport } from "@/utils/generate-batch-status-report";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client-compat";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";

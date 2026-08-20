@@ -14,10 +14,10 @@ export const getUserEmail = (session) => {
 /**
  * Safely extract user ID from session
  * @param {Object} session - NextAuth session object
- * @returns {number|null} - User ID or null if not available
+ * @returns {number|null} - Vision-Aid user ID or null if not available
  */
 export const getUserId = (session) => {
-  return session?.user?.id ?? null;
+  return session?.user?.id ?? session?.user?.vaUserId ?? null;
 };
 
 /**

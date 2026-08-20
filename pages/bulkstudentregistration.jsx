@@ -1,7 +1,7 @@
 import styles from "../styles/StudentReg.module.css";
 import Navbar from "../components/Navbar";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client-compat";
 import GlobalSnackbar from "@/components/GlobalSnackbar";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";

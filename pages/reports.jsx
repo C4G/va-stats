@@ -2,7 +2,7 @@
 import Navbar from "@/components/Navbar";
 import styles from "@/styles/Home.module.css";
 import reportStyles from "@/styles/Reports.module.css";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client-compat";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,7 +30,7 @@ export default function Reports() {
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
-      router.push("/");
+      router.replace("/auth/sign-in");
     },
   });
 

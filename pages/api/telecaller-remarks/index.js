@@ -1,20 +1,14 @@
 import { executeQuery } from "@/lib/db";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { getServerSession } from "@/lib/server-auth";
 
 export default async function handler(req, res) {
   // Get user session for authentication
   let session = null;
   try {
-    session = await getServerSession(req, res, authOptions);
+    session = await getServerSession(req);
   } catch (sessionError) {
-    // Handle JWT decryption errors gracefully
-    if (sessionError.code === "ERR_JWE_DECRYPTION_FAILED") {
-      console.error("Session decryption failed:", sessionError);
-      return res.status(401).json({ error: "Unauthorized" });
-    } else {
-      throw sessionError;
-    }
+    console.error("Session lookup failed:", sessionError);
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   if (!session) {
