@@ -1,0 +1,175 @@
+pages/api/configurations/deleteDropdownOption.js
+  s_bee90a767e31c6::t_9c70189a35f901 1,8
+lib/auth.ts
+  s_bee90a767e31c6::t_754119a3b8343b 38
+  s_bee90a767e31c6::t_cb6cd214f6aa63 6,47-54,56-65
+  s_bee90a767e31c6::t_d2ebe002b4c446 1-5,8-16,18-22,24,28-37,39-46,68-69,72,74-89,92-99,101-113,116-124,126-128,130
+  s_bee90a767e31c6::t_5dd7f70a3143b0 25-27
+pages/api/telecaller-remarks/index.js
+  s_bee90a767e31c6::t_9c70189a35f901 2,8
+  s_bee90a767e31c6::t_cf353af08945de 10-11
+pages/api/va-remarks/index.js
+  s_bee90a767e31c6::t_9c70189a35f901 2,6
+pages/api/updateusers.js
+  s_bee90a767e31c6::t_cf353af08945de 64-65
+  s_bee90a767e31c6::t_9c70189a35f901 2,62
+example.env
+  s_bee90a767e31c6::t_cb6cd214f6aa63 22
+  s_bee90a767e31c6::t_9dc0e29bca1c9c 10-14
+  s_bee90a767e31c6::t_c16538a3ab9e1e 18-21
+pages/api/telecaller-remarks/[id].js
+  s_bee90a767e31c6::t_9c70189a35f901 2,8
+  s_bee90a767e31c6::t_cf353af08945de 10-11
+package.json
+  s_bee90a767e31c6::t_f8d4723ee878da 23,31
+  s_bee90a767e31c6::t_89e0f155ecf936 43
+pages/courses.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 11
+pages/api/diag-host.js
+  s_bee90a767e31c6::t_9dc0e29bca1c9c 4-5
+pages/reports.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 5
+  s_bee90a767e31c6::t_da579a631090b7 33
+pages/auth/reset-password.jsx
+  s_bee90a767e31c6::t_cb6cd214f6aa63 1-24,31,38,63-69
+  s_bee90a767e31c6::t_6b7d432b86b3c4 28-30,33-34,39-40,43,53
+  s_bee90a767e31c6::t_3f1dbb003fc55c 57-60
+  s_bee90a767e31c6::t_dbcd39054894c5 25-27,32,35-37,41-42,44-52,54-56,61-62
+sql/better-auth-schema.sql
+  s_bee90a767e31c6::t_9dc0e29bca1c9c 1-81
+styles/globals.css
+  h_d5b6f744415839 302,472,630
+  s_bee90a767e31c6::t_c83e3dbece9b79 482-483
+  s_bee90a767e31c6::t_97db264aa5b978 466
+  s_bee90a767e31c6::t_3a4128a53c8d6c 367
+pages/logs.js
+  s_bee90a767e31c6::t_9c70189a35f901 2
+docker-compose.yml
+  s_bee90a767e31c6::t_9dc0e29bca1c9c 18-20
+  s_bee90a767e31c6::t_c16538a3ab9e1e 23-24
+lib/auth-client-compat.js
+  s_bee90a767e31c6::t_d2ebe002b4c446 1-10,13-14,17,19-27
+  s_bee90a767e31c6::t_2fcfc4cb9bbb46 11-12,15-16,18
+lib/server-auth.ts
+  s_bee90a767e31c6::t_d2ebe002b4c446 1-14
+pages/api/configurations/addDropdownOption.js
+  s_bee90a767e31c6::t_9c70189a35f901 1,8
+pages/api/usercreate.js
+  s_bee90a767e31c6::t_cf353af08945de 38-39
+  s_bee90a767e31c6::t_9c70189a35f901 4,36
+pages/batch/[id].jsx
+  s_bee90a767e31c6::t_9c70189a35f901 23
+pages/batches.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 23
+lib/auth-email.ts
+  s_bee90a767e31c6::t_c16538a3ab9e1e 1,4-7,10-11,16-17
+  s_bee90a767e31c6::t_cb6cd214f6aa63 2-3,8-9,12-15,18
+pages/auth/forgot-password.jsx
+  s_bee90a767e31c6::t_6b7d432b86b3c4 27-30,34,38-39,42,50-54,59
+  s_bee90a767e31c6::t_cb6cd214f6aa63 1-23,33,37,57-58,62-66
+  s_bee90a767e31c6::t_dbcd39054894c5 24-26,31-32,35-36,40-41,43-49,55-56,60-61
+pages/api/va-remarks/[id].js
+  s_bee90a767e31c6::t_9c70189a35f901 2,6
+jest.setup.js
+  s_bee90a767e31c6::t_2fcfc4cb9bbb46 32-33,43-47
+pages/_app.jsx
+  s_bee90a767e31c6::t_d2ebe002b4c446 17-18,28
+pages/configurations.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 1
+pages/bulkstudentregistration.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 4
+pages/api/configurations/batchStatusRules.js
+  s_bee90a767e31c6::t_9c70189a35f901 1,8,25
+docker-compose.local-db.yml
+  s_3593071743f3df::t_d6cdbcdc3c64c7 17
+  s_bee90a767e31c6::t_734b212d561e66 1-16,18-23
+pages/users.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 16
+pages/api/account/set-password.ts
+  s_bee90a767e31c6::t_35b25d7acd7ab0 1-20,23-24
+  s_bee90a767e31c6::t_1fdd99db406fca 21-22
+pages/api/deleteuser.js
+  s_bee90a767e31c6::t_9c70189a35f901 2,11
+pages/studentregistration.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 14
+pages/dashboard-configurations.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 1
+components/Navbar.jsx
+  s_bee90a767e31c6::t_a7bfe4ee3ab849 7,202-206,209-210,218-219,224,237-245,247-248,250-252,254-300,309,314-316,320-327,330-350,352-357
+  h_d5b6f744415839 186,226,329
+  s_bee90a767e31c6::t_fa66f8c685e4b9 162-163,165-181
+  s_bee90a767e31c6::t_a73281f9d662e9 211-217,310-313,317-319
+  s_bee90a767e31c6::t_92aa5791ec76f2 3
+  s_bee90a767e31c6::t_a602d3d53c028d 182-185,187-196
+  s_bee90a767e31c6::t_d46d40a308b088 208,225,227-236,246,249,253,328
+  s_bee90a767e31c6::t_adfa0b4c44bfa1 207,220-223,301-308
+  s_bee90a767e31c6::t_af30e1252077b6 351
+  s_bee90a767e31c6::t_8bcfe6c19d9234 358-360
+pages/student/[id].jsx
+  s_bee90a767e31c6::t_9c70189a35f901 1
+pages/students.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 5
+  s_bee90a767e31c6::t_da579a631090b7 195
+README.md
+  s_bee90a767e31c6::t_fada168c37300c 68-79,83-91,93-94
+  s_bee90a767e31c6::t_c16538a3ab9e1e 80-82,92
+  s_bee90a767e31c6::t_734b212d561e66 122-151
+  s_bee90a767e31c6::t_9dc0e29bca1c9c 165
+pages/auth/sign-in.jsx
+  s_bee90a767e31c6::t_35b25d7acd7ab0 1-2,4-7,9-18,20-36,38,49-57,59-72,74-88,95-96,101-105,113-114,124-126,132,134,136,144-145,147-148,150-156,158-159,161-168,184-188,190-197,203-207
+  s_bee90a767e31c6::t_6b7d432b86b3c4 89-94,97-100,106-111,115-121,127-128,130,133,135,137-143,146,149,157,160,170,175,179-183,189,199
+  s_bee90a767e31c6::t_5dd7f70a3143b0 8,122-123,129,131,169,171,177-178
+  s_bee90a767e31c6::t_cb6cd214f6aa63 19,37,39-48,58,73,172-174,176,198,200-202
+  s_bee90a767e31c6::t_cf353af08945de 3,112
+pages/account/security.jsx
+  s_bee90a767e31c6::t_6b7d432b86b3c4 98-99,102,108-109,111,113,134-135,137,139,154,156
+  s_bee90a767e31c6::t_3f1dbb003fc55c 123-124,126-127,145-149,158,160-161,164
+  s_bee90a767e31c6::t_958c5a7d7274d3 159
+  s_bee90a767e31c6::t_5dd7f70a3143b0 94-96,101,103-105,129,150-151,166,170-172
+  s_bee90a767e31c6::t_35b25d7acd7ab0 1-15,18-46,63-68,90-93,97,100,106-107,110,112,114-122,130-133,136,138,140-144,152-153,155,157,167-169,173-177
+  s_bee90a767e31c6::t_e32d1c81c198ff 17,47-62,162-163,165
+  s_bee90a767e31c6::t_1fdd99db406fca 16,69-89,125,128
+pages/index.jsx
+  s_bee90a767e31c6::t_9c70189a35f901 3
+utils/session-helpers.js
+  s_bee90a767e31c6::t_d2ebe002b4c446 17,20
+lib/db.js
+  s_bee90a767e31c6::t_0166224ef0d118 6
+  s_bee90a767e31c6::t_2148570062f691 17-18
+lib/auth-client.ts
+  s_bee90a767e31c6::t_d2ebe002b4c446 1-7,13-17
+  s_bee90a767e31c6::t_b190fc8a989221 8-12
+pages/api/auth/[...all].ts
+  s_bee90a767e31c6::t_d2ebe002b4c446 1-10
+pnpm-lock.yaml
+  s_3593071743f3df::t_ca9b1927cabfe7 13-15,37-39,73-75,846-948,1095-1098,1402-1405,1591-1600,1621-1634,1636-1677,1749-1757,1770-1773,2461-2465,2577-2648,3062-3065,3448-3451,4271,4273,4358-4362,4606-4610,4908-4911,5069-5077,5180-5183,5231-5240,5310-5313,5387-5390,5533-5536,5837-5840,5849-5853,6245-6248,7005-7071,7222-7223,7544-7545,7682-7685,7700-7800,7861-7873,7884-7885,8485-8490,8612-8648,8950-8951,9407-9408,10266,10345-10346,10530-10531,10760-10761,10847-10852,10953-10954,11002-11006,11058-11059,11124-11125,11266-11270,11553-11554,11559-11562,12007-12008
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "79698b38abbc609a4f5a3165ffbe077306da9673",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_3593071743f3df": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "370b1931-86cf-4d8e-af09-b96f8d203676",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    },
+    "s_bee90a767e31c6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a01d11-6dc5-7f11-8b8a-2505e84b0e24",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
