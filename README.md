@@ -65,6 +65,33 @@ commit SHA of a build already verified on va-stats-test in the `va-stats`
 application's Coolify environment variables, then redeploy it. Production then
 runs the exact image that was tested — no rebuild.
 
+### Authentication setup
+
+Authentication is provided by Better Auth and supports Google, verified
+email/password accounts, and passkeys. Access is still limited to email
+addresses present in the existing `vausers` table; the role included in each
+session is also read from that table.
+
+Before deploying this version:
+
+1. Apply [`sql/better-auth-schema.sql`](sql/better-auth-schema.sql) to the app's
+   MySQL database. This creates Better Auth's isolated user, account, session,
+   verification, and passkey tables without changing `vausers`.
+2. Set the `BETTER_AUTH_*`, Google, and Resend variables shown in `example.env`.
+   `BETTER_AUTH_SECRET` must be at least 32 random characters. Verify the sender
+   domain in Resend and use an address from that domain for `RESEND_FROM_EMAIL`.
+3. Configure Google's authorized callback URL as
+   `https://<app-host>/api/auth/callback/google` for each environment.
+4. Set `BETTER_AUTH_RP_ID` to the hostname only, such as
+   `va-stats-test.c4g.dev`. Passkeys require HTTPS outside localhost and are
+   bound to this relying-party ID.
+
+The old NextAuth sessions cannot be migrated because they were stateless JWTs;
+users will sign in again after deployment. A staff member who first signs in
+with Google can add a password and passkeys from the Account page. New password
+registrations require email verification, and Resend is also used for password
+resets.
+
 ### One image, two origins
 
 `NEXT_PUBLIC_BASE_URL` differs per environment, and Next.js normally inlines
@@ -92,6 +119,36 @@ this.
 docker compose -f docker-compose.yml -f docker-compose.build.yml up --build -d
 ```
 
+### Local database from staging
+
+The local database compose file uses MySQL 8.4 and a named Docker volume. It
+does not connect to or modify staging:
+
+```bash
+docker compose -f docker-compose.local-db.yml up -d
+mkdir -p .local
+docker compose -f docker-compose.local-db.yml exec -T va-stats-db \
+  sh -c 'MYSQL_PWD="$MYSQL_PASSWORD" mysql --user="$MYSQL_USER" "$MYSQL_DATABASE"' \
+  < .local/staging-backup.sql
+```
+
+The staging export can be created with the MySQL client container using the
+staging-only values in `.env`:
+
+```bash
+docker run --rm --env-file .env --entrypoint sh mysql:8.4 -c \
+  'mysqldump --host="$MYSQL_HOST" --port=3306 --user="$MYSQL_USER" \
+  --password="$MYSQL_PASSWORD" --single-transaction --quick \
+  --no-tablespaces --skip-events --routines --triggers \
+  --set-gtid-purged=OFF "$MYSQL_DATABASE"' > .local/staging-backup.sql
+```
+
+The local database listens on `127.0.0.1:3307` by default. Point local app
+environment variables at that port (`MYSQL_HOST=127.0.0.1`,
+`MYSQL_PORT=3307`, database/user/password `vastats`) before starting Next.js.
+The dump contains staging data, so `.local/` is intentionally untracked and
+must not be committed or uploaded.
+
 ## Code modifications required when changing hosting provider
 
 PAGES FOLDER: files requiring mods to API routes:
@@ -105,7 +162,7 @@ PAGES FOLDER: files requiring mods to API routes:
 
 .env file:
 
-- Adjust MySQL and NEXTAUTH_URL values
+- Adjust MySQL, BETTER_AUTH_URL, and BETTER_AUTH_RP_ID values
 
 NOTE REGARDING BATCH ATTENDANCE DROPDOWN:
 

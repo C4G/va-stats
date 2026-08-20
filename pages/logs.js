@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client-compat";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";

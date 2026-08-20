@@ -29,8 +29,8 @@ jest.mock("next/router", () => ({
   },
 }));
 
-// Mock Next.js session
-jest.mock("next-auth/react", () => ({
+// Mock the app's Better Auth compatibility wrapper
+jest.mock("@/lib/auth-client-compat", () => ({
   useSession: () => ({
     data: {
       user: {
@@ -40,8 +40,11 @@ jest.mock("next-auth/react", () => ({
     },
     status: "authenticated",
   }),
-  signIn: jest.fn(),
-  signOut: jest.fn(),
+  authClient: {
+    signOut: jest.fn(),
+    signIn: { email: jest.fn(), social: jest.fn(), passkey: jest.fn() },
+    signUp: { email: jest.fn() },
+  },
 }));
 
 // Mock fetch globally

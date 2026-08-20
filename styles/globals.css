@@ -299,6 +299,7 @@ nav {
   background-color: #c5e8cf;
   color: #000;
   display: flex;
+  gap: 1rem;
   justify-content: space-between;
   padding-left: 1em;
 }
@@ -312,7 +313,6 @@ nav {
   font-weight: 500;
   min-height: calc(50vh - 60px);
   max-height: calc(100vh - 60px);
-  padding: 24px 16px 16px 16px;
   position: fixed;
   overflow-y: auto;
   overflow-x: hidden;
@@ -364,7 +364,7 @@ h1:focus {
 h2:focus {
   outline: 2px solid blue;
 }
-button:focus {
+button:focus-visible {
   outline: 2px solid blue;
 }
 /*-------------- NAV BAR STYLES END -------------*/
@@ -463,13 +463,13 @@ footer a {
 }
 
 /* Logic to hide nav bar elements when navbar is not active */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1149px) {
   .hide {
     display: none;
   }
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 1165px) {
   .nav__menu-list {
     position: unset;
     flex-direction: row;
@@ -479,6 +479,8 @@ footer a {
     width: fit-content;
     column-gap: 24px;
     align-items: center;
+    /* Let nested menus (such as the account avatar menu) overlay page content. */
+    overflow: visible;
   }
   .nav__link::before {
     content: "";
@@ -625,14 +627,7 @@ main {
 nav {
   margin: 0;
   padding-block: 0;
-}
-
-/* Mobile navbar spacing */
-@media screen and (max-width: 768px) {
-  nav {
-    padding-top: 1rem; /* Add top padding for mobile */
-    padding-bottom: 1rem; /* Add bottom padding for mobile */
-  }
+  padding: 1rem;
 }
 
 /* Remove problematic rules for medium width screens */

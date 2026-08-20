@@ -20,7 +20,7 @@ import Link from "next/link";
 // import React from 'react';
 import Button from "@/components/Button";
 import { getUserEmail } from "@/utils/session-helpers";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client-compat";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { normalizeBatchDates } from "@/utils/date-normalizers";

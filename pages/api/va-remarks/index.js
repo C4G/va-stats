@@ -1,10 +1,9 @@
 import { executeQuery } from "@/lib/db";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { getServerSession } from "@/lib/server-auth";
 
 export default async function handler(req, res) {
   // Get user session for authentication
-  const session = await getServerSession(req, res, authOptions);
+  const session = await getServerSession(req);
   if (!session) {
     return res.status(401).json({ error: "Unauthorized" });
   }

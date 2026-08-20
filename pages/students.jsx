@@ -2,7 +2,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
 import { smartComparator } from "@/utils/grid-comparators";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client-compat";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -192,7 +192,7 @@ const Students = () => {
 
       // Check permissions before setting student data
       if (status === "unauthenticated" || user.isactive === 0 || allowedRoles.includes(user.role) === false) {
-        router.push("/");
+        router.replace("/auth/sign-in");
         return;
       }
 

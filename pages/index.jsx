@@ -1,6 +1,6 @@
 /* SITE HOME PAGE */
 
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client-compat";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";

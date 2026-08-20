@@ -20,30 +20,6 @@ declare module "ag-grid-react" {
   export class AgGridReact extends React.Component<AgGridReactProps> {}
 }
 
-// NextAuth Session/JWT extension
-declare module "next-auth" {
-  interface Session {
-    blocked?: boolean;
-    user?: {
-      id?: number;
-      role?: string;
-      email?: string | null;
-      name?: string | null;
-      image?: string | null;
-    };
-    dbError?: boolean;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    userId?: number;
-    role?: string;
-    blocked?: boolean;
-    dbError?: boolean;
-  }
-}
-
 // Window object extensions
 declare global {
   interface Window {
