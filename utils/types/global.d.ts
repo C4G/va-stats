@@ -1,30 +1,28 @@
 // Global type declarations for JavaScript/TypeScript compatibility
 
-// AG Grid types
-declare module "ag-grid-react" {
-  export interface AgGridReactProps {
-    rowData?: any[];
-    columnDefs?: any[];
-    defaultColDef?: any;
-    onGridReady?: (params: any) => void;
-    enableCellTextSelection?: boolean;
-    autoSizeStrategy?: any;
-    theme?: string;
-    animateRows?: boolean;
-    suppressCellFocus?: boolean;
-    getRowStyle?: (params: any) => any;
-    rowSelection?: any;
-    ref?: any;
-  }
-
-  export class AgGridReact extends React.Component<AgGridReactProps> {}
+declare module "*.module.css" {
+  const classes: Record<string, string>;
+  export default classes;
 }
 
 // Window object extensions
 declare global {
   interface Window {
     agGrid?: any;
+    isUpdateMode?: boolean;
+    studentId?: string | number;
+    updateDobFields?: { year: string; month: string; day: string };
+    updateFields?: Record<string, string>;
   }
+
+  const describe: (name: string, fn: () => void) => void;
+  const it: (name: string, fn: () => void) => void;
+  const test: (name: string, fn: () => void) => void;
+  const expect: (actual: unknown) => {
+    toBe(expected: unknown): void;
+    toEqual(expected: unknown): void;
+  };
+  const jest: any;
 }
 
 export {};

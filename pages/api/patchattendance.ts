@@ -1,26 +1,73 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { executeQuery } from "@/lib/db";
-import type { AttendanceSymbol, IsPresentCode, PatchAttendanceBody } from "@/utils/types/attendance";
+import type { IsPresentCode } from "@/utils/types/attendance";
+
+type PatchRequestBody = {
+  batchId?: string | number;
+  studentId?: string | number;
+  date?: string;
+  value?: unknown;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+
+const readPatchRequestBody = (value: unknown): PatchRequestBody => {
+  if (!isRecord(value)) return {};
+
+  return {
+    batchId: typeof value.batchId === "string" || typeof value.batchId === "number" ? value.batchId : undefined,
+    studentId: typeof value.studentId === "string" || typeof value.studentId === "number" ? value.studentId : undefined,
+    date: typeof value.date === "string" ? value.date : undefined,
+    value: value.value,
+  };
+};
 
 const mapValueToNumber = (value: unknown): IsPresentCode => {
   // Accept both letter codes and numeric codes as input
-  const raw = value as any;
-  if (raw === 0 || raw === 1 || raw === 2 || raw === 3 || raw === 4) return raw as IsPresentCode;
-  const asNum = Number(raw);
-  if (Number.isFinite(asNum) && [0, 1, 2, 3, 4].includes(asNum)) return asNum as IsPresentCode;
+  if (typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 4) {
+    switch (value) {
+      case 0:
+        return 0;
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      case 3:
+        return 3;
+      case 4:
+        return 4;
+    }
+  }
+
+  const asNum = typeof value === "symbol" ? Number.NaN : Number(value);
+  if (Number.isFinite(asNum) && Number.isInteger(asNum) && asNum >= 0 && asNum <= 4) {
+    switch (asNum) {
+      case 0:
+        return 0;
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      case 3:
+        return 3;
+      case 4:
+        return 4;
+    }
+  }
+
   const v = String(value ?? "")
     .trim()
-    .toUpperCase() as AttendanceSymbol;
+    .toLowerCase();
   switch (v) {
-    case "Absent":
+    case "absent":
       return 0;
-    case "Present":
+    case "present":
       return 1;
-    case "Cancelled":
+    case "cancelled":
       return 2;
-    case "Dropout":
+    case "dropout":
       return 3;
-    case "Half-day":
+    case "half-day":
       return 4;
     default:
       throw new Error("Invalid attendance value");
@@ -32,24 +79,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  const { batchId, studentId, date, value } = (req.body as PatchAttendanceBody) ?? {};
+  const { batchId, studentId, date, value } = readPatchRequestBody(req.body);
   const dateOnly = String(date ?? "").split("T")[0];
 
   // Safe parsing (accepts both letters and numbers). Returns 400 on failure
-  let parsed: IsPresentCode | null = null;
+  let is_present: IsPresentCode;
   try {
-    parsed = mapValueToNumber(value);
+    is_present = mapValueToNumber(value);
   } catch (e) {
     return res.status(400).json({ success: false, message: "Invalid attendance value" });
   }
 
-  if (!batchId || !dateOnly || (!studentId && parsed !== 2)) {
+  if (!batchId || !dateOnly || (!studentId && is_present !== 2)) {
     return res.status(400).json({ success: false, message: "Missing required fields" });
   }
 
   try {
-    const is_present = parsed as IsPresentCode;
-
     console.log("[PATCHATTENDANCE] Received data:", { batchId, studentId, dateOnly, value, is_present });
 
     if (is_present === 2) {

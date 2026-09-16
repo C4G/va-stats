@@ -471,14 +471,15 @@ footer a {
 
 @media screen and (min-width: 1165px) {
   .nav__menu-list {
+    flex: 1 1 auto;
     position: unset;
     flex-direction: row;
     min-height: -moz-fit-content;
     min-height: fit-content;
-    width: -moz-fit-content;
-    width: fit-content;
+    width: auto;
     column-gap: 24px;
     align-items: center;
+    justify-content: flex-end;
     /* Let nested menus (such as the account avatar menu) overlay page content. */
     overflow: visible;
   }

@@ -3,7 +3,7 @@
 SHELL := /bin/sh
 NPM ?= npm
 
-.PHONY: help install dev build start lint format format-fix type-check check test docker-up docker-down docker-logs ci
+.PHONY: help install dev build start lint format format-fix type-check check check-javascript test docker-up docker-down docker-logs ci
 
 help:
 	@echo "Available targets:"
@@ -15,6 +15,7 @@ help:
 	@echo "  format        - prettier --check"
 	@echo "  format-fix    - prettier --write"
 	@echo "  type-check    - tsc --noEmit"
+	@echo "  check-javascript - reject authored JavaScript/JSX"
 	@echo "  check         - lint + type-check + format + build"
 	@echo "  docker-up     - docker compose up -d"
 	@echo "  docker-down   - docker compose down"
@@ -45,7 +46,10 @@ format-fix:
 type-check:
 	$(NPM) run type-check
 
-check: format-fix lint type-check build
+check-javascript:
+	$(NPM) run check:javascript
+
+check: format-fix lint type-check check-javascript build
 
 ci: check
 
@@ -57,4 +61,3 @@ docker-down:
 
 docker-logs:
 	docker compose logs -f
-

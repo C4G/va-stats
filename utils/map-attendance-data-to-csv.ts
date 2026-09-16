@@ -9,11 +9,13 @@ type RowIn = {
 
 const looksLikeDate = (k: string) => /^\d{4}-\d{2}-\d{2}$/.test(k);
 
+const isDateKey = (key: string): key is DateKey => looksLikeDate(key);
+
 export const mapAttendanceDataToCsv = (attendanceData: RowIn[]): AttendanceOutputRow[] => {
   return attendanceData.map(
     ({ commenter, name, remarks, id, completion_status, reason_for_status, percent, ...rest }) => {
       const attendanceMap = Object.entries(rest).reduce<Record<DateKey, AttendanceSymbol>>((acc, [key, raw]) => {
-        if (!looksLikeDate(key)) return acc; // Only include date keys
+        if (!isDateKey(key)) return acc; // Only include date keys
         const v = String(raw ?? "")
           .trim()
           .toUpperCase();
@@ -27,7 +29,7 @@ export const mapAttendanceDataToCsv = (attendanceData: RowIn[]): AttendanceOutpu
                 : v === "DROPOUT"
                   ? "Dropout"
                   : "Cancelled";
-        acc[key as DateKey] = sym;
+        acc[key] = sym;
         return acc;
       }, {});
 

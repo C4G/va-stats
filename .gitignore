@@ -61,3 +61,6 @@ tsconfig.tsbuildinfo
 
 # Claude Code local settings
 .claude/
+
+# Codex/agent-local skills
+/.agents/

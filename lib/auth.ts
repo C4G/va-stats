@@ -26,7 +26,14 @@ async function findVaUser(email: string): Promise<VaUser | null> {
     email,
   ]);
 
-  return (rows as VaUser[])[0] ?? null;
+  if (!Array.isArray(rows) || rows.length === 0) return null;
+  const row = rows[0];
+  if (!row || typeof row !== "object" || !("id" in row)) return null;
+  return {
+    id: Number(row.id),
+    name: typeof row.name === "string" ? row.name : null,
+    role: typeof row.role === "string" ? row.role : null,
+  };
 }
 
 const baseURL = process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL;

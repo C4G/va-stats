@@ -4,7 +4,7 @@
 
 import { dateToLocalYYYYMMDD } from "./date-normalizers";
 
-const DAYS_MAP = {
+const DAYS_MAP: Record<string, number> = {
   Su: 0,
   M: 1,
   T: 2,
@@ -12,7 +12,7 @@ const DAYS_MAP = {
   Th: 4,
   F: 5,
   Sa: 6,
-} as const;
+};
 
 /**
  * Parses a raw course days string into an array of day codes
@@ -60,7 +60,7 @@ export function isClassDay(dayOfWeek: number, courseDays: string | string[] | nu
 
   return parsedDays.some((day) => {
     const dayCode = day.trim();
-    return DAYS_MAP[dayCode as keyof typeof DAYS_MAP] === dayOfWeek;
+    return DAYS_MAP[dayCode] === dayOfWeek;
   });
 }
 

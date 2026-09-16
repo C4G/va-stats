@@ -15,6 +15,17 @@
         "argsIgnorePattern": "^_",
         "ignoreRestSiblings": true
       }
+    ],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "TSAsExpression",
+        "message": "Do not use TypeScript type assertions; use declarations, generics, unions, or narrowing."
+      },
+      {
+        "selector": "TSTypeAssertion",
+        "message": "Do not use TypeScript type assertions; use declarations, generics, unions, or narrowing."
+      }
     ]
   }
 }
