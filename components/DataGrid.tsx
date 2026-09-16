@@ -1,5 +1,6 @@
 import { getRowStyle } from "@/utils/get-row-style";
 import { smartComparator } from "@/utils/grid-comparators";
+import type { CellKeyDownEvent, ColDef, GridReadyEvent, TabToNextCellParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import React from "react";
 
@@ -8,13 +9,13 @@ type RowData = Record<string, unknown>;
 interface DataGridProps {
   title: string;
   rowData: RowData[];
-  onGridReady?: (_event: unknown) => void;
-  onCellKeyDown?: (_event: unknown) => void;
+  onGridReady?: (_event: GridReadyEvent<RowData>) => void;
+  onCellKeyDown?: (_event: CellKeyDownEvent<RowData>) => void;
   exitTargetId: string;
 }
 
 export function DataGrid({ title, rowData, onGridReady, onCellKeyDown, exitTargetId }: DataGridProps) {
-  const columnDefs = [
+  const columnDefs: ColDef<RowData>[] = [
     {
       field: "id",
       headerName: "ID",
@@ -49,7 +50,7 @@ export function DataGrid({ title, rowData, onGridReady, onCellKeyDown, exitTarge
     comparator: smartComparator,
   };
 
-  const tabToNextCell = (params: any) => {
+  const tabToNextCell = (params: TabToNextCellParams<RowData>) => {
     const { previousCellPosition, backwards, api } = params;
 
     if (!previousCellPosition) return null;
@@ -97,7 +98,7 @@ export function DataGrid({ title, rowData, onGridReady, onCellKeyDown, exitTarge
         Use arrow keys to navigate rows. Press space to select students.
       </p>
 
-      <AgGridReact<any>
+      <AgGridReact<RowData>
         enableCellTextSelection={true}
         rowData={rowData}
         columnDefs={columnDefs}

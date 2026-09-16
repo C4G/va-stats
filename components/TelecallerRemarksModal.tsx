@@ -13,6 +13,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import type { CellValueChangedEvent, ColDef, ICellRendererParams, ValueFormatterParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useState, useEffect, useCallback } from "react";
 import { smartComparator } from "@/utils/grid-comparators";
@@ -21,28 +22,37 @@ import GlobalSnackbar from "./GlobalSnackbar";
 import { dateTimeFormatter, parseDateTimeFromDB } from "@/utils/date-normalizers";
 import type { AlertColor } from "@mui/material/Alert";
 
+type Remark = {
+  id?: string | number;
+  user_name?: string;
+  user_email?: string;
+  remark?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+type SessionUser = { email?: string };
+
 const TelecallerRemarksModal = ({ open, onClose, student }) => {
-  const [remarks, setRemarks] = useState<any[]>([]);
+  const [remarks, setRemarks] = useState<Remark[]>([]);
   const [newRemark, setNewRemark] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [remarkToDelete, setRemarkToDelete] = useState<any>(null);
+  const [remarkToDelete, setRemarkToDelete] = useState<Remark | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
 
   // Custom cell renderer for actions column
-  const ActionsCellRenderer = (props: any) => {
-    const canDelete = currentUser && props.data.user_email === currentUser.email;
-
-    if (!canDelete) {
+  const ActionsCellRenderer = (props: ICellRendererParams<Remark>) => {
+    const row = props.data;
+    if (!row || !currentUser || row.user_email !== currentUser.email) {
       return null;
     }
 
     const handleDeleteClick = () => {
-      setRemarkToDelete(props.data);
+      setRemarkToDelete(row);
       setDeleteConfirmOpen(true);
     };
 
@@ -51,7 +61,7 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
         size="small"
         color="error"
         onClick={handleDeleteClick}
-        aria-label={`Delete remark by ${props.data.user_name}`}
+        aria-label={`Delete remark by ${row.user_name}`}
       >
         <DeleteIcon fontSize="small" />
       </IconButton>
@@ -59,7 +69,7 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
   };
 
   // Column definitions for the AG-Grid
-  const columnDefs = [
+  const columnDefs: ColDef<Remark>[] = [
     {
       field: "user_name",
       headerName: "User",
@@ -76,9 +86,9 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
       flex: 1,
       wrapText: true,
       autoHeight: true,
-      editable: (params: any) => {
+      editable: (params) => {
         // Only allow editing if the current user is the author of the remark
-        return currentUser && params.data.user_email === currentUser.email;
+        return Boolean(currentUser && params.data && params.data.user_email === currentUser.email);
       },
       cellEditor: "agTextCellEditor",
       cellEditorParams: {
@@ -94,9 +104,10 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
       filter: true,
       width: 160,
       editable: false,
-      valueFormatter: (params: any) => {
+      valueFormatter: (params: ValueFormatterParams<Remark>) => {
         if (params.value) {
-          return dateTimeFormatter.format(new Date(parseDateTimeFromDB(params.value)));
+          const parsedDate = parseDateTimeFromDB(params.value);
+          return parsedDate ? dateTimeFormatter.format(parsedDate) : "";
         }
         return "";
       },
@@ -108,8 +119,8 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
       filter: true,
       width: 160,
       editable: false,
-      valueFormatter: (params: any) => {
-        if (params.value && params.value !== params.data.created_at) {
+      valueFormatter: (params: ValueFormatterParams<Remark>) => {
+        if (params.value && params.value !== params.data?.created_at) {
           return new Date(params.value).toLocaleString();
         }
         return "Not edited";
@@ -182,7 +193,7 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
   };
 
   // Handle cell value changes (for editing remarks)
-  const onCellValueChanged = async (params: any) => {
+  const onCellValueChanged = async (params: CellValueChangedEvent<Remark>) => {
     if (params.colDef.field !== "remark" || !params.newValue || params.newValue === params.oldValue) {
       return;
     }
@@ -361,7 +372,7 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
           </Typography>
 
           <div className="ag-theme-alpine" style={{ height: 300, width: "100%" }}>
-            <AgGridReact<any>
+            <AgGridReact<Remark>
               loading={loading}
               rowData={remarks}
               columnDefs={columnDefs}
@@ -385,7 +396,7 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
             variant="outlined"
             placeholder="Enter your remark here..."
             value={newRemark}
-            onChange={(e: any) => setNewRemark(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setNewRemark(e.target.value)}
             disabled={submitting}
           />
         </Box>

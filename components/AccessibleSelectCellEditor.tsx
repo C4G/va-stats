@@ -18,7 +18,7 @@ const AccessibleSelectCellEditor = forwardRef<
   const formattedValue = formatter ? formatter(value) : value;
 
   const [selectedValue, setSelectedValue] = useState(formattedValue || "");
-  const selectRef = useRef<any>(null);
+  const selectRef = useRef<HTMLSelectElement>(null);
   const valueRef = useRef(formattedValue || "");
 
   // Auto-focus and open the select element when the editor mounts
@@ -40,7 +40,7 @@ const AccessibleSelectCellEditor = forwardRef<
     }
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
     valueRef.current = newValue;
     setSelectedValue(newValue);
@@ -49,7 +49,7 @@ const AccessibleSelectCellEditor = forwardRef<
     stopEditing?.();
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSelectElement>) => {
     if (e.key === "Escape") {
       e.stopPropagation();
       const resetValue = formatter ? formatter(value) : (value ?? "");

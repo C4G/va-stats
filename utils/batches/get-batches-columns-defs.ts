@@ -61,7 +61,7 @@ export const getBatchStatus = (params) => {
   return "UNSTARTED";
 };
 
-export const getBatchesColumnDefs = (handleRoster: any, handleDelete: any, userRole = "ADMINISTRATOR") => {
+export const getBatchesColumnDefs = (handleRoster: unknown, handleDelete: unknown, userRole = "ADMINISTRATOR") => {
   return [
     {
       field: "actions",

@@ -94,10 +94,10 @@ export const normalizeDateValue = (value) => {
   return value;
 };
 
-export const normalizeDates = (items: Array<Record<string, any>> = [], fields: string[] = []) =>
+export const normalizeDates = (items: Array<Record<string, unknown>> = [], fields: string[] = []) =>
   items.map((item) => {
     if (!item || typeof item !== "object") return item;
-    const next: Record<string, any> = { ...item };
+    const next: Record<string, unknown> = { ...item };
     fields.forEach((field) => {
       if (field in next) {
         next[field] = normalizeDateValue(next[field]);
@@ -106,11 +106,13 @@ export const normalizeDates = (items: Array<Record<string, any>> = [], fields: s
     return next;
   });
 
-export const normalizeBatchDates = (batches = []) => normalizeDates(batches, ["coursestart", "courseend"]);
+export const normalizeBatchDates = (batches: Array<Record<string, unknown>> = []) =>
+  normalizeDates(batches, ["coursestart", "courseend"]);
 
-export const normalizeStudentDates = (students = []) => normalizeDates(students, ["age", "registration_date"]);
+export const normalizeStudentDates = (students: Array<Record<string, unknown>> = []) =>
+  normalizeDates(students, ["age", "registration_date"]);
 
-export const normalizeUserDates = (users = []) =>
+export const normalizeUserDates = (users: Array<Record<string, unknown>> = []) =>
   normalizeDates(users, ["joindate", "date_of_birth", "registration_date", "age", "contract_end_date"]);
 
 export const formatDateInput = (value) => normalizeDateValue(value) || "";

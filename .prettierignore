@@ -1,4 +1,3 @@
 # Keep this minimal; Prettier already respects .gitignore
 # Add only exceptions not covered by .gitignore if needed
 pnpm-lock.yaml
-

@@ -4,7 +4,7 @@ type RowIn = {
   name: string;
   remarks?: string;
   percent?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 const looksLikeDate = (k: string) => /^\d{4}-\d{2}-\d{2}$/.test(k);

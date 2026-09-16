@@ -53,9 +53,13 @@ export const searchAndUpdateStudentData = async ({ phone_number, gender, dobYear
 
     const mainForm = document.getElementById("studentRegForm");
     if (mainForm instanceof HTMLFormElement) {
-      const setFieldValue = (name: string, value: unknown) => {
+      const setFieldValue = (name: string, value) => {
         const field = mainForm.elements.namedItem(name);
-        if (field instanceof HTMLInputElement || field instanceof HTMLSelectElement) {
+        if (
+          field instanceof HTMLInputElement ||
+          field instanceof HTMLSelectElement ||
+          field instanceof HTMLTextAreaElement
+        ) {
           field.value = String(value ?? "");
         }
       };

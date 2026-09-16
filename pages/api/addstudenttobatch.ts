@@ -122,7 +122,8 @@ export default async function handler(req, res) {
 
     const coursestart = courseDatesResult[0].coursestart;
     const courseend = courseDatesResult[0].courseend;
-    const coursedays = parseCourseDays(courseDatesResult[0].coursedays);
+    const coursedaysValue = courseDatesResult[0].coursedays;
+    const coursedays = parseCourseDays(typeof coursedaysValue === "string" ? coursedaysValue : "");
 
     await executeQuery({
       query: `

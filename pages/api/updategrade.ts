@@ -27,12 +27,13 @@ export default async function handler(req, res) {
       }
 
       const { grade, max_marks } = rows[0];
+      const maxMarks = typeof max_marks === "number" ? max_marks : Number(max_marks);
 
       // Validate grade range
-      if (newGrade > max_marks || newGrade < 0) {
+      if (!Number.isFinite(maxMarks) || newGrade > maxMarks || newGrade < 0) {
         return res.status(400).json({
           success: false,
-          message: `Invalid grade: ${newGrade}. Grade must be between 0 and ${max_marks} for assignment: ${assignmentName}${studentName ? `, student: ${studentName}` : ""}`,
+          message: `Invalid grade: ${newGrade}. Grade must be between 0 and ${maxMarks} for assignment: ${assignmentName}${studentName ? `, student: ${studentName}` : ""}`,
         });
       }
 

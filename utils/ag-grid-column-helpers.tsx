@@ -3,7 +3,7 @@ import { normalizeDateValue, dateFormatter, parseDateFromDateInput } from "./dat
 interface DateColumnOptions {
   field: string;
   headerName: string;
-  editable?: boolean | ((params: any) => boolean);
+  editable?: boolean | ((params) => boolean);
   width?: number;
   filter?: string;
   extraProps?: Record<string, unknown>;

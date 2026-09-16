@@ -64,3 +64,4 @@ tsconfig.tsbuildinfo
 
 # Codex/agent-local skills
 /.agents/
+pnpm-lock.yaml

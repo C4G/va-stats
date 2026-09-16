@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     const query = "SELECT course FROM vacourses";
     // const query = SELECT JSON_ARRAYAGG(JSON_OBJECT('course', course)) from vacourses;
     // const query = SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('course', course)),']') FROM vacourses;
-    // const query = SELECT json_object: any('course', course) FROM vacourses;
+    // const query selects a JSON object containing the course field.
     // const query = "SELECT json_object('course', course) FROM vacourses";
 
     const values: unknown[] = [];

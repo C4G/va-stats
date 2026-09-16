@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import type { CellValueChangedEvent, ColDef, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { smartComparator } from "@/utils/grid-comparators";
@@ -20,29 +21,36 @@ import ConfirmationModal from "../ConfirmationModal";
 import GlobalSnackbar from "../GlobalSnackbar";
 import type { AlertColor } from "@mui/material/Alert";
 
+type Remark = {
+  id?: string | number;
+  user_name?: string;
+  user_id?: string | number;
+  remarks?: string;
+};
+type SessionUser = { id?: string | number };
+
 const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
-  const [remarks, setRemarks] = useState<any[]>([]);
+  const [remarks, setRemarks] = useState<Remark[]>([]);
   const [newRemark, setNewRemark] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [remarkToDelete, setRemarkToDelete] = useState<any>(null);
+  const [remarkToDelete, setRemarkToDelete] = useState<Remark | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
   const [dataChanged, setDataChanged] = useState(false);
 
   // Custom cell renderer for actions column
-  const ActionsCellRenderer = (props: any) => {
-    const canDelete = currentUser && props.data.user_id === currentUser.id;
-
-    if (!canDelete) {
+  const ActionsCellRenderer = (props: ICellRendererParams<Remark>) => {
+    const row = props.data;
+    if (!row || !currentUser || row.user_id !== currentUser.id) {
       return null;
     }
 
     const handleDeleteClick = () => {
-      setRemarkToDelete(props.data);
+      setRemarkToDelete(row);
       setDeleteConfirmOpen(true);
     };
 
@@ -51,7 +59,7 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
         size="small"
         color="error"
         onClick={handleDeleteClick}
-        aria-label={`Delete remark by ${props.data.user_name}`}
+        aria-label={`Delete remark by ${row.user_name}`}
       >
         <DeleteIcon fontSize="small" />
       </IconButton>
@@ -59,7 +67,7 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
   };
 
   // Column definitions for the AG-Grid
-  const columnDefs = [
+  const columnDefs: ColDef<Remark>[] = [
     {
       field: "user_name",
       headerName: "User",
@@ -76,9 +84,9 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
       flex: 1,
       wrapText: true,
       autoHeight: true,
-      editable: (params: any) => {
+      editable: (params) => {
         // Only allow editing if the current user is the author of the remark
-        return currentUser && params.data.user_id === currentUser.id;
+        return Boolean(currentUser && params.data && params.data.user_id === currentUser.id);
       },
       cellEditor: "agTextCellEditor",
       cellEditorParams: {
@@ -155,7 +163,7 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
   };
 
   // Handle cell value changes (for editing remarks)
-  const onCellValueChanged = async (params: any) => {
+  const onCellValueChanged = async (params: CellValueChangedEvent<Remark>) => {
     if (params.colDef.field !== "remarks" || !params.newValue || params.newValue === params.oldValue) {
       return;
     }
@@ -303,7 +311,7 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
           </Typography>
 
           <div className="ag-theme-alpine" style={{ height: 300, width: "100%" }}>
-            <AgGridReact<any>
+            <AgGridReact<Remark>
               loading={loading}
               rowData={remarks}
               columnDefs={columnDefs}
@@ -327,7 +335,7 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
             variant="outlined"
             placeholder="Enter your remark here..."
             value={newRemark}
-            onChange={(e: any) => setNewRemark(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setNewRemark(e.target.value)}
             disabled={submitting}
           />
         </Box>

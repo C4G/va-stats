@@ -10,8 +10,9 @@ import * as React from "react";
 // AG Grid v32 them problem resolution setup
 if (typeof window !== "undefined") {
   // AG Grid v32 theme related error avoidance
-  window.agGrid = window.agGrid || {};
-  window.agGrid.licenseManager = window.agGrid.licenseManager || {};
+  const agGrid = window.agGrid ?? {};
+  window.agGrid = agGrid;
+  agGrid.licenseManager = agGrid.licenseManager ?? {};
 }
 
 const App = ({ Component, pageProps }) => (

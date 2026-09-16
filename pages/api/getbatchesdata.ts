@@ -214,7 +214,7 @@ export default async function handler(req, res) {
     query += " ORDER BY STR_TO_DATE(coursestart, '%Y-%m-%d') DESC";
 
     const data = await executeQuery({ query, values });
-    const normalized = normalizeBatchDates(data);
+    const normalized = normalizeBatchDates(Array.from(data));
     res.status(200).json({ batches: normalized });
   } catch (error) {
     res.status(500).json({ error: error.message });

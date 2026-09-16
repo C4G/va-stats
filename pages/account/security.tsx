@@ -4,17 +4,20 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
+type Passkey = { id: string; name?: string | null };
+type LinkedAccount = { providerId?: string };
+
 export default function SecurityPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [passkeys, setPasskeys] = useState<any[]>([]);
-  const [accounts, setAccounts] = useState<any[]>([]);
+  const [passkeys, setPasskeys] = useState<Passkey[]>([]);
+  const [accounts, setAccounts] = useState<LinkedAccount[]>([]);
   const [password, setPassword] = useState("");
   const [passkeyName, setPasskeyName] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [passwordBusy, setPasswordBusy] = useState(false);
-  const [deletingPasskeyId, setDeletingPasskeyId] = useState<any>(null);
+  const [deletingPasskeyId, setDeletingPasskeyId] = useState<string | null>(null);
 
   const loadSecurityMethods = useCallback(async () => {
     const [passkeyResult, accountResult] = await Promise.all([

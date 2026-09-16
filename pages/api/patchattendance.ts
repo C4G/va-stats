@@ -9,9 +9,9 @@ type PatchRequestBody = {
   value?: unknown;
 };
 
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+const isRecord = (value): value is Record<string, unknown> => typeof value === "object" && value !== null;
 
-const readPatchRequestBody = (value: unknown): PatchRequestBody => {
+const readPatchRequestBody = (value): PatchRequestBody => {
   if (!isRecord(value)) return {};
 
   return {
@@ -22,7 +22,7 @@ const readPatchRequestBody = (value: unknown): PatchRequestBody => {
   };
 };
 
-const mapValueToNumber = (value: unknown): IsPresentCode => {
+const mapValueToNumber = (value): IsPresentCode => {
   // Accept both letter codes and numeric codes as input
   if (typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 4) {
     switch (value) {
@@ -158,7 +158,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Normal P/A/H: UPDATE → (if not exists) INSERT (works without unique key constraints)
-    const updateRes: any = await executeQuery({
+    const updateRes = await executeQuery({
       query: `UPDATE va_attendance
               SET is_present = ?
               WHERE batch_id = ? AND student_id = ? AND date = ?`,
@@ -176,7 +176,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       success: true,
       message: is_present === 4 ? "Half-day saved." : "Attendance updated successfully!",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in patchattendance handler:", error);
     return res.status(500).json({ success: false, message: error?.message || "Error in patch attendance handler" });
   }

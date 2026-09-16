@@ -64,7 +64,7 @@ const visualAcuityOptions = [" ", "LowVision", "Blind", "Sighted"];
 const genderOptions = [" ", "Male", "Female"];
 const natureOfWorkOptions = [" ", "Full-Time", "Part-Time"];
 
-export const getUsersColumnDefs = (handleDelete: any, designationOptionsOverride?: string[]) => {
+export const getUsersColumnDefs = (handleDelete: unknown, designationOptionsOverride?: string[]) => {
   if (typeof window !== "undefined" && !hasRequestedStaffOptions) {
     hasRequestedStaffOptions = true;
     fetchStaffOptions();

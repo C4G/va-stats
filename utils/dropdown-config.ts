@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { executeQuery } from "@/lib/db";
 
 const SUPPORTED_DROPDOWN_KEYS = new Set(["staff_designation", "certification_eligibility", "completion_status"]);

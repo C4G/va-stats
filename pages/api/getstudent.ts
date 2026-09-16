@@ -51,7 +51,11 @@ export default async function handler(req, res) {
     }
 
     const rawStudent = result[0];
-    const dobDate = rawStudent.age ? new Date(rawStudent.age) : null;
+    const ageValue = rawStudent.age;
+    const dobDate =
+      typeof ageValue === "string" || typeof ageValue === "number" || ageValue instanceof Date
+        ? new Date(ageValue)
+        : null;
     const year = dobDate ? dobDate.getFullYear() : "";
     const month = dobDate ? String(dobDate.getMonth() + 1).padStart(2, "0") : "";
     const day = dobDate ? String(dobDate.getDate()).padStart(2, "0") : "";
@@ -74,7 +78,10 @@ export default async function handler(req, res) {
       edu_details: rawStudent.edu_details || "",
       employment_status: rawStudent.employment_status || "",
       visual_acuity: rawStudent.visual_acuity || "",
-      percent_loss: rawStudent.percent_loss !== null ? rawStudent.percent_loss.toString() : "",
+      percent_loss:
+        rawStudent.percent_loss !== null && rawStudent.percent_loss !== undefined
+          ? String(rawStudent.percent_loss)
+          : "",
       impairment_history: rawStudent.impairment_history || "",
       objectives: rawStudent.objectives || "",
       first_choice: rawStudent.first_choice || "",

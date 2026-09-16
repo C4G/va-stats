@@ -128,7 +128,7 @@ export default async function handler(req, res) {
     if (attendanceData.length > 0 && studentsData.length > 0) {
       const { coursestart, courseend, coursedays } = attendanceData[0];
       // Generate all class dates from start to end (for admin view to show all dates)
-      const parsedCourseDays = parseCourseDays(coursedays);
+      const parsedCourseDays = parseCourseDays(typeof coursedays === "string" ? coursedays : "");
       const dateArray = generateDateArray(coursestart, courseend, parsedCourseDays);
 
       // Create a Map for O(1) lookup: key = "student_id|date", value = is_present

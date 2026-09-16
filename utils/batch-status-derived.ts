@@ -143,7 +143,7 @@ export function resolveCompletionStatus(compRules, ctx) {
 /**
  * Validates admin-submitted rules. Returns { ok, rules?, errors? }.
  */
-export function validateBatchStatusDerivedRulesInput(body): { ok: false; errors: string[] } | { ok: true; rules: any } {
+export function validateBatchStatusDerivedRulesInput(body): { ok: false; errors: string[] } | { ok: true; rules } {
   const errors: string[] = [];
   const c = body?.certification ?? {};
   const o = body?.completion ?? {};

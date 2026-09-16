@@ -8,21 +8,12 @@ declare module "*.module.css" {
 // Window object extensions
 declare global {
   interface Window {
-    agGrid?: any;
+    agGrid?: { licenseManager?: Record<string, unknown> };
     isUpdateMode?: boolean;
     studentId?: string | number;
-    updateDobFields?: { year: string; month: string; day: string };
-    updateFields?: Record<string, string>;
+    updateDobFields?: { year: string; month: string; day: string } | null;
+    updateFields?: Record<string, string> | null;
   }
-
-  const describe: (name: string, fn: () => void) => void;
-  const it: (name: string, fn: () => void) => void;
-  const test: (name: string, fn: () => void) => void;
-  const expect: (actual: unknown) => {
-    toBe(expected: unknown): void;
-    toEqual(expected: unknown): void;
-  };
-  const jest: any;
 }
 
 export {};

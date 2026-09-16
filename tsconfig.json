@@ -22,7 +22,7 @@
         "name": "next"
       }
     ],
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "allowJs": false
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts", ".next/types/**/*.ts"],

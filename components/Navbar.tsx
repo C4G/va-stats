@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient, useSession } from "@/lib/auth-client-compat";
+import { authClient, useSession, type AppSession } from "@/lib/auth-client-compat";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -214,17 +214,17 @@ const AccountMenu = ({
   email,
   onSignOut,
 }: {
-  session: any;
+  session: AppSession | null;
   role: string;
   email: string;
   onSignOut: () => void | Promise<void>;
 }) => {
   const [open, setOpen] = useState(false);
-  const menuRef = useRef<any>(null);
-  const buttonRef = useRef<any>(null);
-  const itemRefs = useRef<any[]>([]);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const itemRefs = useRef<Array<HTMLAnchorElement | HTMLButtonElement | null>>([]);
   const [imageFailed, setImageFailed] = useState(false);
-  const [mobileMenuPosition, setMobileMenuPosition] = useState<any>(null);
+  const [mobileMenuPosition, setMobileMenuPosition] = useState<{ top: number; right: number } | null>(null);
   const name = session?.user?.name || email;
   const image = session?.user?.image;
   const initials =
@@ -275,7 +275,8 @@ const AccountMenu = ({
 
   const focusItem = (index) => {
     const items = itemRefs.current.filter(Boolean);
-    if (items.length) items[(index + items.length) % items.length].focus();
+    const item = items[(index + items.length) % items.length];
+    item?.focus();
   };
 
   const handleButtonKeyDown = (event) => {
@@ -288,7 +289,7 @@ const AccountMenu = ({
 
   const handleMenuKeyDown = (event) => {
     const items = itemRefs.current.filter(Boolean);
-    const currentIndex = items.indexOf(document.activeElement);
+    const currentIndex = items.findIndex((item) => item === document.activeElement);
     if (event.key === "ArrowDown") {
       event.preventDefault();
       focusItem(currentIndex + 1);
@@ -353,7 +354,7 @@ const AccountMenu = ({
           </div>
           <Link
             ref={(element) => {
-              itemRefs.current[0] = element;
+              itemRefs.current[0] = element instanceof HTMLAnchorElement ? element : null;
             }}
             href="/account/security"
             role="menuitem"
@@ -365,7 +366,7 @@ const AccountMenu = ({
           </Link>
           <button
             ref={(element) => {
-              itemRefs.current[1] = element;
+              itemRefs.current[1] = element instanceof HTMLButtonElement ? element : null;
             }}
             type="button"
             role="menuitem"
@@ -387,7 +388,7 @@ const DropdownMenu = ({
   setActive,
   setActiveIdx,
 }: {
-  menu: any;
+  menu: MenuItem;
   active: boolean;
   setActive: () => void;
   setActiveIdx: (_index: number) => void;

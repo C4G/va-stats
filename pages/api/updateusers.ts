@@ -197,7 +197,7 @@ export default async function handler(req, res) {
           contract_duration_months: toIntOrNull(contract_duration_months),
         };
 
-        const changes: Record<string, any> = {};
+        const changes: Record<string, unknown> = {};
         Object.keys(newData).forEach((k) => {
           // Compare with type normalization (number/boolean) (number/boolean)
           const prev = norm(k, previous?.[k]);

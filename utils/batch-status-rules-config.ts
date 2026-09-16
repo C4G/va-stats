@@ -8,6 +8,11 @@ import {
 import { getDropdownOptions } from "@/utils/dropdown-config";
 
 const SETTING_KEY = "batch_status_derived_rules";
+type SavedRules = {
+  rules: unknown;
+  byCourse?: unknown;
+  defaultRules?: unknown;
+};
 
 async function ensureAppSettingsTable() {
   await executeQuery({
@@ -88,7 +93,7 @@ async function assertCompletionLabelsInDropdown(completion) {
   }
 }
 
-export async function saveBatchStatusDerivedRules(body): Promise<any> {
+export async function saveBatchStatusDerivedRules(body): Promise<SavedRules> {
   const validated = validateBatchStatusDerivedRulesInput(body);
   if (validated.ok === false) {
     throw new Error(validated.errors.join("; "));

@@ -1,5 +1,15 @@
 import Link from "next/link";
-const NavItem = ({ text, href, active, description }) => {
+interface NavItemProps {
+  text: string;
+  href: string;
+  active?: boolean;
+  description?: string;
+  sessionRequired?: boolean;
+  allowedRoles?: string[];
+  submenu?: Array<{ text: string; href: string; description?: string }>;
+}
+
+const NavItem = ({ text, href, active, description }: NavItemProps) => {
   return (
     <Link
       onClick={(event) => {
