@@ -16,11 +16,11 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+The `pages/api` directory is mapped to `/api/*`. TypeScript files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
@@ -101,7 +101,7 @@ Next only substitutes `NEXT_PUBLIC_*` values that exist at build time, so
 `process.env.NEXT_PUBLIC_BASE_URL` survives in the compiled server output as a
 real runtime lookup and each environment supplies its own value through Coolify.
 
-This works only because the value is read server-side (`utils/auditLogger.js`,
+This works only because the value is read server-side (`utils/auditLogger.ts`,
 imported solely by `pages/api/*`). Reading it from client code would yield
 `undefined` in the browser — see the comment in the Dockerfile before changing
 this.
@@ -153,12 +153,12 @@ must not be committed or uploaded.
 
 PAGES FOLDER: files requiring mods to API routes:
 
-- batch > [id].jsx
-- student > [id].jsx
-- batches.jsx
-- courses.jsx
-- students.jsx
-- users.jsx
+- batch > [id].tsx
+- student > [id].tsx
+- batches.tsx
+- courses.tsx
+- students.tsx
+- users.tsx
 
 .env file:
 
@@ -166,19 +166,19 @@ PAGES FOLDER: files requiring mods to API routes:
 
 NOTE REGARDING BATCH ATTENDANCE DROPDOWN:
 
-- This can be edited in /utils/tableHelper.js
+- This can be edited in `/utils` TypeScript helpers.
 
 ## CSV download - related modifications
 
 - Components to modify:
   - Vercel
-    - /pages/users.jsx\*: name, accessor, htmlFor, id (input attribute)
-    - /pages/api/getuserdata.js (if necessary)
+    - /pages/users.tsx\*: name, accessor, htmlFor, id (input attribute)
+    - /pages/api/getuserdata.ts (if necessary)
   - DreamHost
     - [https://visionaid.dreamhosters.com/csv/staff.php](https://visionaid.dreamhosters.com/csv/staff.php): th tag list
     - /csv/csvfunctions.php: fputcsv(), while($row = mysqli_fetch_assoc($result)), get_all_user_records()
 
-\*users.jsx file (staff) example: database and UI column names:
+\*users.tsx file (staff) example: database and UI column names:
 
 id Id
 email Email
@@ -203,7 +203,7 @@ action Action
 ## Errors
 
 - Can't log out? If you get an error preventing you from logging out:
-  please modify the /components/Navbar.jsx file per comments
+  please modify the `/components/Navbar.tsx` file per comments
   at the top of the file.
 
 ## Dreamhost-mtl folder (DB hosting)

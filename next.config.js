@@ -7,7 +7,7 @@ const withPWA = require("next-pwa")({
 module.exports = withPWA({
   reactStrictMode: true,
   output: "standalone",
-  pageExtensions: ["mdx", "md", "jsx", "js", "tsx", "ts", "svg"],
+  pageExtensions: ["mdx", "md", "tsx", "ts", "svg"],
 
   /**
    * mysql2 uses dynamic requires; bundling it for API routes can fail with

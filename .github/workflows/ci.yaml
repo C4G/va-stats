@@ -34,6 +34,9 @@ jobs:
       - name: Run lint
         run: pnpm lint
 
+      - name: Reject authored JavaScript
+        run: pnpm check:javascript
+
       - name: Run type check
         run: pnpm type-check
 

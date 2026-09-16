@@ -1,20 +1,18 @@
-// AG Grid row style parameters interface
 interface RowData {
   risk_factor?: string;
-  [key: string]: any; // Allow other properties
-}
-
-interface RowStyleParams {
-  data: RowData;
-  [key: string]: any; // Allow other AG Grid properties
+  [key: string]: unknown;
 }
 
 // AG Grid row style function
+interface RowStyleParams {
+  data?: RowData;
+}
+
 export const getRowStyle = (params: RowStyleParams): { background: string } | undefined => {
-  if (params.data.risk_factor === "Medium") {
+  if (params.data?.risk_factor === "Medium") {
     return { background: "lemonchiffon" };
   }
-  if (params.data.risk_factor === "High") {
+  if (params.data?.risk_factor === "High") {
     return { background: "lightpink" };
   }
   return undefined;

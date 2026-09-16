@@ -4,16 +4,34 @@
     "es2021": true
   },
   "extends": "next/core-web-vitals",
+  "plugins": ["@typescript-eslint"],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "rules": {
+    "@typescript-eslint/no-explicit-any": [
+      "error",
+      {
+        "fixToUnknown": true
+      }
+    ],
     "no-unused-vars": [
       "error",
       {
         "argsIgnorePattern": "^_",
         "ignoreRestSiblings": true
+      }
+    ],
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "TSAsExpression",
+        "message": "Do not use TypeScript type assertions; use declarations, generics, unions, or narrowing."
+      },
+      {
+        "selector": "TSTypeAssertion",
+        "message": "Do not use TypeScript type assertions; use declarations, generics, unions, or narrowing."
       }
     ]
   }
