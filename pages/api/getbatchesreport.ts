@@ -1,4 +1,11 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
+
+type BatchReportRow = Record<string, string | number | bigint | Date | null>;
+
+const serializeBatchReportRow = (row: BatchReportRow): Record<string, string | number | Date | null> =>
+  Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [key, typeof value === "bigint" ? Number(value) : value])
+  );
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -31,12 +38,9 @@ export default async function handler(req, res) {
       ORDER BY b.coursestart DESC
     `;
 
-    const data = await executeQuery({
-      query,
-      values: [startDate, endDate],
-    });
+    const data = await prisma.$queryRawUnsafe<BatchReportRow[]>(query, startDate, endDate);
 
-    res.status(200).json({ batches: data });
+    res.status(200).json({ batches: data.map(serializeBatchReportRow) });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });

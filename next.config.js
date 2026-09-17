@@ -9,17 +9,6 @@ module.exports = withPWA({
   output: "standalone",
   pageExtensions: ["mdx", "md", "tsx", "ts", "svg"],
 
-  /**
-   * mysql2 uses dynamic requires; bundling it for API routes can fail with
-   * `Cannot find module './chunks/undefined'`. Load it from node_modules at runtime.
-   */
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals.push("mysql2", "mysql2/promise");
-    }
-    return config;
-  },
-
   async headers() {
     return [
       {

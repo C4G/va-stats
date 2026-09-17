@@ -3,9 +3,22 @@ This function is called from courses.tsx (Courses link).
 It CREATES A COURSE.
 */
 
-import { executeQuery } from "@/lib/db";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { vacourses_duration_type } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
-export default async function handler(req, res) {
+type CourseBody = {
+  course?: unknown;
+  description?: unknown;
+  duration?: unknown;
+  duration_type?: unknown;
+};
+
+function isDurationType(value: unknown): value is vacourses_duration_type {
+  return typeof value === "string" && Object.values(vacourses_duration_type).some((item) => item === value);
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
@@ -14,14 +27,25 @@ export default async function handler(req, res) {
 
   try {
     // Get data submitted in request body
-    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    const body: CourseBody = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+
+    if (
+      typeof body.course !== "string" ||
+      typeof body.duration !== "string" ||
+      typeof body.duration_type !== "string" ||
+      !isDurationType(body.duration_type)
+    ) {
+      return res.status(400).json({ message: "Invalid course data" });
+    }
 
     // View response object in terminal
-    await executeQuery({
-      /* ---------- DATABASE MODIFICATION SECTION ------------- */
-      // If timestamp is a field, use: user.createdAt.Date (not toString)
-      query: "INSERT INTO vacourses (id, course, description, duration, duration_type) VALUES (?, ?, ?, ?, ?)",
-      values: ["", body.course, body.description, body.duration, body.duration_type],
+    await prisma.vacourses.create({
+      data: {
+        course: body.course,
+        description: typeof body.description === "string" ? body.description : null,
+        duration: body.duration,
+        duration_type: body.duration_type,
+      },
     });
   } catch (error) {
     console.log(error);

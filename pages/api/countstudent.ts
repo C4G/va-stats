@@ -2,18 +2,14 @@
 This function is called from index.tsx to count number of students for overall stats
 */
 
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
-export default async function handler(req, res) {
+export default async function handler(_req, res) {
   try {
-    const data = await executeQuery({
-      query: "SELECT COUNT(*) FROM vastudents",
-      values: [],
-    });
-    console.log(data[0]["COUNT(*)"]);
-    res.status(200).json({ count: data[0]["COUNT(*)"] });
-    res.end();
+    const count = await prisma.vastudents.count();
+    res.status(200).json({ count });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
 }

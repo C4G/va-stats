@@ -1,6 +1,7 @@
 /* This function is called from users.tsx (Staff link). */
 
-import { executeQuery } from "@/lib/db";
+import { vausers_isactive } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "@/lib/server-auth";
 import { staffAuditLogger } from "../../utils/auditLogger";
 
@@ -28,6 +29,13 @@ const toISODateOrNull = (v) => {
   return null;
 };
 
+const toDateOrNull = (v) => {
+  const iso = toISODateOrNull(v);
+  if (!iso) return null;
+  const date = new Date(`${iso}T00:00:00.000Z`);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ message: "Method Not Allowed" });
   try {
@@ -40,48 +48,40 @@ export default async function handler(req, res) {
     }
 
     const performerEmail = session?.user?.email || null;
-    const performerData = performerEmail
-      ? await executeQuery({
-          query: "SELECT id FROM vausers WHERE email = ?",
-          values: [performerEmail],
-        })
-      : [];
-
-    const performerId = performerData?.[0]?.id || "Unknown User";
+    const performer = performerEmail
+      ? await prisma.vausers.findUnique({ where: { email: performerEmail }, select: { id: true } })
+      : null;
+    const performerId = performer?.id || "Unknown User";
 
     // Get data submitted in request body
     const body = req.body;
 
-    const data = await executeQuery({
-      /* ---------- DATABASE MODIFICATION SECTION ------------- */
-      // If timestamp is a field, use: user.createdAt.Date (not toString)
-      query:
-        "INSERT INTO vausers (employeeId, email, name, designation, joindate, mobilenumber, workbase, supervisor, natureofjob, visualacuity, trainingprogram1, trainingprogram2, trainingprogram3, role, isactive, action, date_of_birth, gender, contract_duration_months) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      values: [
-        toNull(body.employeeId),
-        toNull(body.email) || "",
-        toNull(body.name) || "",
-        toNull(body.designation) || "",
-        toISODateOrNull(body.joindate),
-        toNull(body.mobilenumber),
-        toNull(body.workbase) || "",
-        toNull(body.supervisor) || "",
-        toNull(body.natureofjob) || "",
-        toNull(body.visualacuity),
-        toNull(body.trainingprogram1),
-        toNull(body.trainingprogram2),
-        toNull(body.trainingprogram3),
-        toNull(body.role) || "",
-        toNull(body.isactive) || "",
-        toNull(body.action) || "",
-        toISODateOrNull(body.date_of_birth),
-        toNull(body.gender),
-        toIntOrNull(body.contract_duration_months),
-      ],
+    const created = await prisma.vausers.create({
+      data: {
+        employeeId: toNull(body.employeeId),
+        email: toNull(body.email) || "",
+        name: toNull(body.name) || "",
+        designation: toNull(body.designation) || "",
+        joindate: toDateOrNull(body.joindate),
+        mobilenumber: toNull(body.mobilenumber),
+        workbase: toNull(body.workbase) || "",
+        supervisor: toNull(body.supervisor) || "",
+        natureofjob: toNull(body.natureofjob) || "",
+        visualacuity: toNull(body.visualacuity),
+        trainingprogram1: toNull(body.trainingprogram1) || "",
+        trainingprogram2: toNull(body.trainingprogram2) || "",
+        trainingprogram3: toNull(body.trainingprogram3) || "",
+        role: toNull(body.role) || "",
+        isactive: toNull(body.isactive) === "I" ? vausers_isactive.I : vausers_isactive.A,
+        action: toNull(body.action) || "",
+        date_of_birth: toDateOrNull(body.date_of_birth),
+        gender: toNull(body.gender),
+        contract_duration_months: toIntOrNull(body.contract_duration_months),
+      },
     });
     try {
       // Log the staff creation
-      await staffAuditLogger.logStaffCreation(performerId, body, data.insertId);
+      await staffAuditLogger.logStaffCreation(performerId, body, created.id);
     } catch (auditError) {
       console.error("Audit logger threw:", auditError.message);
       console.error("Audit stack:", auditError.stack);
@@ -91,7 +91,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         message: "Staff created successfully",
-        staffId: data.insertId,
+        staffId: created.id,
       });
     }
 

@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -7,50 +7,44 @@ export default async function handler(req, res) {
 
   try {
     const { id, name, gender, dob, phone_number } = req.body;
-    const conditions: string[] = [];
-    const values: unknown[] = [];
+    const conditions: Array<{
+      id?: number;
+      name?: string;
+      gender?: string;
+      age?: Date;
+      phone_number?: bigint;
+    }> = [];
 
     if (id !== null && id !== undefined && id !== "") {
-      conditions.push("id = ?");
-      values.push(id);
+      conditions.push({ id: Number(id) });
     }
 
     if (name !== null && name !== undefined && name !== "") {
-      conditions.push("name = ?");
-      values.push(name);
+      conditions.push({ name });
     }
 
     if (gender !== null && gender !== undefined && gender !== "") {
-      conditions.push("gender = ?");
-      values.push(gender);
+      conditions.push({ gender });
     }
 
     if (dob !== null && dob !== undefined && dob !== "") {
-      conditions.push("DATE(age) = ?");
-      values.push(dob);
+      conditions.push({ age: new Date(`${dob}T00:00:00.000Z`) });
     }
 
     if (phone_number !== null && phone_number !== undefined && phone_number !== "") {
-      conditions.push("phone_number = ?");
-      values.push(phone_number);
+      conditions.push({ phone_number: BigInt(phone_number) });
     }
 
     if (conditions.length === 0) {
       return res.status(400).json({ message: "At least one valid search criteria is required" });
     }
 
-    const whereClause = conditions.join(" AND ");
+    const rawStudent = await prisma.vastudents.findFirst({ where: { AND: conditions } });
 
-    let result = await executeQuery({
-      query: `SELECT * FROM vastudents WHERE ${whereClause} LIMIT 1`,
-      values: values,
-    });
-
-    if (!result || result.length === 0) {
+    if (!rawStudent) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    const rawStudent = result[0];
     const ageValue = rawStudent.age;
     const dobDate =
       typeof ageValue === "string" || typeof ageValue === "number" || ageValue instanceof Date
@@ -116,6 +110,6 @@ export default async function handler(req, res) {
 
     res.status(200).json(student);
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: error instanceof Error ? error.message : "Internal server error" });
   }
 }

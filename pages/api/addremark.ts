@@ -1,15 +1,15 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   const body = req.body;
 
   try {
-    const studentToBatch = await executeQuery({
-      query: "SELECT id FROM vastudent_to_batch WHERE batch_id = ? AND student_id = ?",
-      values: [parseInt(body.batchId), parseInt(body.studentId)],
+    const studentToBatch = await prisma.vastudent_to_batch.findFirst({
+      where: { batch_id: parseInt(body.batchId), student_id: parseInt(body.studentId) },
+      select: { id: true },
     });
 
-    const id = studentToBatch[0]?.id;
+    const id = studentToBatch?.id;
     if (!id) {
       return res.status(404).json({
         success: false,
@@ -17,24 +17,18 @@ export default async function handler(req, res) {
       });
     }
     if (body.isUpdated) {
-      // Delete all past remarks
-      await executeQuery({
-        query: "DELETE FROM va_remarks WHERE vastudent_to_batch_id = ? and user_id = ?",
-        values: [id, body.commenter],
+      await prisma.va_remarks.deleteMany({ where: { vastudent_to_batch_id: id, user_id: body.commenter } });
+      await prisma.va_remarks.createMany({
+        data: body.remarksArray.map((remarks) => ({
+          vastudent_to_batch_id: id,
+          remarks,
+          user_id: body.commenter,
+        })),
       });
-
-      // Re-insert past remarks
-      for (const pastRemark of body.remarksArray) {
-        await executeQuery({
-          query: "INSERT INTO va_remarks (vastudent_to_batch_id, remarks, user_id) VALUES (?, ?, ?)",
-          values: [id, pastRemark, body.commenter],
-        });
-      }
     }
     if (body.remarks !== "") {
-      await executeQuery({
-        query: "INSERT INTO va_remarks (vastudent_to_batch_id, remarks, user_id) VALUES (?, ?, ?)",
-        values: [id, body.remarks, body.commenter],
+      await prisma.va_remarks.create({
+        data: { vastudent_to_batch_id: id, remarks: body.remarks, user_id: body.commenter },
       });
     }
 

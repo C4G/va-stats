@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "@/lib/server-auth";
 
 export default async function handler(req, res) {
@@ -17,24 +17,19 @@ export default async function handler(req, res) {
     }
 
     try {
-      const results = await executeQuery({
-        query: `
-          SELECT 
-            vr.id,
-            vr.remarks,
-            vr.user_id,
-            u.name as user_name,
-            u.email as user_email
-          FROM va_remarks vr
-          JOIN vastudent_to_batch stb ON vr.vastudent_to_batch_id = stb.id
-          JOIN vausers u ON vr.user_id = u.id
-          WHERE stb.student_id = ? AND stb.batch_id = ?
-          ORDER BY vr.id DESC
-        `,
-        values: [parseInt(student_id), parseInt(batch_id)],
+      const results = await prisma.va_remarks.findMany({
+        where: {
+          vastudent_to_batch: { student_id: parseInt(student_id), batch_id: parseInt(batch_id) },
+        },
+        select: { id: true, remarks: true, user_id: true, vausers: { select: { name: true, email: true } } },
+        orderBy: { id: "desc" },
       });
 
-      return res.status(200).json(results);
+      return res
+        .status(200)
+        .json(
+          results.map(({ vausers, ...remark }) => ({ ...remark, user_name: vausers.name, user_email: vausers.email }))
+        );
     } catch (error) {
       console.error("Error fetching va remarks:", error);
       return res.status(500).json({ error: "Failed to fetch va remarks" });
@@ -58,29 +53,25 @@ export default async function handler(req, res) {
       }
 
       // First, get the vastudent_to_batch_id
-      const studentToBatchResult = await executeQuery({
-        query: "SELECT id FROM vastudent_to_batch WHERE student_id = ? AND batch_id = ?",
-        values: [parseInt(student_id), parseInt(batch_id)],
+      const studentToBatchResult = await prisma.vastudent_to_batch.findFirst({
+        where: { student_id: parseInt(student_id), batch_id: parseInt(batch_id) },
+        select: { id: true },
       });
 
-      if (!studentToBatchResult || studentToBatchResult.length === 0) {
+      if (!studentToBatchResult) {
         return res.status(404).json({ error: "Student not found in this batch" });
       }
 
-      const vastudentToBatchId = studentToBatchResult[0].id;
+      const vastudentToBatchId = studentToBatchResult.id;
 
       // Insert the new remark
-      const insertResult = await executeQuery({
-        query: `
-          INSERT INTO va_remarks (vastudent_to_batch_id, remarks, user_id)
-          VALUES (?, ?, ?)
-        `,
-        values: [vastudentToBatchId, remarks, userId],
+      const insertResult = await prisma.va_remarks.create({
+        data: { vastudent_to_batch_id: vastudentToBatchId, remarks, user_id: Number(userId) },
       });
 
       return res.status(201).json({
         success: true,
-        id: insertResult.insertId,
+        id: insertResult.id,
         message: "VA remark added successfully",
       });
     } catch (error) {

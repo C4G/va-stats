@@ -1,13 +1,10 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   const { batchId, assignmentName } = req.body;
 
   try {
-    await executeQuery({
-      query: "DELETE FROM va_grades WHERE batch_id = ? AND assignment_name = ?",
-      values: [batchId, assignmentName],
-    });
+    await prisma.va_grades.deleteMany({ where: { batch_id: batchId, assignment_name: assignmentName } });
 
     res.status(200).json({ success: true });
   } catch (error) {

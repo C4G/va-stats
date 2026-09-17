@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "@/lib/server-auth";
 
 export default async function handler(req, res) {
@@ -27,12 +27,8 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: "User email not found in session" });
   }
 
-  const performerData = await executeQuery({
-    query: "SELECT id FROM vausers WHERE email = ?",
-    values: [performerEmail],
-  });
-
-  const userId = performerData?.[0]?.id ?? null;
+  const performer = await prisma.vausers.findUnique({ where: { email: performerEmail }, select: { id: true } });
+  const userId = performer?.id ?? null;
   if (!userId) {
     return res.status(404).json({ error: "User not found" });
   }
@@ -41,12 +37,12 @@ export default async function handler(req, res) {
     // Delete a telecaller remark (only by the user who created it)
     try {
       // Check if the remark exists and belongs to the current user
-      const remarkResult = await executeQuery({
-        query: "SELECT id, user_id FROM telecaller_remarks WHERE id = ?",
-        values: [parseInt(id)],
+      const remarkResult = await prisma.telecaller_remarks.findUnique({
+        where: { id: parseInt(id) },
+        select: { user_id: true },
       });
 
-      if (!remarkResult || remarkResult.length === 0) {
+      if (!remarkResult) {
         return res.status(404).json({ error: "Remark not found" });
       }
 
@@ -55,10 +51,7 @@ export default async function handler(req, res) {
       }
 
       // Delete the remark
-      await executeQuery({
-        query: "DELETE FROM telecaller_remarks WHERE id = ? AND user_id = ?",
-        values: [parseInt(id), userId],
-      });
+      await prisma.telecaller_remarks.deleteMany({ where: { id: parseInt(id), user_id: userId } });
 
       return res.status(200).json({
         success: true,
@@ -80,12 +73,12 @@ export default async function handler(req, res) {
 
     try {
       // Check if the remark exists and belongs to the current user
-      const remarkResult = await executeQuery({
-        query: "SELECT id, user_id FROM telecaller_remarks WHERE id = ?",
-        values: [parseInt(id)],
+      const remarkResult = await prisma.telecaller_remarks.findUnique({
+        where: { id: parseInt(id) },
+        select: { user_id: true },
       });
 
-      if (!remarkResult || remarkResult.length === 0) {
+      if (!remarkResult) {
         return res.status(404).json({ error: "Remark not found" });
       }
 
@@ -94,9 +87,9 @@ export default async function handler(req, res) {
       }
 
       // Update the remark
-      await executeQuery({
-        query: "UPDATE telecaller_remarks SET remark = ?, updated_at = NOW() WHERE id = ? AND user_id = ?",
-        values: [remark.trim(), parseInt(id), userId],
+      await prisma.telecaller_remarks.updateMany({
+        where: { id: parseInt(id), user_id: userId },
+        data: { remark: remark.trim(), updated_at: new Date() },
       });
 
       return res.status(200).json({

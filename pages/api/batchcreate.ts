@@ -3,7 +3,13 @@ This function is called from batches.tsx (Batches link).
 It CREATES A NEW BATCH.
 */
 
-import { executeQuery } from "@/lib/db";
+import { vabatches_currency, vabatches_status, vabatches_trainingmode } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+
+const isCurrency = (value: unknown): value is vabatches_currency =>
+  typeof value === "string" && Object.values(vabatches_currency).some((item) => item === value);
+const isTrainingMode = (value: unknown): value is vabatches_trainingmode =>
+  typeof value === "string" && Object.values(vabatches_trainingmode).some((item) => item === value);
 
 export default async function handler(req, res) {
   try {
@@ -12,12 +18,12 @@ export default async function handler(req, res) {
 
     // Check if batch ID already exists
     if (body.batch) {
-      const existingBatch = await executeQuery({
-        query: "SELECT id FROM vabatches WHERE batch = ?",
-        values: [body.batch.trim()],
+      const existingBatch = await prisma.vabatches.findFirst({
+        where: { batch: body.batch.trim() },
+        select: { id: true },
       });
 
-      if (existingBatch && existingBatch.length > 0) {
+      if (existingBatch) {
         return res.status(400).json({
           success: false,
           message: "Batch ID already exists. Please use a different Batch ID.",
@@ -32,33 +38,29 @@ export default async function handler(req, res) {
     } else {
       coursedays = body.coursedays;
     }
-    const result = await executeQuery({
-      /* ---------- DATABASE MODIFICATION SECTION ------------- */
-      // If timestamp is a field, use: user.createdAt.Date (not toString)
-      // NOTE: coursedays does is not a property of 'body' in query below;
-      // Do not use body.coursedays just use coursedays
-      query:
-        "INSERT INTO vabatches (id, coursename, batch, coursestart, courseend, coursedays, coursetimes, instructor, PM, TA, dataentry, cost, currency, strength, trainingmode, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      values: [
-        null,
-        body.coursename || "",
-        body.batch || "",
-        body.coursestart || "",
-        body.courseend || "",
-        coursedays || "",
-        (body.coursetimestart ? body.coursetimestart + " - " + (body.coursetimeend || "") : "") || "",
-        body.instructor || "",
-        body.PM || "",
-        body.TA || "",
-        body.dataentry || "",
-        body.cost || null,
-        body.currency || null,
-        body.strength || 0,
-        body.trainingmode || "",
-        "UNSTARTED",
-      ],
+    if (!isTrainingMode(body.trainingmode)) {
+      return res.status(400).json({ success: false, message: "Invalid training mode" });
+    }
+    const result = await prisma.vabatches.create({
+      data: {
+        coursename: body.coursename || "",
+        batch: body.batch || "",
+        coursestart: body.coursestart || "",
+        courseend: body.courseend || "",
+        coursedays: coursedays || "",
+        coursetimes: (body.coursetimestart ? body.coursetimestart + " - " + (body.coursetimeend || "") : "") || "",
+        instructor: body.instructor || "",
+        PM: body.PM || "",
+        TA: body.TA || "",
+        dataentry: body.dataentry || "",
+        cost: body.cost || null,
+        currency: isCurrency(body.currency) ? body.currency : null,
+        strength: body.strength || 0,
+        trainingmode: body.trainingmode,
+        status: vabatches_status.UNSTARTED,
+      },
     });
-    res.status(200).json({ success: true, batchId: result.insertId });
+    res.status(200).json({ success: true, batchId: result.id });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "An error occurred" });

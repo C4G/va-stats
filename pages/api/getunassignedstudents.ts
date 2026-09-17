@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   // Only allow POST requests
@@ -20,19 +20,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid batch_id" });
     }
 
-    const studentsQuery = `
-      SELECT id, name
-      FROM vastudents
-      WHERE id NOT IN (
-        SELECT student_id
-        FROM vastudent_to_batch
-        WHERE batch_id = ?
-      )
-    `;
-
-    const studentsData = await executeQuery({
-      query: studentsQuery,
-      values: [batchIdNum],
+    const studentsData = await prisma.vastudents.findMany({
+      where: { vastudent_to_batch: { none: { batch_id: batchIdNum } } },
+      select: { id: true, name: true },
     });
 
     res.status(200).json({
@@ -45,8 +35,8 @@ export default async function handler(req, res) {
       console.error("Request body:", req.body);
     }
     res.status(500).json({
-      error: error.message || "Internal server error",
-      details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+      error: error instanceof Error ? error.message : "Internal server error",
+      details: process.env.NODE_ENV === "development" && error instanceof Error ? error.stack : undefined,
     });
   }
 }

@@ -15,13 +15,15 @@
 //   });
 // };
 
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 async function pmManager(req, res) {
   try {
-    const results = await executeQuery({
-      query:
-        "SELECT * FROM vausers WHERE designation REGEXP '^(Senior Program Manager|Program Manager|Program Coordinator)$' ORDER BY name ASC",
+    const results = await prisma.vausers.findMany({
+      where: {
+        designation: { in: ["Senior Program Manager", "Program Manager", "Program Coordinator"] },
+      },
+      orderBy: { name: "asc" },
     });
     res.status(200).json(results);
   } catch (error) {

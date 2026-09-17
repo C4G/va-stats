@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { executeQuery } from "@/lib/db";
+import { vastudents_enrollment_status } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import type { IsPresentCode } from "@/utils/types/attendance";
 
 type PatchRequestBody = {
@@ -99,27 +100,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (is_present === 2) {
       // X(Cancelled): Update existing rows in batch, then INSERT only for students without records (NOT EXISTS)
-      await executeQuery({
-        query: `UPDATE va_attendance
-                SET is_present = ?
-                WHERE batch_id = ? AND date = ?`,
-        values: [is_present, batchId, dateOnly],
+      const attendanceDate = new Date(dateOnly);
+      await prisma.va_attendance.updateMany({
+        where: { batch_id: Number(batchId), date: attendanceDate },
+        data: { is_present },
       });
-
-      await executeQuery({
-        query: `
-          INSERT INTO va_attendance (batch_id, student_id, date, is_present)
-          SELECT sb.batch_id, sb.student_id, ?, ?
-          FROM vastudent_to_batch sb
-          WHERE sb.batch_id = ?
-            AND NOT EXISTS (
-              SELECT 1 FROM va_attendance va
-              WHERE va.batch_id = sb.batch_id
-                AND va.student_id = sb.student_id
-                AND va.date = ?
-            )
-        `,
-        values: [dateOnly, is_present, batchId, dateOnly],
+      const memberships = await prisma.vastudent_to_batch.findMany({
+        where: { batch_id: Number(batchId) },
+        select: { student_id: true },
+      });
+      const existing = await prisma.va_attendance.findMany({
+        where: { batch_id: Number(batchId), date: attendanceDate },
+        select: { student_id: true },
+      });
+      const existingIds = new Set(existing.map(({ student_id }) => student_id));
+      await prisma.va_attendance.createMany({
+        data: memberships
+          .filter(({ student_id }) => student_id != null && !existingIds.has(student_id))
+          .map(({ student_id }) => ({ batch_id: Number(batchId), student_id, date: attendanceDate, is_present })),
       });
 
       return res
@@ -131,11 +129,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log("[PATCHATTENDANCE] Processing dropout for student:", studentId);
 
       // Dropout: Update student's enrollment status to 'DROPOUT' in vastudents table
-      const enrollmentResult = await executeQuery({
-        query: `UPDATE vastudents 
-                SET enrollment_status = 'DROPOUT' 
-                WHERE id = ?`,
-        values: [studentId],
+      const enrollmentResult = await prisma.vastudents.updateMany({
+        where: { id: Number(studentId) },
+        data: { enrollment_status: vastudents_enrollment_status.DROPOUT },
       });
       console.log("[PATCHATTENDANCE] Enrollment status update result:", enrollmentResult);
 
@@ -144,11 +140,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       //       the query won't update the cell(s) for this record.
       // NOTE: This shouldn't be an issue for newer batches, but if any issues emerge with dropout not working well, check if
       //       the records appears in the database.
-      const attendanceResult = await executeQuery({
-        query: `UPDATE va_attendance 
-                SET is_present = ? 
-                WHERE batch_id = ? AND student_id = ? AND date >= ?`,
-        values: [is_present, batchId, studentId, dateOnly],
+      const attendanceResult = await prisma.va_attendance.updateMany({
+        where: { batch_id: Number(batchId), student_id: Number(studentId), date: { gte: new Date(dateOnly) } },
+        data: { is_present },
       });
       console.log("[PATCHATTENDANCE] Attendance update result:", attendanceResult);
 
@@ -158,17 +152,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Normal P/A/H: UPDATE → (if not exists) INSERT (works without unique key constraints)
-    const updateRes = await executeQuery({
-      query: `UPDATE va_attendance
-              SET is_present = ?
-              WHERE batch_id = ? AND student_id = ? AND date = ?`,
-      values: [is_present, batchId, studentId, dateOnly],
+    const updateRes = await prisma.va_attendance.updateMany({
+      where: { batch_id: Number(batchId), student_id: Number(studentId), date: new Date(dateOnly) },
+      data: { is_present },
     });
-    if ((updateRes?.affectedRows ?? 0) === 0) {
-      await executeQuery({
-        query: `INSERT INTO va_attendance (batch_id, student_id, date, is_present)
-                VALUES (?, ?, ?, ?)`,
-        values: [batchId, studentId, dateOnly, is_present],
+    if (updateRes.count === 0) {
+      await prisma.va_attendance.create({
+        data: { batch_id: Number(batchId), student_id: Number(studentId), date: new Date(dateOnly), is_present },
       });
     }
 

@@ -1,23 +1,18 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   const body = req.body;
   const assignmentData = body.assignmentData;
 
   try {
-    // MySQL bind params must not be undefined; use null for SQL NULL
-    const values = [
-      assignmentData.assignment_name,
-      assignmentData.assignment_type,
-      assignmentData.assignment_weight,
-      assignmentData.max_marks,
-      body.batchId,
-      assignmentData.id,
-    ].map((v) => (v === undefined ? null : v));
-
-    await executeQuery({
-      query: `UPDATE va_grades SET assignment_name = ?, assignment_type = ?, assignment_weight = ?, max_marks = ? WHERE batch_id = ? AND assignment_name = ?`,
-      values,
+    await prisma.va_grades.updateMany({
+      where: { batch_id: body.batchId, assignment_name: assignmentData.id },
+      data: {
+        assignment_name: assignmentData.assignment_name,
+        assignment_type: assignmentData.assignment_type,
+        assignment_weight: assignmentData.assignment_weight,
+        max_marks: assignmentData.max_marks,
+      },
     });
 
     res.status(200).json({ success: true });

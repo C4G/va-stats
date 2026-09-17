@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "@/lib/server-auth";
 
 export default async function handler(req, res) {
@@ -17,19 +17,19 @@ export default async function handler(req, res) {
     // Delete a va remark (only by the user who created it)
     try {
       // Get user ID from session
-      const userId = session?.user?.id;
+      const userId = Number(session?.user?.id);
 
       if (!userId) {
         return res.status(404).json({ error: "User ID not found in session" });
       }
 
       // Check if the remark exists and belongs to the current user
-      const remarkResult = await executeQuery({
-        query: "SELECT id, user_id FROM va_remarks WHERE id = ?",
-        values: [parseInt(id)],
+      const remarkResult = await prisma.va_remarks.findUnique({
+        where: { id: parseInt(id) },
+        select: { user_id: true },
       });
 
-      if (!remarkResult || remarkResult.length === 0) {
+      if (!remarkResult) {
         return res.status(404).json({ error: "Remark not found" });
       }
 
@@ -38,10 +38,7 @@ export default async function handler(req, res) {
       }
 
       // Delete the remark
-      await executeQuery({
-        query: "DELETE FROM va_remarks WHERE id = ? AND user_id = ?",
-        values: [parseInt(id), userId],
-      });
+      await prisma.va_remarks.deleteMany({ where: { id: parseInt(id), user_id: userId } });
 
       return res.status(200).json({
         success: true,
@@ -63,19 +60,19 @@ export default async function handler(req, res) {
 
     try {
       // Get user ID from session
-      const userId = session?.user?.id;
+      const userId = Number(session?.user?.id);
 
       if (!userId) {
         return res.status(404).json({ error: "User ID not found in session" });
       }
 
       // Check if the remark exists and belongs to the current user
-      const remarkResult = await executeQuery({
-        query: "SELECT id, user_id FROM va_remarks WHERE id = ?",
-        values: [parseInt(id)],
+      const remarkResult = await prisma.va_remarks.findUnique({
+        where: { id: parseInt(id) },
+        select: { user_id: true },
       });
 
-      if (!remarkResult || remarkResult.length === 0) {
+      if (!remarkResult) {
         return res.status(404).json({ error: "Remark not found" });
       }
 
@@ -84,9 +81,9 @@ export default async function handler(req, res) {
       }
 
       // Update the remark
-      await executeQuery({
-        query: "UPDATE va_remarks SET remarks = ? WHERE id = ? AND user_id = ?",
-        values: [remarks.trim(), parseInt(id), userId],
+      await prisma.va_remarks.updateMany({
+        where: { id: parseInt(id), user_id: userId },
+        data: { remarks: remarks.trim() },
       });
 
       return res.status(200).json({

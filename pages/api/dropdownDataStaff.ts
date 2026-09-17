@@ -16,13 +16,11 @@
 //     });
 // };
 
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 async function staffList(req, res) {
   try {
-    const results = await executeQuery({
-      query: "SELECT DISTINCT * FROM vausers ORDER BY name ASC",
-    });
+    const results = await prisma.vausers.findMany({ orderBy: { name: "asc" } });
     res.status(200).json(results);
   } catch (error) {
     console.error("Error fetching staff list:", error);

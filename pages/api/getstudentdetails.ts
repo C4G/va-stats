@@ -1,61 +1,62 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   const { student_id } = req.body;
 
   try {
-    const studentsQuery = `
-      SELECT 
-        b.id,
-        b.coursename,
-        b.batch,
-        b.coursestart,
-        b.courseend,
-        b.instructor,
-        sb.completion_status,
-        sb.reason_for_status,
-        sb.certification_eligibility,
-        sb.grade,
-        sb.attendance,
-        sb.next_program,
-        s.enrollment_status AS enrollment_status,
-        GROUP_CONCAT(DISTINCT CONCAT(u.name, ': ', r.remarks) SEPARATOR ' || ') AS remarks
-      FROM vabatches b
-      JOIN vastudent_to_batch sb ON b.id = sb.batch_id
-      JOIN vastudents s ON s.id = sb.student_id
-      LEFT JOIN va_remarks r ON sb.id = r.vastudent_to_batch_id
-      LEFT JOIN vausers u ON r.user_id = u.id
-      WHERE sb.student_id = ?
-      GROUP BY 
-        b.id, b.coursename, b.batch, b.coursestart, b.courseend, b.instructor,
-        sb.completion_status, sb.reason_for_status, sb.certification_eligibility,
-        sb.grade, sb.attendance, sb.next_program, s.enrollment_status
-    `;
+    const student = await prisma.vastudents.findUnique({
+      where: { id: student_id },
+      select: {
+        id: true,
+        name: true,
+        enrollment_status: true,
+        vastudent_to_batch: {
+          where: { batch_id: { not: null } },
+          select: {
+            completion_status: true,
+            reason_for_status: true,
+            certification_eligibility: true,
+            grade: true,
+            attendance: true,
+            next_program: true,
+            vabatches: {
+              select: {
+                id: true,
+                coursename: true,
+                batch: true,
+                coursestart: true,
+                courseend: true,
+                instructor: true,
+              },
+            },
+            va_remarks: { select: { remarks: true, vausers: { select: { name: true } } } },
+          },
+        },
+      },
+    });
 
-    const studentNameQuery = `
-      SELECT name, id
-      FROM vastudents
-      WHERE id = ?
-    `;
-
-    // Parallel execution of queries for better performance
-    const [studentsData, studentNameData] = await Promise.all([
-      executeQuery({
-        query: studentsQuery,
-        values: [student_id],
-      }),
-      executeQuery({
-        query: studentNameQuery,
-        values: [student_id],
-      }),
-    ]);
+    const studentsData =
+      student?.vastudent_to_batch.map((enrollment) => ({
+        ...enrollment.vabatches,
+        completion_status: enrollment.completion_status,
+        reason_for_status: enrollment.reason_for_status,
+        certification_eligibility: enrollment.certification_eligibility,
+        grade: enrollment.grade,
+        attendance: enrollment.attendance,
+        next_program: enrollment.next_program,
+        enrollment_status: student.enrollment_status,
+        remarks:
+          enrollment.va_remarks.length > 0
+            ? enrollment.va_remarks.map(({ vausers, remarks }) => `${vausers.name}: ${remarks}`).join(" || ")
+            : null,
+      })) ?? [];
 
     res.status(200).json({
       batches: studentsData,
-      name: studentNameData[0]?.name ?? null,
-      studentId: studentNameData[0]?.id ?? null,
+      name: student?.name ?? null,
+      studentId: student?.id ?? null,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
 }

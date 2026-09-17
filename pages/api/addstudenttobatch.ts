@@ -1,7 +1,8 @@
 // NOTE: If default data should be entered when student is added to
 // a batch, MySQL table column default and default value below must BOTH be set.
 
-import { executeQuery } from "@/lib/db";
+import { vastudents_enrollment_status, YesNo } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { parseCourseDays, isClassDay } from "@/utils/course-days";
 
 function formatDate(date) {
@@ -42,21 +43,9 @@ async function createAttendanceRecords(batch_id, student_id, coursestart, course
   const dateArray = generateDateArray(coursestart, courseend, coursedays);
   if (!dateArray.length) return;
 
-  const placeholders = dateArray.map(() => "(?, ?, ?, ?)").join(",");
-
-  // Per request, set the db value to 1 (Present) for default/initial data
-  // But this will show as "-" for future dates in the UI
-  // And can be updated as needed by the instructor
-  const values = dateArray.flatMap((date) => [batch_id, student_id, date, 1]);
-
   try {
-    await executeQuery({
-      query: `
-        INSERT INTO va_attendance (batch_id, student_id, date, is_present)
-        VALUES ${placeholders}
-        ON DUPLICATE KEY UPDATE is_present = VALUES(is_present)
-      `,
-      values,
+    await prisma.va_attendance.createMany({
+      data: dateArray.map((date) => ({ batch_id, student_id, date: new Date(date), is_present: 1 })),
     });
   } catch (error) {
     console.log("Error inserting attendance records:", error);
@@ -67,73 +56,58 @@ export default async function handler(req, res) {
   const { studentId, batchId } = req.body;
 
   try {
-    const existingStudentBatch = await executeQuery({
-      query: `
-        SELECT 1
-        FROM vastudent_to_batch
-        WHERE student_id = ?
-        LIMIT 1
-      `,
-      values: [studentId],
+    const existingStudentBatch = await prisma.vastudent_to_batch.findFirst({
+      where: { student_id: studentId },
+      select: { id: true },
     });
 
-    const studentAlreadyInBatch = existingStudentBatch.length > 0;
-    await executeQuery({
-      query: "INSERT INTO vastudent_to_batch (student_id, batch_id) VALUES (?, ?)",
-      values: [studentId, batchId],
-    });
+    const studentAlreadyInBatch = Boolean(existingStudentBatch);
+    await prisma.vastudent_to_batch.create({ data: { student_id: studentId, batch_id: batchId } });
 
     // Get the student ID proof, disability certificate, and photo information
-    const getStudentIdInfo = await executeQuery({
-      query: "SELECT id_proof, disability_cert, photo FROM vastudents WHERE id = ?",
-      values: [studentId],
+    const getStudentIdInfo = await prisma.vastudents.findUnique({
+      where: { id: studentId },
+      select: { id_proof: true, disability_cert: true, photo: true },
     });
 
-    const idProof = getStudentIdInfo[0]?.id_proof || "yes";
-    const disabilityCert = getStudentIdInfo[0]?.disability_cert || "yes";
-    const photo = getStudentIdInfo[0]?.photo || "yes";
+    const idProof = getStudentIdInfo?.id_proof || YesNo.Yes;
+    const disabilityCert = getStudentIdInfo?.disability_cert || YesNo.Yes;
+    const photo = getStudentIdInfo?.photo || YesNo.Yes;
 
     // If student is already in the batch, we update their ID proof, disability certificate, and photo information
     // otherwise, we set them to "yes" as default values
-    await executeQuery({
-      query: `
-        UPDATE vastudents
-        SET id_proof = ?, disability_cert = ?, photo = ?
-        WHERE id = ?
-      `,
-      values: studentAlreadyInBatch ? [idProof, disabilityCert, photo, studentId] : ["yes", "yes", "yes", studentId],
+    await prisma.vastudents.update({
+      where: { id: studentId },
+      data: studentAlreadyInBatch
+        ? { id_proof: idProof, disability_cert: disabilityCert, photo }
+        : { id_proof: YesNo.Yes, disability_cert: YesNo.Yes, photo: YesNo.Yes },
     });
 
-    const result = await executeQuery({
-      query: "SELECT DISTINCT assignment_name FROM va_grades WHERE batch_id = ? AND assignment_name IS NOT NULL",
-      values: [batchId],
+    const result = await prisma.va_grades.findMany({
+      where: { batch_id: batchId },
+      distinct: ["assignment_name"],
+      select: { assignment_name: true },
     });
 
     const assignments = result.map((assignment) => assignment.assignment_name);
 
-    const courseDatesResult = await executeQuery({
-      query: "SELECT coursestart, courseend, coursedays FROM vabatches WHERE id = ?",
-      values: [batchId],
+    const courseDatesResult = await prisma.vabatches.findUnique({
+      where: { id: batchId },
+      select: { coursestart: true, courseend: true, coursedays: true },
     });
 
-    if (!courseDatesResult || courseDatesResult.length === 0) {
+    if (!courseDatesResult) {
       return res.status(404).json({ success: false, message: "Batch not found" });
     }
 
-    const coursestart = courseDatesResult[0].coursestart;
-    const courseend = courseDatesResult[0].courseend;
-    const coursedaysValue = courseDatesResult[0].coursedays;
+    const coursestart = courseDatesResult.coursestart;
+    const courseend = courseDatesResult.courseend;
+    const coursedaysValue = courseDatesResult.coursedays;
     const coursedays = parseCourseDays(typeof coursedaysValue === "string" ? coursedaysValue : "");
 
-    await executeQuery({
-      query: `
-        UPDATE vastudents AS s
-        JOIN vabatches AS b ON b.id = ?
-        SET s.enrollment_status = 'ENROLLED'
-        WHERE s.id = ?
-          AND (b.courseend IS NULL OR b.courseend >= CURDATE())
-      `,
-      values: [batchId, studentId],
+    await prisma.vastudents.updateMany({
+      where: { id: studentId, enrollment_status: { not: vastudents_enrollment_status.DROPOUT } },
+      data: { enrollment_status: vastudents_enrollment_status.ENROLLED },
     });
 
     if (coursestart && courseend) {
@@ -143,9 +117,16 @@ export default async function handler(req, res) {
     if (assignments && assignments.length > 0) {
       for (const assignment of assignments) {
         if (typeof assignment !== "undefined") {
-          await executeQuery({
-            query: "INSERT INTO va_grades (student_id, batch_id, assignment_name) VALUES (?, ?, ?)",
-            values: [studentId, batchId, assignment],
+          await prisma.va_grades.create({
+            data: {
+              student_id: studentId,
+              batch_id: batchId,
+              assignment_name: assignment,
+              assignment_type: "",
+              assignment_weight: 0,
+              grade: 0,
+              max_marks: 0,
+            },
           });
         } else {
           console.log("skipping");
@@ -154,9 +135,16 @@ export default async function handler(req, res) {
     }
 
     try {
-      await executeQuery({
-        query: `INSERT INTO va_fees (batch_id, student_id, fee_paid) VALUES (?, ?, ?)`,
-        values: [batchId, studentId, "NA"],
+      await prisma.va_fees.create({
+        data: {
+          batch_id: batchId,
+          student_id: studentId,
+          fee_paid: "NA",
+          amount_1: 0,
+          amount_2: 0,
+          amount_3: 0,
+          nature_of_fee: "",
+        },
       });
     } catch (error) {
       console.log("Error inserting fees record:", error);

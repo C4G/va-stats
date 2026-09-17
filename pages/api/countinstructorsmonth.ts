@@ -1,21 +1,18 @@
-import { executeQuery } from "@/lib/db";
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   try {
-    const data = await executeQuery({
-      query: `
-        SELECT COUNT(*)
+    const data = await prisma.$queryRaw<{ count: bigint }[]>(Prisma.sql`
+        SELECT COUNT(*) AS count
         FROM vabatches b
         WHERE TRIM(COALESCE(b.instructor, '')) <> ''
           AND YEAR(b.coursestart) = YEAR(CURDATE())
           AND QUARTER(b.coursestart) = QUARTER(CURDATE())
-      `,
-      values: [],
-    });
-    res.status(200).json({ count: data[0]["COUNT(*)"] });
-    res.end();
+      `);
+    res.status(200).json({ count: Number(data[0]?.count ?? BigInt(0)) });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: error.message });
+    console.error(error);
+    return res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
 }

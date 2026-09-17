@@ -1,4 +1,5 @@
-import { executeQuery } from "@/lib/db";
+import { vausers_isactive } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "@/lib/server-auth";
 import { staffAuditLogger } from "../../utils/auditLogger";
 
@@ -8,14 +9,13 @@ const toIntOrNull = (v) => (v === undefined || v === "" || v === null || Number.
 // safe isactive handling function (safe isactive handling function)
 const normalizeIsActive = (input) => {
   if (input == null || input === undefined || input === "") return undefined; // do not pass if no pass (do not pass if no pass)
-  // Handle both "A" and "IA" (DB uses "IA" for inactive)
+  // Accept legacy "IA" input while storing the Prisma enum value "I".
   if (input === "A" || input === "IA" || input === "I") {
-    // Convert "I" to "IA" for DB compatibility
-    return input === "I" ? "IA" : input;
+    return input === "A" ? "A" : "I";
   }
   // allow common form values (checkbox/toggle) defensively (allow common form values (checkbox/toggle) defensively)
   if (input === true || input === "true" || input === 1 || input === "1") return "A";
-  if (input === false || input === "false" || input === 0 || input === "0") return "IA";
+  if (input === false || input === "false" || input === 0 || input === "0") return "I";
   return undefined; // if invalid value, ignore (ignore)
 };
 // STR_TO_DATE is guaranteed to return NULL if the argument is NULL
@@ -52,6 +52,13 @@ const toISODateOrNull = (v) => {
 
   // If not recognized, save as null (=SQL NULL)
   return null;
+};
+
+const toDateOrNull = (v) => {
+  const iso = toISODateOrNull(v);
+  if (!iso) return null;
+  const date = new Date(`${iso}T00:00:00.000Z`);
+  return Number.isNaN(date.getTime()) ? null : date;
 };
 
 export default async function handler(req, res) {
@@ -94,84 +101,43 @@ export default async function handler(req, res) {
 
     // Find performer (account may not exist in session)
     const performerEmail = session?.user?.email || null;
-    const performerData = performerEmail
-      ? await executeQuery({ query: "SELECT id FROM vausers WHERE email = ?", values: [performerEmail] })
-      : [];
-    const performerId = performerData?.[0]?.id ?? null;
+    const performer = performerEmail
+      ? await prisma.vausers.findUnique({ where: { email: performerEmail }, select: { id: true } })
+      : null;
+    const performerId = performer?.id ?? null;
 
     // Get previous data
-    const previousRows = await executeQuery({ query: "SELECT * FROM vausers WHERE id = ?", values: [idNum] });
-    const previous = previousRows?.[0] ?? null;
+    const previous = await prisma.vausers.findUnique({ where: { id: idNum } });
 
     try {
       // only include isactive if it is explicitly passed
       const normalizedIsActive = normalizeIsActive(isactive);
       const includeIsActive = normalizedIsActive !== undefined;
 
-      // dynamically construct the query
-      const setClauses = [
-        "email = ?",
-        "name = ?",
-        "designation = ?",
-        "joindate = DATE(?)",
-        "mobilenumber = ?",
-        "workbase = ?",
-        "supervisor = ?",
-        "natureofjob = ?",
-        "visualacuity = ?",
-        "trainingprogram1 = ?",
-        "trainingprogram2 = ?",
-        "trainingprogram3 = ?",
-        "role = ?",
-        "action = ?",
-        "lastlogin = DATE(?)",
-        "employeeId = ?",
-        "gender = ?",
-        "date_of_birth = DATE(?)",
-        "contract_duration_months = ?",
-      ];
+      const updateData = {
+        email: toNull(email),
+        name: toNull(name),
+        designation: toNull(designation),
+        joindate: toDateOrNull(joindate),
+        mobilenumber: toNull(mobilenumber),
+        workbase: toNull(workbase),
+        supervisor: toNull(supervisor),
+        natureofjob: toNull(natureofjob),
+        visualacuity: toNull(visualacuity),
+        trainingprogram1: toNull(trainingprogram1),
+        trainingprogram2: toNull(trainingprogram2),
+        trainingprogram3: toNull(trainingprogram3),
+        role: toNull(role),
+        ...(includeIsActive ? { isactive: normalizedIsActive === "I" ? vausers_isactive.I : vausers_isactive.A } : {}),
+        action: toNull(action),
+        lastlogin: toDateOrNull(lastlogin),
+        employeeId: toNull(employeeId),
+        gender: toNull(gender),
+        date_of_birth: toDateOrNull(date_of_birth),
+        contract_duration_months: toIntOrNull(contract_duration_months),
+      };
 
-      // only add isactive to the SET clause if it is explicitly passed
-      if (includeIsActive) {
-        setClauses.splice(13, 0, "isactive = ?"); // insert after role (insert after role)
-      }
-
-      const query = `UPDATE vausers SET ${setClauses.join(", ")} WHERE id = ?;`;
-
-      // construct the values
-      const values = [
-        toNull(email),
-        toNull(name),
-        toNull(designation),
-        toISODateOrNull(joindate),
-        toNull(mobilenumber),
-        toNull(workbase),
-        toNull(supervisor),
-        toNull(natureofjob),
-        toNull(visualacuity),
-        toNull(trainingprogram1),
-        toNull(trainingprogram2),
-        toNull(trainingprogram3),
-        toNull(role),
-      ];
-
-      // only add isactive if it is explicitly passed
-      if (includeIsActive) {
-        values.push(normalizedIsActive);
-      }
-
-      // add the remaining values
-      values.push(
-        toNull(action),
-        toISODateOrNull(lastlogin),
-        toNull(employeeId),
-        toNull(gender),
-        toISODateOrNull(date_of_birth),
-        toIntOrNull(contract_duration_months),
-        idNum
-      );
-
-      await executeQuery({ query, values });
+      await prisma.vausers.update({ where: { id: idNum }, data: updateData });
 
       // Create change log (simple comparison; dates may differ in format) (simple comparison; dates may differ in format)
       if (previous && performerId) {
@@ -208,7 +174,7 @@ export default async function handler(req, res) {
         // Handle isactive separately (compare "A" vs "IA" strings directly)
         if (includeIsActive) {
           const prevIsActive = previous?.isactive || null;
-          const currIsActive = normalizedIsActive === "I" ? "IA" : normalizedIsActive; // Convert "I" to "IA" for DB compatibility
+          const currIsActive = normalizedIsActive;
           if (prevIsActive !== currIsActive) {
             changes.isactive = { from: prevIsActive, to: currIsActive };
           }

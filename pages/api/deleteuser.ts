@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "@/lib/server-auth";
 import { staffAuditLogger } from "../../utils/auditLogger";
 
@@ -16,42 +16,33 @@ export default async function deleteUser(req, res) {
     }
 
     try {
-      const performerData = await executeQuery({
-        query: "SELECT id FROM vausers WHERE email = ?",
-        values: [session?.user?.email],
-      });
-      const performerId = performerData?.[0]?.id || "Unknown User";
+      const performer = session?.user?.email
+        ? await prisma.vausers.findUnique({ where: { email: session.user.email }, select: { id: true } })
+        : null;
+      const performerId = performer?.id || "Unknown User";
 
-      const userData = await executeQuery({
-        query: "SELECT * FROM vausers WHERE id = ?",
-        values: [id],
-      });
+      const userData = await prisma.vausers.findUnique({ where: { id }, include: { va_remarks: true } });
 
-      if (!userData || userData.length === 0) {
+      if (!userData) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const deleteRemarksResult = await executeQuery({
-        query: "DELETE FROM va_remarks WHERE user_id = ?",
-        values: [id],
-      });
-
-      const deleteUserResult = await executeQuery({
-        query: "DELETE FROM vausers WHERE id = ?",
-        values: [id],
-      });
+      const [deleteRemarksResult, deleteUserResult] = await prisma.$transaction([
+        prisma.va_remarks.deleteMany({ where: { user_id: id } }),
+        prisma.vausers.delete({ where: { id } }),
+      ]);
+      const { va_remarks: _remarks, ...deletedUser } = userData;
       try {
-        // Log the staff creation
-        await staffAuditLogger.logStaffDeletion(performerId, id, userData[0]);
+        await staffAuditLogger.logStaffDeletion(performerId, id, deletedUser);
       } catch (auditError) {
-        console.error("Audit logger threw:", auditError.message);
-        console.error("Audit stack:", auditError.stack);
+        console.error("Audit logger threw:", auditError instanceof Error ? auditError.message : String(auditError));
+        console.error("Audit stack:", auditError instanceof Error ? auditError.stack : undefined);
       }
 
       return res.status(200).json({
         message: "User and related records deleted successfully",
-        remarksDeleted: deleteRemarksResult.affectedRows,
-        userDeleted: deleteUserResult.affectedRows,
+        remarksDeleted: deleteRemarksResult.count,
+        userDeleted: deleteUserResult ? 1 : 0,
       });
     } catch (error) {
       return res.status(500).json({
