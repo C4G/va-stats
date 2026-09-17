@@ -1,0 +1,28 @@
+prisma.config.ts
+  s_16c36164353671::t_02827c54716f73 14
+package.json
+  s_16c36164353671::t_02827c54716f73 12,22-23
+Dockerfile
+  s_16c36164353671::t_02827c54716f73 25-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "132740e2053eeffd21bd34b82d317853be4d9845",
+  "prompts": {},
+  "humans": {
+    "h_d5b6f744415839": {
+      "author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  },
+  "sessions": {
+    "s_16c36164353671": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ad7d-3d3f-7df3-aeaa-41ca1d96798c",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
