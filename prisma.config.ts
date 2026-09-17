@@ -9,13 +9,7 @@ const databaseUrl =
     ? `mysql://${encodeURIComponent(MYSQL_USER)}:${encodeURIComponent(MYSQL_PASSWORD)}@${MYSQL_HOST}:${MYSQL_PORT ?? "3306"}/${encodeURIComponent(MYSQL_DATABASE)}`
     : undefined);
 
-if (!databaseUrl) {
-  throw new Error("Set DATABASE_URL or MYSQL_HOST, MYSQL_DATABASE, MYSQL_USER, and MYSQL_PASSWORD.");
-}
-
 export default defineConfig({
   schema: "prisma",
-  datasource: {
-    url: databaseUrl,
-  },
+  ...(databaseUrl ? { datasource: { url: databaseUrl } } : {}),
 });
