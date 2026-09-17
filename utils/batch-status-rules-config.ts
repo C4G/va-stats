@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import {
   getRulesForCourse,
   mergeBatchStatusDerivedRules,
@@ -14,19 +14,7 @@ type SavedRules = {
   defaultRules?: unknown;
 };
 
-async function ensureAppSettingsTable() {
-  await executeQuery({
-    query: `
-      CREATE TABLE IF NOT EXISTS va_app_settings (
-        setting_key VARCHAR(100) NOT NULL PRIMARY KEY,
-        setting_value LONGTEXT NOT NULL,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-      )
-    `,
-  });
-}
-
-function parseStoredJson(raw) {
+function parseStoredJson(raw: string | null | undefined) {
   if (raw == null || raw === "") return null;
   try {
     const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -37,16 +25,8 @@ function parseStoredJson(raw) {
 }
 
 export async function getBatchStatusDerivedRules() {
-  await ensureAppSettingsTable();
-
-  const rows = await executeQuery({
-    query: "SELECT setting_value FROM va_app_settings WHERE setting_key = ? LIMIT 1",
-    values: [SETTING_KEY],
-  });
-
-  const raw = rows?.[0]?.setting_value;
-  const stored = parseStoredJson(raw);
-  return stored;
+  const setting = await prisma.va_app_settings.findUnique({ where: { setting_key: SETTING_KEY } });
+  return parseStoredJson(setting?.setting_value);
 }
 
 /**
@@ -102,8 +82,6 @@ export async function saveBatchStatusDerivedRules(body): Promise<SavedRules> {
   await assertCertificationLabelsInDropdown(validated.rules.certification);
   await assertCompletionLabelsInDropdown(validated.rules.completion);
 
-  await ensureAppSettingsTable();
-
   const current = await getBatchStatusDerivedRules();
   const currentDefault = mergeBatchStatusDerivedRules(current?.defaultRules ?? current);
   const byCourse = current?.byCourse && typeof current.byCourse === "object" ? { ...current.byCourse } : {};
@@ -126,13 +104,10 @@ export async function saveBatchStatusDerivedRules(body): Promise<SavedRules> {
 
   const json = JSON.stringify(payload);
 
-  await executeQuery({
-    query: `
-      INSERT INTO va_app_settings (setting_key, setting_value)
-      VALUES (?, ?)
-      ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)
-    `,
-    values: [SETTING_KEY, json],
+  await prisma.va_app_settings.upsert({
+    where: { setting_key: SETTING_KEY },
+    create: { setting_key: SETTING_KEY, setting_value: json },
+    update: { setting_value: json },
   });
 
   return {

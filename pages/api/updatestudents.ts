@@ -1,5 +1,6 @@
 // pages/api/updatestudents.ts
-import { executeQuery } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 const ALLOWED_ENROLLMENT = new Set([
   null,
@@ -68,14 +69,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "Student ID is required for update" });
     }
 
-    const setClauses: string[] = [];
-    const values: unknown[] = [];
+    const data: Prisma.vastudentsUpdateInput = {};
 
     // Only allow YYYY-MM-DD for age (others are null)
     if (Object.prototype.hasOwnProperty.call(body, "age")) {
       const age = typeof body.age === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.age) ? body.age : null;
-      setClauses.push("age = ?");
-      values.push(age);
+      Object.assign(data, { age: age ? new Date(age) : null });
     }
 
     // Only allow YYYY-MM-DD for registration_date (others are null)
@@ -84,8 +83,7 @@ export default async function handler(req, res) {
         typeof body.registration_date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.registration_date)
           ? body.registration_date
           : null;
-      setClauses.push("registration_date = ?");
-      values.push(rd);
+      Object.assign(data, { registration_date: rd ? new Date(rd) : null });
     }
 
     for (const key of WHITELIST) {
@@ -100,27 +98,18 @@ export default async function handler(req, res) {
         if (v && !ALLOWED_ENROLLMENT.has(v)) {
           return res.status(400).json({ message: "Invalid enrollment_status" });
         }
-        setClauses.push("enrollment_status = ?");
-        values.push(v);
+        Object.assign(data, { enrollment_status: v });
       } else {
         const raw = body[key] ?? null;
-        setClauses.push(`${key} = ?`);
-        values.push(typeof raw === "string" ? raw.trim() : raw);
+        Object.assign(data, { [key]: typeof raw === "string" ? raw.trim() : raw });
       }
     }
 
-    if (setClauses.length === 0) {
+    if (Object.keys(data).length === 0) {
       return res.status(400).json({ message: "No fields to update" });
     }
 
-    // Debug guard (put this in during development to find the cause immediately) (undefined detected in values)
-    if (values.some((v) => v === undefined)) {
-      return res.status(400).json({ message: "Undefined detected in values" });
-    }
-
-    values.push(studentId);
-    const firstUpdateQuery = `UPDATE vastudents SET ${setClauses.join(", ")} WHERE id = ?`;
-    await executeQuery({ query: firstUpdateQuery, values });
+    await prisma.vastudents.update({ where: { id: studentId }, data });
 
     return res.status(200).json({ success: true, message: "Student updated successfully" });
   } catch (error) {

@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -15,28 +15,25 @@ export default async function handler(req, res) {
       });
     }
 
-    const query = `
-            INSERT INTO va_audit_logs 
-            (action_type, performed_by, details, resource_type, resource_id)
-            VALUES (?, ?, ?, ?, ?)
-        `;
-
-    // Convert details object to JSON string if it exists
-    const jsonDetails = details ? JSON.stringify(details) : null;
-
-    const values = [action_type, performed_by, jsonDetails, resource_type || null, resource_id || null];
-
-    const results = await executeQuery({ query, values });
+    const result = await prisma.va_audit_logs.create({
+      data: {
+        action_type,
+        performed_by,
+        details: details ?? null,
+        resource_type: resource_type || null,
+        resource_id: resource_id == null ? null : String(resource_id),
+      },
+    });
 
     return res.status(201).json({
       message: "Audit log entry created successfully",
-      id: results.insertId,
+      id: Number(result.id),
     });
   } catch (error) {
     console.error("Error in audit log creation:", error);
     return res.status(500).json({
       message: "Internal server error",
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }

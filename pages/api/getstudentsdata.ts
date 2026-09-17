@@ -3,8 +3,15 @@ This function is called from students.tsx (Students link).
 student registration form.
 */
 
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { normalizeDateValue } from "@/utils/date-normalizers";
+
+type StudentReportRow = Record<string, string | number | bigint | Date | null>;
+
+const serializeStudentRow = (row: StudentReportRow): Record<string, string | number | Date | null> =>
+  Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [key, typeof value === "bigint" ? value.toString() : value])
+  );
 
 const ALLOWED_CODES = new Set([
   "ENROLLED",
@@ -101,14 +108,16 @@ export default async function handler(req, res) {
                     ORDER BY last_edited DESC;
                   `;
 
-    let students = await executeQuery({ query });
+    let students = await prisma.$queryRawUnsafe<StudentReportRow[]>(query);
 
-    students = students.map((s) => ({
-      ...s,
-      enrollment_status: toCode(s.enrollment_status),
-      age: normalizeDateValue(s.age),
-      registration_date: normalizeDateValue(s.registration_date),
-    }));
+    students = students.map((s) =>
+      serializeStudentRow({
+        ...s,
+        enrollment_status: toCode(s.enrollment_status),
+        age: normalizeDateValue(s.age),
+        registration_date: normalizeDateValue(s.registration_date),
+      })
+    );
     res.status(200).json({ students });
   } catch (error) {
     console.error("Error fetching students data:", error);

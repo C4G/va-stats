@@ -1,7 +1,14 @@
 // FILE CONTENTS: MySQL Courses table query
 
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { normalizeBatchDates } from "@/utils/date-normalizers";
+
+type BatchReportRow = Record<string, string | number | bigint | Date | null>;
+
+const serializeBatchReportRow = (row: BatchReportRow): Record<string, string | number | Date | null> =>
+  Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [key, typeof value === "bigint" ? Number(value) : value])
+  );
 
 export default async function handler(req, res) {
   try {
@@ -213,8 +220,8 @@ export default async function handler(req, res) {
 
     query += " ORDER BY STR_TO_DATE(coursestart, '%Y-%m-%d') DESC";
 
-    const data = await executeQuery({ query, values });
-    const normalized = normalizeBatchDates(Array.from(data));
+    const data = await prisma.$queryRawUnsafe<BatchReportRow[]>(query, ...values);
+    const normalized = normalizeBatchDates(data.map(serializeBatchReportRow));
     res.status(200).json({ batches: normalized });
   } catch (error) {
     res.status(500).json({ error: error.message });

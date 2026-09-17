@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   const body = req.body;
@@ -8,9 +8,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, message: "batch_id is required." });
     }
 
-    const students = await executeQuery({
-      query: "SELECT s.id FROM vastudents s JOIN vastudent_to_batch sb ON s.id = sb.student_id WHERE sb.batch_id = ?",
-      values: [body.batch_id],
+    const students = await prisma.vastudent_to_batch.findMany({
+      where: { batch_id: body.batch_id },
+      select: { student_id: true },
     });
 
     if (students.length === 0) {
@@ -20,21 +20,22 @@ export default async function handler(req, res) {
       });
     }
 
-    // Bulk insert for better performance - insert all students at once
-    const placeholders = students.map(() => "(?, ?, ?, ?, ?, ?, ?)").join(",");
-    const values = students.flatMap((student) => [
-      student.id,
-      body.batch_id,
-      body.assignment_name,
-      body.assignment_type,
-      body.assignment_weight,
-      0,
-      body.max_marks,
-    ]);
-
-    await executeQuery({
-      query: `INSERT INTO va_grades (student_id, batch_id, assignment_name, assignment_type, assignment_weight, grade, max_marks) VALUES ${placeholders}`,
-      values,
+    await prisma.va_grades.createMany({
+      data: students.flatMap(({ student_id }) =>
+        student_id == null
+          ? []
+          : [
+              {
+                student_id,
+                batch_id: body.batch_id,
+                assignment_name: body.assignment_name,
+                assignment_type: body.assignment_type,
+                assignment_weight: body.assignment_weight,
+                grade: 0,
+                max_marks: body.max_marks,
+              },
+            ]
+      ),
     });
 
     res.status(200).json({ success: true });

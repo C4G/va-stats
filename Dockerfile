@@ -22,6 +22,10 @@ COPY prisma.config.ts ./prisma.config.ts
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
     pnpm install --frozen-lockfile --ignore-scripts --store-dir=/pnpm/store
 
+# The install above intentionally skips lifecycle scripts, so generate the
+# typed client explicitly before compiling the application.
+RUN pnpm prisma generate
+
 # Copy source code
 COPY . .
 

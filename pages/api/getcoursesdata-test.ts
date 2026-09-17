@@ -1,22 +1,10 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
-export default async function handler(req, res) {
+export default async function handler(_req, res) {
   try {
-    /* ---------------- DATA MODIFICATION SECTION --------------- */
-    const query = "SELECT course FROM vacourses";
-    // const query = SELECT JSON_ARRAYAGG(JSON_OBJECT('course', course)) from vacourses;
-    // const query = SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('course', course)),']') FROM vacourses;
-    // const query selects a JSON object containing the course field.
-    // const query = "SELECT json_object('course', course) FROM vacourses";
-
-    const values: unknown[] = [];
-    const data = await executeQuery({
-      query,
-      values,
-    });
-    res.status(200).json({ courses: data });
-    // res.send(data);   // TRY
+    const courses = await prisma.vacourses.findMany({ select: { course: true } });
+    res.status(200).json({ courses });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
 }

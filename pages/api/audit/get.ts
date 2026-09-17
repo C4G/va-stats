@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -17,77 +17,48 @@ export default async function handler(req, res) {
       offset = 0,
     } = req.query;
 
-    let query = "SELECT * FROM va_audit_logs WHERE 1=1";
-    const values: unknown[] = [];
+    const parsedLimit = Number(limit);
+    const parsedOffset = Number(offset);
+    const where = {
+      ...(typeof action_type === "string" ? { action_type } : {}),
+      ...(typeof performed_by === "string" ? { performed_by } : {}),
+      ...(typeof resource_type === "string" ? { resource_type } : {}),
+      ...(typeof resource_id === "string" ? { resource_id } : {}),
+      ...(typeof start_date === "string" || typeof end_date === "string"
+        ? {
+            performed_at: {
+              ...(typeof start_date === "string" ? { gte: new Date(start_date) } : {}),
+              ...(typeof end_date === "string" ? { lte: new Date(end_date) } : {}),
+            },
+          }
+        : {}),
+    };
 
-    // Add filters if provided
-    if (action_type) {
-      query += " AND action_type = ?";
-      values.push(action_type);
-    }
+    const [total, mainResults] = await Promise.all([
+      prisma.va_audit_logs.count({ where }),
+      prisma.va_audit_logs.findMany({
+        where,
+        orderBy: { performed_at: "desc" },
+        skip: Number.isFinite(parsedOffset) ? parsedOffset : 0,
+        take: Number.isFinite(parsedLimit) ? parsedLimit : 50,
+      }),
+    ]);
 
-    if (performed_by) {
-      query += " AND performed_by = ?";
-      values.push(performed_by);
-    }
-
-    if (resource_type) {
-      query += " AND resource_type = ?";
-      values.push(resource_type);
-    }
-
-    if (resource_id) {
-      query += " AND resource_id = ?";
-      values.push(resource_id);
-    }
-
-    if (start_date) {
-      query += " AND performed_at >= ?";
-      values.push(new Date(start_date));
-    }
-
-    if (end_date) {
-      query += " AND performed_at <= ?";
-      values.push(new Date(end_date));
-    }
-
-    // Add ordering and pagination
-    query += " ORDER BY performed_at DESC LIMIT ? OFFSET ?";
-    values.push(parseInt(limit), parseInt(offset));
-
-    // Get total count for pagination
-    const countQuery = query.replace("SELECT *", "SELECT COUNT(*) as total").split("LIMIT")[0];
-
-    const countResults = await executeQuery({
-      query: countQuery,
-      values: values.slice(0, -2),
-    });
-
-    // Execute main query
-    const mainResults = await executeQuery({
-      query,
-      values,
-    });
-
-    // Parse JSON details field
-    const formattedResults = mainResults.map((row) => ({
-      ...row,
-      details: row.details,
-    }));
+    const formattedResults = mainResults.map((row) => ({ ...row, id: Number(row.id) }));
 
     return res.status(200).json({
-      total: countResults[0].total,
+      total,
       data: formattedResults,
       pagination: {
-        limit: parseInt(limit),
-        offset: parseInt(offset),
+        limit: Number.isFinite(parsedLimit) ? parsedLimit : 50,
+        offset: Number.isFinite(parsedOffset) ? parsedOffset : 0,
       },
     });
   } catch (error) {
     console.error("Error in audit log retrieval:", error);
     return res.status(500).json({
       message: "Internal server error",
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
     });
   }
 }

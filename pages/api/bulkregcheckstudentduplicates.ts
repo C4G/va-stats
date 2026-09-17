@@ -3,7 +3,7 @@ This function is called from bulkstudentregistration.tsx (Bulk Registration link
 student bulk registration checking for duplicates in the database.
 */
 
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   try {
@@ -11,9 +11,6 @@ export default async function handler(req, res) {
     // console.log("body received in bulkregcheckstudentduplicates API:", req.body);
 
     // console.log("Received rows for duplicate check:", rows);
-
-    const dupConditions: string[] = [];
-    const dupValues: unknown[] = [];
 
     if (!Array.isArray(rows) || rows.length === 0) {
       return res.status(200).json({
@@ -28,36 +25,22 @@ export default async function handler(req, res) {
     // you can check this by running
     // SHOW INDEX FROM vastats.vastudents;
     // and looking for the unique key constraint
-    rows.forEach((row) => {
-      dupConditions.push("(gender = ? AND age = ? AND phone_number = ?)");
-      dupValues.push(row.gender || null, row.age || null, row.phone_number || null);
+    const duplicates = await prisma.vastudents.findMany({
+      where: {
+        OR: rows.map((row) => ({
+          gender: row.gender || null,
+          age: row.age ? new Date(row.age) : null,
+          phone_number: row.phone_number ? BigInt(row.phone_number) : null,
+        })),
+      },
+      select: { id: true, gender: true, age: true, phone_number: true },
     });
-
-    const whereClause = dupConditions.join(" OR ");
-    // console.log("WHERE clause for duplicate check:", whereClause);
-
-    const query = `
-    SELECT 
-      id, gender, cast(age as char) as age, phone_number 
-    FROM 
-      vastudents 
-    WHERE 
-      ${whereClause}
-    `;
-
-    console.log("Executing duplicate check query:", query);
-    console.log("With values:", dupValues);
-
-    const duplicates = await executeQuery({
-      query: query,
-      values: dupValues,
-    });
-
-    console.log("Duplicate check query result:", duplicates);
 
     // compare query findings with input data
     // updating row._errors._database_duplicates with any error messages if duplicates are found
-    const duplicatesSet = new Set(duplicates.map((dup) => `${dup.gender}|${dup.age}|${dup.phone_number}`));
+    const duplicatesSet = new Set(
+      duplicates.map((dup) => `${dup.gender}|${dup.age?.toISOString().slice(0, 10)}|${dup.phone_number}`)
+    );
     console.log("Set of existing students for duplicate check:", duplicatesSet);
 
     rows.forEach((row) => {

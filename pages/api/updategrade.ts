@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req, res) {
   if (req.method === "PATCH") {
@@ -14,19 +14,19 @@ export default async function handler(req, res) {
 
     try {
       // Get current grade and max marks
-      const rows = await executeQuery({
-        query: "SELECT grade, max_marks FROM va_grades WHERE batch_id = ? AND student_id = ? AND assignment_name = ?",
-        values: [batchId, studentId, assignmentName],
+      const row = await prisma.va_grades.findFirst({
+        where: { batch_id: batchId, student_id: studentId, assignment_name: assignmentName },
+        select: { grade: true, max_marks: true },
       });
 
-      if (rows.length === 0) {
+      if (!row) {
         return res.status(404).json({
           success: false,
           message: `Grade record not found for batchId: ${batchId}, studentId: ${studentId}, assignment: ${assignmentName}`,
         });
       }
 
-      const { grade, max_marks } = rows[0];
+      const { grade, max_marks } = row;
       const maxMarks = typeof max_marks === "number" ? max_marks : Number(max_marks);
 
       // Validate grade range
@@ -39,9 +39,9 @@ export default async function handler(req, res) {
 
       // Only update if the grade has actually changed
       if (grade !== newGrade) {
-        await executeQuery({
-          query: "UPDATE va_grades SET grade = ? WHERE batch_id = ? AND student_id = ? AND assignment_name = ?",
-          values: [newGrade, batchId, studentId, assignmentName],
+        await prisma.va_grades.updateMany({
+          where: { batch_id: batchId, student_id: studentId, assignment_name: assignmentName },
+          data: { grade: newGrade },
         });
       }
 

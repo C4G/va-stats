@@ -3,17 +3,14 @@ This function is called from the Courses page (/courses.tsx).
 It executes the query that SHOWS CURRENT COURSES (?CURRENT BATCHES).
 */
 
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export default async function assetHandler(req, res) {
   const { method } = req;
   switch (method) {
     case "GET":
       try {
-        const result = await executeQuery({
-          query: "SELECT * FROM vabatches",
-          values: [],
-        });
+        const result = await prisma.vabatches.findMany();
         res.json(result);
         return result;
       } catch (e) {

@@ -1,5 +1,13 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { parseCourseDays, isClassDay } from "@/utils/course-days";
+
+type BatchDetailValue = string | number | bigint | boolean | Date | null;
+type BatchDetailRow = Record<string, BatchDetailValue>;
+
+const serializeBatchDetailRow = (row: BatchDetailRow): Record<string, string | number | boolean | Date | null> =>
+  Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [key, typeof value === "bigint" ? value.toString() : value])
+  );
 
 // Format date as YYYY-MM-DD without timezone conversion
 function formatDate(date) {
@@ -56,6 +64,11 @@ function generateDateArray(startDate, endDate, courseDays) {
 
 export default async function handler(req, res) {
   const { batch_id } = req.body;
+  const batchId = Number(batch_id);
+
+  if (!Number.isInteger(batchId) || batchId <= 0) {
+    return res.status(400).json({ error: "Invalid batch_id" });
+  }
 
   try {
     const studentsQuery = `
@@ -102,27 +115,17 @@ export default async function handler(req, res) {
     // Execute all queries in parallel for better performance
     const [studentsData, gradesData, attendanceData, courseAndBatchNameData, remarksAndCommenterData] =
       await Promise.all([
-        executeQuery({
-          query: studentsQuery,
-          values: [batch_id],
-        }),
-        executeQuery({
-          query: gradesQuery,
-          values: [batch_id],
-        }),
-        executeQuery({
-          query: attendanceQuery,
-          values: [batch_id],
-        }),
-        executeQuery({
-          query: courseAndBatchNameQuery,
-          values: [batch_id],
-        }),
-        executeQuery({
-          query: remarksAndCommentersQuery,
-          values: [batch_id],
-        }),
+        prisma.$queryRawUnsafe<BatchDetailRow[]>(studentsQuery, batchId),
+        prisma.$queryRawUnsafe<BatchDetailRow[]>(gradesQuery, batchId),
+        prisma.$queryRawUnsafe<BatchDetailRow[]>(attendanceQuery, batchId),
+        prisma.$queryRawUnsafe<BatchDetailRow[]>(courseAndBatchNameQuery, batchId),
+        prisma.$queryRawUnsafe<BatchDetailRow[]>(remarksAndCommentersQuery, batchId),
       ]);
+
+    const serializedStudentsData = studentsData.map(serializeBatchDetailRow);
+    const serializedGradesData = gradesData.map(serializeBatchDetailRow);
+    const serializedCourseAndBatchNameData = courseAndBatchNameData.map(serializeBatchDetailRow);
+    const serializedRemarksAndCommenterData = remarksAndCommenterData.map(serializeBatchDetailRow);
 
     let attendance: Array<{ student_id: unknown; date: string; is_present: number }> = [];
     if (attendanceData.length > 0 && studentsData.length > 0) {
@@ -140,7 +143,7 @@ export default async function handler(req, res) {
       });
 
       // Generate attendance records efficiently
-      studentsData.forEach((student) => {
+      serializedStudentsData.forEach((student) => {
         dateArray.forEach((date) => {
           // Include all dates (past, present, and future) for admin view
           // Attendance calculation will filter to today in frontend
@@ -155,20 +158,20 @@ export default async function handler(req, res) {
     }
 
     res.status(200).json({
-      students: studentsData,
-      grades: gradesData,
+      students: serializedStudentsData,
+      grades: serializedGradesData,
       attendance: attendance,
-      coursename: courseAndBatchNameData[0].coursename,
-      batch: courseAndBatchNameData[0].batch,
-      instructor: courseAndBatchNameData[0].instructor,
-      PM: courseAndBatchNameData[0].PM, // ADD THIS
-      TA: courseAndBatchNameData[0].TA,
-      currency: courseAndBatchNameData[0].currency,
-      dataentry: courseAndBatchNameData[0].dataentry,
-      coursedays: courseAndBatchNameData[0].coursedays,
-      coursestart: courseAndBatchNameData[0].coursestart,
-      courseend: courseAndBatchNameData[0].courseend,
-      remarksAndCommenterData,
+      coursename: serializedCourseAndBatchNameData[0].coursename,
+      batch: serializedCourseAndBatchNameData[0].batch,
+      instructor: serializedCourseAndBatchNameData[0].instructor,
+      PM: serializedCourseAndBatchNameData[0].PM, // ADD THIS
+      TA: serializedCourseAndBatchNameData[0].TA,
+      currency: serializedCourseAndBatchNameData[0].currency,
+      dataentry: serializedCourseAndBatchNameData[0].dataentry,
+      coursedays: serializedCourseAndBatchNameData[0].coursedays,
+      coursestart: serializedCourseAndBatchNameData[0].coursestart,
+      courseend: serializedCourseAndBatchNameData[0].courseend,
+      remarksAndCommenterData: serializedRemarksAndCommenterData,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -1,39 +1,21 @@
 import { passkey } from "@better-auth/passkey";
+import { prismaAdapter } from "@better-auth/prisma-adapter";
+import type { Prisma } from "@prisma/client";
 import { betterAuth } from "better-auth";
 import { APIError } from "better-auth/api";
 import { customSession } from "better-auth/plugins";
-import { createPool } from "mysql2/promise";
+import { prisma } from "./prisma";
 import { sendAuthEmail } from "./auth-email";
 
-const database = createPool({
-  host: process.env.MYSQL_HOST,
-  port: Number(process.env.MYSQL_PORT ?? 3306),
-  database: process.env.MYSQL_DATABASE,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  timezone: "Z",
-  connectionLimit: 10,
-});
-
-type VaUser = {
-  id: number;
-  name: string | null;
-  role: string | null;
-};
+type VaUser = Prisma.vausersGetPayload<{
+  select: { id: true; name: true; role: true };
+}>;
 
 async function findVaUser(email: string): Promise<VaUser | null> {
-  const [rows] = await database.execute("SELECT id, name, role FROM vausers WHERE LOWER(email) = LOWER(?) LIMIT 1", [
-    email,
-  ]);
-
-  if (!Array.isArray(rows) || rows.length === 0) return null;
-  const row = rows[0];
-  if (!row || typeof row !== "object" || !("id" in row)) return null;
-  return {
-    id: Number(row.id),
-    name: typeof row.name === "string" ? row.name : null,
-    role: typeof row.role === "string" ? row.role : null,
-  };
+  return prisma.vausers.findFirst({
+    where: { email },
+    select: { id: true, name: true, role: true },
+  });
 }
 
 const baseURL = process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_BASE_URL;
@@ -43,7 +25,7 @@ export const auth = betterAuth({
   appName: "Vision-Aid STATS",
   baseURL,
   secret: process.env.BETTER_AUTH_SECRET,
-  database,
+  database: prismaAdapter(prisma, { provider: "mysql", transaction: true }),
   session: {
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60,

@@ -1,4 +1,4 @@
-import { executeQuery } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "@/lib/server-auth";
 
 export default async function handler(req, res) {
@@ -30,24 +30,23 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Invalid student ID" });
       }
 
-      const results = await executeQuery({
-        query: `
-          SELECT 
-            tr.id,
-            tr.remark,
-            tr.created_at,
-            tr.updated_at,
-            u.name as user_name,
-            u.email as user_email
-          FROM telecaller_remarks tr
-          LEFT JOIN vausers u ON tr.user_id = u.id
-          WHERE tr.student_id = ?
-          ORDER BY tr.created_at DESC
-        `,
-        values: [studentId],
+      const results = await prisma.telecaller_remarks.findMany({
+        where: { student_id: studentId },
+        select: {
+          id: true,
+          remark: true,
+          created_at: true,
+          updated_at: true,
+          vausers: { select: { name: true, email: true } },
+        },
+        orderBy: { created_at: "desc" },
       });
 
-      return res.status(200).json(results || []);
+      return res
+        .status(200)
+        .json(
+          results.map(({ vausers, ...result }) => ({ ...result, user_name: vausers.name, user_email: vausers.email }))
+        );
     } catch (error) {
       console.error("Error fetching telecaller remarks:", error);
       return res.status(500).json({
@@ -72,28 +71,20 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: "User email not found in session" });
       }
 
-      const performerData = await executeQuery({
-        query: "SELECT id FROM vausers WHERE email = ?",
-        values: [performerEmail],
-      });
-
-      const userId = performerData?.[0]?.id ?? null;
+      const performer = await prisma.vausers.findUnique({ where: { email: performerEmail }, select: { id: true } });
+      const userId = performer?.id ?? null;
       if (!userId) {
         return res.status(404).json({ error: "User not found" });
       }
 
       // Insert the new remark
-      const insertResult = await executeQuery({
-        query: `
-          INSERT INTO telecaller_remarks (student_id, user_id, remark, created_at, updated_at)
-          VALUES (?, ?, ?, NOW(), NOW())
-        `,
-        values: [parseInt(student_id), userId, remark],
+      const insertResult = await prisma.telecaller_remarks.create({
+        data: { student_id: parseInt(student_id), user_id: userId, remark },
       });
 
       return res.status(201).json({
         success: true,
-        id: insertResult.insertId,
+        id: insertResult.id,
         message: "Telecaller remark added successfully",
       });
     } catch (error) {
