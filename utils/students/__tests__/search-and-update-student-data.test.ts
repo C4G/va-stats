@@ -1,4 +1,5 @@
 import { searchAndUpdateStudentData } from "../search-and-update-student-data";
+import { vi } from "vitest";
 
 describe("searchAndUpdateStudentData", () => {
   it("populates textarea fields when an existing student is loaded", async () => {
@@ -12,7 +13,7 @@ describe("searchAndUpdateStudentData", () => {
 
     Object.defineProperty(globalThis, "fetch", {
       configurable: true,
-      value: jest.fn(() =>
+      value: vi.fn(() =>
         Promise.resolve({
           ok: true,
           json: () =>
