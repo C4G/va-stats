@@ -25,4 +25,4 @@ The development styling regression was traced to `postcss.config.ts`: Next's Pos
 - Headless Chrome rendered the sign-in page and its sign-in controls. Authenticated local testing subsequently covered sign-in/session handling, report generation/download, and assessment-form updates.
 - After restarting the local dev server with the loader-supported PostCSS config, the sign-in page contained generated Tailwind selectors (`.grid`, `.min-h-screen`, and `.rounded-xl`) and rendered with styling.
 - The final Jest run passed: 1 suite and 5 tests.
-- The image was built and exercised locally, but it was not pushed or deployed through GitHub Actions/Coolify. Task 8.3 remains open until the normal staging deployment has an authorized commit and deployment credentials.
+- The image was built and exercised locally. The migration was subsequently merged as commit `48900b0` in PR #8 and, per the rollout record, pushed and deployed to the testing environment.
