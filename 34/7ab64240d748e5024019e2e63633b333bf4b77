@@ -1,0 +1,21 @@
+openspec/changes/archive/2026-09-20-migrate-javascript-to-typescript/tasks.md
+  s_1629ce917e70b0::t_72a7b50a11877b 54
+openspec/changes/archive/2026-09-20-migrate-javascript-to-typescript/validation.md
+  s_1629ce917e70b0::t_da327f63dde064 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "347ab64240d748e5024019e2e63633b333bf4b77",
+  "prompts": {},
+  "sessions": {
+    "s_1629ce917e70b0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c1a2-4a63-7e80-938b-251faf53c820",
+        "model": "unknown"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
