@@ -53,7 +53,7 @@ export function DataGrid({ title, rowData, onGridReady, onCellKeyDown, exitTarge
   const tabToNextCell = (params: TabToNextCellParams<RowData>) => {
     const { previousCellPosition, backwards, api } = params;
 
-    if (!previousCellPosition) return null;
+    if (!previousCellPosition) return false;
 
     const rowCount = rowData.length;
 
@@ -67,11 +67,11 @@ export function DataGrid({ title, rowData, onGridReady, onCellKeyDown, exitTarge
         nextEl?.focus();
       }, 0);
 
-      return null;
+      return false;
     }
 
     const firstColumn = api.getAllDisplayedColumns()[0];
-    if (!firstColumn) return null;
+    if (!firstColumn) return false;
 
     return {
       rowIndex: nextRowIndex,

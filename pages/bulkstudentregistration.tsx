@@ -4,9 +4,7 @@ import Navbar from "../components/Navbar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "@/lib/auth-client-compat";
 import GlobalSnackbar from "@/components/GlobalSnackbar";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
-import { AgGridReact } from "ag-grid-react";
+import dynamic from "next/dynamic";
 import { useGetStudentColumnDefs } from "../utils/students/use-get-student-column-defs-bulk";
 import { smartComparator } from "@/utils/grid-comparators";
 import { getRowStyle } from "@/utils/get-row-style";
@@ -15,7 +13,15 @@ import Link from "next/link";
 import tableStyles from "../styles/Table.module.css";
 import PageTitleWithUserGuideLink from "@/components/PageTitleWithUserGuideLink";
 import type { AlertColor } from "@mui/material/Alert";
+import { isGridEditing, shouldStartCellEditing, shouldSuppressSpaceNavigation } from "@/utils/grid-editing";
+
+const AgGridReact = dynamic(() => import("ag-grid-react").then((mod) => mod.AgGridReact), { ssr: false });
+
 const getElementById = (id: string): unknown => document.getElementById(id);
+
+export async function getServerSideProps() {
+  return { props: {} };
+}
 
 type ValidationError = {
   row;
@@ -739,10 +745,11 @@ export default function Page() {
                     },
                   },
                   suppressKeyboardEvent: (params) => {
-                    const { event, editing } = params;
+                    const { event, api, editing } = params;
+                    const gridIsEditing = isGridEditing(editing, api);
 
                     // Prevent default scroll when Space is pressed
-                    if (event.key === " " && !editing) {
+                    if (shouldSuppressSpaceNavigation(event.key, gridIsEditing)) {
                       event.preventDefault();
                       return true;
                     }
@@ -759,9 +766,10 @@ export default function Page() {
                 onGridReady={onGridReady}
                 onCellKeyDown={(params) => {
                   const { event, api, node, column, colDef, editing } = params;
+                  const gridIsEditing = isGridEditing(editing, api);
 
                   // when Space or Enter is pressed, start editing
-                  if (!editing && colDef.editable && (event.key === " " || event.key === "Enter")) {
+                  if (shouldStartCellEditing(event.key, colDef.editable, gridIsEditing)) {
                     api.startEditingCell({
                       rowIndex: node.rowIndex,
                       colKey: column.getColId(),

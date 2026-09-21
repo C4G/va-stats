@@ -11,8 +11,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
 import type { CellValueChangedEvent, ColDef, ICellRendererParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import React, { useCallback, useEffect, useState } from "react";

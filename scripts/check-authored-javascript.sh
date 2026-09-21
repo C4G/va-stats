@@ -8,10 +8,13 @@ mapfile -t javascript_files < <(
     -path "$repo_root/node_modules" -prune -o \
     -path "$repo_root/.git" -prune -o \
     -path "$repo_root/.next" -prune -o \
+    -path "$repo_root/coverage" -prune -o \
     -type f \( -name '*.js' -o -name '*.jsx' \) \
     ! -path "$repo_root/next.config.js" \
+    ! -path "$repo_root/serwist.config.js" \
     ! -path "$repo_root/postcss.config.js" \
     ! -path "$repo_root/public/sw.js" \
+    ! -path "$repo_root/public/swe-worker-*.js" \
     ! -path "$repo_root/public/workbox-*.js" \
     -print | sort
 )
@@ -33,6 +36,7 @@ done < <(
     -path "$repo_root/node_modules" -prune -o \
     -path "$repo_root/.git" -prune -o \
     -path "$repo_root/.next" -prune -o \
+    -path "$repo_root/coverage" -prune -o \
     -type f \( -name '*.ts' -o -name '*.tsx' \) -print | sort
 )
 

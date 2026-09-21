@@ -1,6 +1,4 @@
 // @ts-nocheck
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
 import { smartComparator } from "@/utils/grid-comparators";
 import { useSession } from "@/lib/auth-client-compat";
@@ -20,6 +18,7 @@ import { ENROLLMENT_STATUS } from "../utils/enrollment";
 import { useGetStudentColumnDefs } from "../utils/students/use-get-student-column-defs";
 import { toDisplay } from "../utils/types/date";
 import { normalizeDateValue, normalizeStudentDates } from "@/utils/date-normalizers";
+import { isGridEditing, shouldStartCellEditing, shouldSuppressSpaceNavigation } from "@/utils/grid-editing";
 import PageTitleWithUserGuideLink from "@/components/PageTitleWithUserGuideLink";
 const getElementById = (id: string): unknown => document.getElementById(id);
 
@@ -551,10 +550,11 @@ const Students = () => {
                 cellRenderer,
                 cellClass: (params) => (params.colDef.editable === true ? styles.gridCellEditable : undefined),
                 suppressKeyboardEvent: (params) => {
-                  const { event, editing } = params;
+                  const { event, api, editing } = params;
+                  const gridIsEditing = isGridEditing(editing, api);
 
                   // Prevent default scroll when Space is pressed
-                  if (event.key === " " && !editing) {
+                  if (shouldSuppressSpaceNavigation(event.key, gridIsEditing)) {
                     event.preventDefault();
                     return true;
                   }
@@ -572,9 +572,10 @@ const Students = () => {
               onGridReady={onGridReady}
               onCellKeyDown={(params) => {
                 const { event, api, node, column, colDef, editing } = params;
+                const gridIsEditing = isGridEditing(editing, api);
 
                 // when Space or Enter is pressed, start editing
-                if (!editing && colDef.editable && (event.key === " " || event.key === "Enter")) {
+                if (shouldStartCellEditing(event.key, colDef.editable, gridIsEditing)) {
                   api.startEditingCell({
                     rowIndex: node.rowIndex,
                     colKey: column.getColId(),

@@ -120,7 +120,7 @@ const Navbar = ({ user_role, className }: { user_role?: string | null; className
   };
 
   return (
-    <header style={{ backgroundColor: "white" }}>
+    <header className="site-header" style={{ backgroundColor: "white" }}>
       <Head>
         <title>VisionAid</title>
         <meta

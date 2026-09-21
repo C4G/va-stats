@@ -41,8 +41,6 @@ import GlobalSnackbar from "@/components/GlobalSnackbar";
 import { exportToCsv } from "@/utils/export-to-csv";
 import { mapAttendanceDataToCsv } from "@/utils/map-attendance-data-to-csv";
 import { convertNumberToYesNo } from "@/utils/students/convert-number-to-yes-no";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
 import { smartComparator } from "@/utils/grid-comparators";
 import {

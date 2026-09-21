@@ -28,7 +28,10 @@ const DEFAULTS_BY_KEY: Record<DropdownKey, readonly string[]> = {
 function normalizeKey(key: unknown): DropdownKey | null {
   if (typeof key !== "string") return null;
   const normalized = key.trim();
-  return SUPPORTED_DROPDOWN_KEYS.has(normalized as DropdownKey) ? (normalized as DropdownKey) : null;
+  for (const supportedKey of SUPPORTED_DROPDOWN_KEYS) {
+    if (supportedKey === normalized) return supportedKey;
+  }
+  return null;
 }
 
 function normalizeNonEmptyString(value: unknown): string | null {

@@ -20,6 +20,8 @@ public/workbox-*.js
 public/sw.js.map
 public/sw.js
 public/workbox-*.js.map
+public/swe-worker-*.js
+public/swe-worker-*.js.map
 
 # testing
 /coverage

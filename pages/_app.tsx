@@ -2,7 +2,12 @@
 // import Navbar from '../components/Navbar';
 
 import Head from "next/head";
+import { SerwistProvider } from "@serwist/next/react";
+import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions, themeQuartz } from "ag-grid-community";
 import "../styles/globals.css";
+
+ModuleRegistry.registerModules([AllCommunityModule]);
+provideGlobalGridOptions({ theme: themeQuartz });
 
 // Below required for NextUI components
 import * as React from "react";
@@ -25,7 +30,9 @@ const App = ({ Component, pageProps }) => (
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
     </Head>
-    <Component {...pageProps} />
+    <SerwistProvider swUrl="/sw.js" disable={process.env.NODE_ENV === "development"}>
+      <Component {...pageProps} />
+    </SerwistProvider>
   </>
 );
 

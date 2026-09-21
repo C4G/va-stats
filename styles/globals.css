@@ -288,6 +288,11 @@ header {
   padding-bottom: 4px;
 }
 
+.site-header {
+  position: relative;
+  z-index: 1000;
+}
+
 /*-------------- NAV BAR STYLES BEGIN -------------*/
 /* This is the light green banner at the top of most pages. */
 nav {
@@ -321,6 +326,7 @@ nav {
   top: 60px;
   transition: all 0.2s;
   width: 288px;
+  z-index: 1001;
 }
 
 a.textlogo {
