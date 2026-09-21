@@ -23,7 +23,8 @@
       }
     ],
     "strictNullChecks": true,
-    "allowJs": false
+    "allowJs": false,
+    "types": ["vitest/globals", "node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

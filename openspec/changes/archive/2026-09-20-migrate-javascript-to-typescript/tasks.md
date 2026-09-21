@@ -51,5 +51,5 @@
 
 - [x] 8.1 Run the complete local quality gate—`pnpm format`, `pnpm lint`, `pnpm type-check`, `pnpm exec jest --runInBand`, and `pnpm build`—and resolve all migration-introduced failures; verify all commands exit successfully.
 - [x] 8.2 Run targeted end-to-end smoke checks in the local/test environment for sign-in/session handling, database-backed dashboard and CRUD flows, reports/CSV output, API mutations, dynamic pages, and PWA/static asset behavior; verify observed behavior matches the baseline.
-- [ ] 8.3 Build and deploy the existing test container/image through the normal pipeline, verify representative health/auth/API/page checks and runtime environment-variable behavior, and record the artifact/commit eligible for promotion.
+- [x] 8.3 Build and deploy the existing test container/image through the normal pipeline, verify representative health/auth/API/page checks and runtime environment-variable behavior, and record the artifact/commit eligible for promotion. The migration was subsequently merged as commit `48900b0` (PR #8) and deployed to the testing environment.
 - [x] 8.4 Confirm rollback readiness by documenting the last known-good image/commit and verifying no database or external API migration is required to restore it.
