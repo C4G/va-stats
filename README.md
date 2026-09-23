@@ -92,6 +92,47 @@ with Google can add a password and passkeys from the Account page. New password
 registrations require email verification, and Resend is also used for password
 resets.
 
+### Browser end-to-end test
+
+The Playwright login test uses a disposable local MySQL database and the local
+app. Create an empty database named `va_stats_e2e` and a local database user
+with access to it. Set the values below in the shell where you run the commands;
+do not point these values at staging or production:
+
+```bash
+export MYSQL_HOST=127.0.0.1
+export MYSQL_PORT=3306
+export MYSQL_DATABASE=va_stats_e2e
+export MYSQL_USER=your_local_user
+export MYSQL_PASSWORD=your_local_password
+export DATABASE_URL=mysql://your_local_user:your_local_password@127.0.0.1:3306/va_stats_e2e
+export BETTER_AUTH_SECRET=e2e-local-only-secret-at-least-32-chars
+export BETTER_AUTH_URL=http://localhost:3000
+```
+
+Apply the Prisma migrations, seed the test records, and start the app in one
+terminal:
+
+```bash
+pnpm prisma migrate deploy
+pnpm e2e:seed
+pnpm dev
+```
+
+In another terminal, install the browser once and run the login test:
+
+```bash
+pnpm exec playwright install chromium
+E2E_BASE_URL=http://localhost:3000 pnpm e2e
+```
+
+The seed is idempotent and only accepts loopback MySQL hosts with database
+names `ci`, `*_e2e`, or `*_test`. It creates one user per staff role, a course,
+a batch, and a student assigned to that batch. The test signs in as the seeded
+administrator using `e2e-administrator@va-stats.test` and password
+`E2E-only-passphrase-2026`. These credentials are for disposable test databases
+only.
+
 ### One image, two origins
 
 `NEXT_PUBLIC_BASE_URL` differs per environment, and Next.js normally inlines

@@ -25,6 +25,8 @@ public/swe-worker-*.js.map
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
