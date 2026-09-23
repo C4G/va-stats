@@ -11,5 +11,8 @@ const databaseUrl =
 
 export default defineConfig({
   schema: "prisma",
+  migrations: {
+    seed: "node --experimental-strip-types scripts/seed-e2e.ts",
+  },
   ...(databaseUrl ? { datasource: { url: databaseUrl } } : {}),
 });

@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Run lint
         run: pnpm lint
 
@@ -54,6 +57,8 @@ jobs:
           # erroring at startup.
           NEXTAUTH_SECRET: ci-dummy-secret
           JWT_SECRET: ci-dummy-secret
+          BETTER_AUTH_SECRET: ci-e2e-only-secret-012345678901234567890123
+          BETTER_AUTH_URL: http://localhost:3000
           MYSQL_HOST: localhost
           MYSQL_DATABASE: ci
           MYSQL_USER: ci
@@ -84,6 +89,23 @@ jobs:
             docker compose -p "va-stats-pr-${PR_NUMBER}" logs va-stats-app
             exit 1
           }
+
+      - name: Seed the disposable CI database
+        env:
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3307
+          MYSQL_DATABASE: ci
+          MYSQL_USER: ci
+          MYSQL_PASSWORD: ci
+        run: |
+          pnpm e2e:seed
+          pnpm e2e:seed
+
+      - name: Run Playwright end-to-end tests
+        env:
+          CI: true
+          E2E_BASE_URL: http://localhost:3000
+        run: pnpm e2e
 
       - name: Clean up
         if: always()
