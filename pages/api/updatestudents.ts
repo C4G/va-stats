@@ -1,9 +1,11 @@
 // pages/api/updatestudents.ts
 import type { Prisma } from "@prisma/client";
+import { YesNo } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 const ALLOWED_ENROLLMENT = new Set([
   null,
+  "AVAILABLE",
   "ENROLLED",
   "NO_RESPONSE_SW_OFF",
   "FOLLOW_UP",
@@ -15,6 +17,7 @@ const ALLOWED_ENROLLMENT = new Set([
 
 const MAP_LABEL_TO_CODE = new Map([
   ["Unassigned", null],
+  ["Available", "AVAILABLE"],
   ["Enrolled", "ENROLLED"],
   ["No respond/ switched off", "NO_RESPONSE_SW_OFF"],
   ["Follow up", "FOLLOW_UP"],
@@ -59,6 +62,8 @@ const WHITELIST = [
   "registration_date",
 ];
 
+const YES_NO_FIELDS = new Set(["id_proof", "disability_cert", "photo", "bank_details"]);
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ message: "Method not allowed" });
 
@@ -99,6 +104,16 @@ export default async function handler(req, res) {
           return res.status(400).json({ message: "Invalid enrollment_status" });
         }
         Object.assign(data, { enrollment_status: v });
+      } else if (YES_NO_FIELDS.has(key)) {
+        const raw = body[key];
+        const normalized = typeof raw === "string" ? raw.trim().toLowerCase() : raw;
+        if (normalized === "yes" || normalized === 1 || normalized === true) {
+          Object.assign(data, { [key]: YesNo.Yes });
+        } else if (normalized === "no" || normalized === 0 || normalized === false) {
+          Object.assign(data, { [key]: YesNo.No });
+        } else {
+          return res.status(400).json({ message: `${key} must be Yes or No` });
+        }
       } else {
         const raw = body[key] ?? null;
         Object.assign(data, { [key]: typeof raw === "string" ? raw.trim() : raw });
@@ -109,7 +124,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "No fields to update" });
     }
 
-    await prisma.vastudents.update({ where: { id: studentId }, data });
+    // Select only the ID: legacy rows may contain an empty MySQL enum value in
+    // a YesNo column, which Prisma cannot deserialize in the default full-row result.
+    await prisma.vastudents.update({ where: { id: studentId }, data, select: { id: true } });
 
     return res.status(200).json({ success: true, message: "Student updated successfully" });
   } catch (error) {

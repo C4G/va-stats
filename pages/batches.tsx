@@ -34,7 +34,7 @@ import { smartComparator } from "@/utils/grid-comparators";
 // FOR MAPPING VALUES to PM and dataentry dropdowns
 import DropdownMenuPm from "@/components/DropdownMenuPm";
 import DropdownMenuStaff from "@/components/DropdownMenuStaff";
-import GlobalSnackbar from "@/components/GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { exportToCsv } from "@/utils/export-to-csv";
 import PageTitleWithUserGuideLink from "@/components/PageTitleWithUserGuideLink";
@@ -48,6 +48,7 @@ export async function getServerSideProps() {
 }
 
 export default function Page() {
+  const notify = useNotification();
   // const res = null;
   useForm(); // Form reset
   const { data: session, status } = useSession();
@@ -87,8 +88,6 @@ export default function Page() {
   const isRevertingCellRef = useRef(false);
   const lastFocusedCell = useRef<unknown>(null);
   const editConfirmOpenRef = useRef(false);
-  const [message, setMessage] = useState("");
-  const [alertOpen, setAlertOpen] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState("NA");
   const [useMobileAutoSize, setUseMobileAutoSize] = useState(false);
   const [batchIdError, setBatchIdError] = useState("");
@@ -100,39 +99,40 @@ export default function Page() {
   }, []);
 
   /*--------------- UPDATE/DELETE BATCH BEGINS -------------------*/
-  const handleUpdateBatch = useCallback(async (editedBatch) => {
-    setContentLoading(true);
-    const response = await fetch("/api/updatebatches", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(editedBatch),
-    });
+  const handleUpdateBatch = useCallback(
+    async (editedBatch) => {
+      setContentLoading(true);
+      const response = await fetch("/api/updatebatches", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedBatch),
+      });
 
-    if (response.ok) {
-      // I had to move getpagedata out of useeffect so i could call it here (Spr 2023 team).
-      setMessage(`BatchId: ${editedBatch.id}, Batch: ${editedBatch.batch} Update Success!`);
-      setAlertOpen(true);
-      // getPageData will be called later when it's defined
-      setEditingId(null);
-      const focused = lastFocusedCell.current;
-      if (focused && gridRef.current?.api) {
-        const api = gridRef.current.api;
-        requestAnimationFrame(() => {
+      if (response.ok) {
+        // I had to move getpagedata out of useeffect so i could call it here (Spr 2023 team).
+        notify(`BatchId: ${editedBatch.id}, Batch: ${editedBatch.batch} Update Success!`, "success");
+        // getPageData will be called later when it's defined
+        setEditingId(null);
+        const focused = lastFocusedCell.current;
+        if (focused && gridRef.current?.api) {
+          const api = gridRef.current.api;
           requestAnimationFrame(() => {
-            api.setFocusedCell(focused.rowIndex, focused.colKey);
+            requestAnimationFrame(() => {
+              api.setFocusedCell(focused.rowIndex, focused.colKey);
+            });
           });
-        });
+        }
+      } else {
+        notify(`BatchId: ${editedBatch.id}, Batch: ${editedBatch.batch} Update Failed!`, "error");
+        console.error("Error updating the batch");
       }
-    } else {
-      setMessage(`BatchId: ${editedBatch.id}, Batch: ${editedBatch.batch} Update Failed!`);
-      setAlertOpen(true);
-      console.error("Error updating the batch");
-    }
-    setContentLoading(false);
-    setLoading(false);
-  }, []);
+      setContentLoading(false);
+      setLoading(false);
+    },
+    [notify]
+  );
 
   const onCellValueChanged = (params) => {
     if (!params?.data?.id) return;
@@ -252,19 +252,17 @@ export default function Page() {
         });
 
         if (response.ok) {
-          setMessage(`BatchId: ${batchID} Delete Success!`);
-          setAlertOpen(true);
+          notify(`BatchId: ${batchID} Delete Success!`, "success");
           await fetchBatchesData();
         } else {
-          setMessage(`BatchId: ${batchID} Delete Failed!`);
-          setAlertOpen(true);
+          notify(`BatchId: ${batchID} Delete Failed!`, "error");
           console.error("Error deleting the batch");
         }
       } finally {
         setContentLoading(false);
       }
     },
-    [fetchBatchesData]
+    [fetchBatchesData, notify]
   );
 
   const handleDelete = useCallback((props) => {
@@ -351,7 +349,7 @@ export default function Page() {
   const validateCheckedDays = (form) => {
     const checkedDays = form.querySelectorAll('input[name="coursedays"]:checked');
     if (checkedDays.length === 0) {
-      alert("Please select at least one class day!");
+      notify("Please select at least one class day!", "warning");
       return false;
     }
     return true;
@@ -364,7 +362,7 @@ export default function Page() {
       const startDate = new Date(courseStartValue);
       const endDate = new Date(courseEndValue);
       if (endDate < startDate) {
-        alert("Course End Date can't be before Start Date. Please try again!");
+        notify("Course End Date can't be before Start Date. Please try again!", "warning");
         return false;
       }
     }
@@ -378,7 +376,7 @@ export default function Page() {
       const classStartTime = classStartTimeInput.value;
       const classEndTime = classEndTimeInput.value;
       if (classStartTime && classEndTime && classEndTime < classStartTime) {
-        alert("Class End Time can't be before Class Start Time. Please try again!");
+        notify("Class End Time can't be before Class Start Time. Please try again!", "warning");
         return false;
       }
     }
@@ -481,11 +479,9 @@ export default function Page() {
       const response = await fetch(apiUrlEndpoint, postData);
       const res = await response.json();
       if (!res.success) {
-        setMessage(`Batch Creation Failed!`);
-        setAlertOpen(true);
+        notify(`Batch Creation Failed!`, "error");
       } else {
-        setMessage(`Batch Creation Success!`);
-        setAlertOpen(true);
+        notify(`Batch Creation Success!`, "success");
         // Reset form and hide it
         form.reset();
         setShowForm(false);
@@ -632,7 +628,6 @@ export default function Page() {
 
               {/*---------------- FORM BEGINS -------------------*/}
               <div className={styles.gridcourses}>
-                <GlobalSnackbar open={alertOpen} message={message} setOpen={setAlertOpen} />
                 <ConfirmationModal
                   open={confirmOpen}
                   handleClose={handleConfirmClose}

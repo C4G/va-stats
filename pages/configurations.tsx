@@ -4,7 +4,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
-import GlobalSnackbar from "@/components/GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import PageTitleWithUserGuideLink from "@/components/PageTitleWithUserGuideLink";
 import DashboardSettingsPanel from "@/components/DashboardSettingsPanel";
@@ -12,7 +12,6 @@ import styles from "@/styles/Home.module.css";
 import configStyles from "@/styles/Configurations.module.css";
 import { mergeBatchStatusDerivedRules } from "@/utils/batch-status-derived";
 import { canAccessConfigurationsPage } from "@/utils/configurations-access";
-import type { AlertColor } from "@mui/material/Alert";
 
 /** API option rows + current rule strings so invalid/orphan values still appear until fixed. */
 function buildSelectValues(apiOptions, currentStrings) {
@@ -73,6 +72,7 @@ function getSectionFromHash() {
 }
 
 export default function ConfigurationsPage() {
+  const notify = useNotification();
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -88,10 +88,6 @@ export default function ConfigurationsPage() {
   const [selectedKey, setSelectedKey] = useState(CONFIG_KEYS[0].key);
   const [options, setOptions] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
 
   const [rulesForm, setRulesForm] = useState<unknown>(() => mergeBatchStatusDerivedRules(null));
   /** Last successfully loaded or saved rules; used to revert the form if save fails. */
@@ -118,11 +114,12 @@ export default function ConfigurationsPage() {
     window.history.replaceState(null, "", next);
   }, []);
 
-  const handleDashboardConfigNotify = useCallback((message, severity) => {
-    setSnackbarSeverity(severity === "error" ? "error" : "success");
-    setSnackbarMessage(message);
-    setSnackbarOpen(true);
-  }, []);
+  const handleDashboardConfigNotify = useCallback(
+    (message, severity) => {
+      notify(message, severity === "error" ? "error" : "success");
+    },
+    [notify]
+  );
 
   const fetchOptions = useCallback(async () => {
     setLoading(true);
@@ -133,14 +130,12 @@ export default function ConfigurationsPage() {
       setOptions(Array.isArray(data?.options) ? data.options : []);
     } catch (e) {
       console.error("fetchOptions error:", e);
-      setSnackbarSeverity("error");
-      setSnackbarMessage("Failed to load dropdown options");
-      setSnackbarOpen(true);
+      notify("Failed to load dropdown options", "error");
       setOptions([]);
     } finally {
       setLoading(false);
     }
-  }, [selectedKey]);
+  }, [selectedKey, notify]);
 
   useEffect(() => {
     fetchOptions();
@@ -276,9 +271,7 @@ export default function ConfigurationsPage() {
       (opt) => typeof opt?.value === "string" && opt.value.trim().toLowerCase() === value.toLowerCase()
     );
     if (alreadyExists) {
-      setSnackbarSeverity("error");
-      setSnackbarMessage(`"${value}" already exists in this dropdown.`);
-      setSnackbarOpen(true);
+      notify(`"${value}" already exists in this dropdown.`, "error");
       return;
     }
 
@@ -295,19 +288,14 @@ export default function ConfigurationsPage() {
       const contentType = response.headers.get("content-type");
       if (contentType?.includes("application/json")) {
         const errData = await response.json().catch(() => null);
-        setSnackbarSeverity("error");
-        setSnackbarMessage(errData?.message ?? "Failed to add option");
+        notify(errData?.message ?? "Failed to add option", "error");
       } else {
-        setSnackbarSeverity("error");
-        setSnackbarMessage("Failed to add option");
+        notify("Failed to add option", "error");
       }
-      setSnackbarOpen(true);
       return;
     }
 
-    setSnackbarSeverity("success");
-    setSnackbarMessage("Option added successfully");
-    setSnackbarOpen(true);
+    notify("Option added successfully", "success");
     resetAddForm();
     await fetchOptions();
     await loadRuleDropdownOptions();
@@ -339,9 +327,7 @@ export default function ConfigurationsPage() {
       const body = contentType?.includes("application/json") ? await res.json().catch(() => null) : null;
       if (!res.ok) {
         setRulesForm(mergeBatchStatusDerivedRules(rulesBaseline));
-        setSnackbarSeverity("error");
-        setSnackbarMessage(body?.message ?? "Failed to save rules");
-        setSnackbarOpen(true);
+        notify(body?.message ?? "Failed to save rules", "error");
         return;
       }
       if (body?.rules) {
@@ -349,15 +335,11 @@ export default function ConfigurationsPage() {
         setRulesForm(merged);
         setRulesBaseline(merged);
       }
-      setSnackbarSeverity("success");
-      setSnackbarMessage(successMessage);
-      setSnackbarOpen(true);
+      notify(successMessage, "success");
     } catch (e) {
       console.error("persistBatchStatusRules:", e);
       setRulesForm(mergeBatchStatusDerivedRules(rulesBaseline));
-      setSnackbarSeverity("error");
-      setSnackbarMessage("Failed to save rules");
-      setSnackbarOpen(true);
+      notify("Failed to save rules", "error");
     } finally {
       setRulesSaving(false);
     }
@@ -390,22 +372,17 @@ export default function ConfigurationsPage() {
       const contentType = response.headers.get("content-type");
       if (contentType?.includes("application/json")) {
         const errData = await response.json().catch(() => null);
-        setSnackbarSeverity("error");
-        setSnackbarMessage(errData?.message ?? "Failed to delete option");
+        notify(errData?.message ?? "Failed to delete option", "error");
       } else {
-        setSnackbarSeverity("error");
-        setSnackbarMessage("Failed to delete option");
+        notify("Failed to delete option", "error");
       }
-      setSnackbarOpen(true);
       setConfirmOpen(false);
       return;
     }
 
     setConfirmOpen(false);
     setConfirmValueToDelete(null);
-    setSnackbarSeverity("success");
-    setSnackbarMessage("Option deleted successfully");
-    setSnackbarOpen(true);
+    notify("Option deleted successfully", "success");
     await fetchOptions();
     await loadRuleDropdownOptions();
   };
@@ -842,13 +819,6 @@ export default function ConfigurationsPage() {
               confirmColor="error"
               title={confirmTitle}
               message="Are you sure? This will remove the value from the dropdown."
-            />
-
-            <GlobalSnackbar
-              open={snackbarOpen}
-              setOpen={setSnackbarOpen}
-              message={snackbarMessage}
-              severity={snackbarSeverity}
             />
           </div>
         </main>

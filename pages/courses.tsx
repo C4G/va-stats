@@ -22,9 +22,8 @@ import { exportToCsv } from "@/utils/export-to-csv";
 import { AgGridReact } from "ag-grid-react";
 import { smartComparator } from "@/utils/grid-comparators";
 import { useCallback, useEffect, useRef, useState } from "react";
-import GlobalSnackbar from "../components/GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import ConfirmationModal from "../components/ConfirmationModal";
-import type { AlertColor } from "@mui/material/Alert";
 import { getCoursesColumnDefs } from "../utils/get-courses-column-defs";
 import { canAccessConfigurationsPage } from "../utils/configurations-access";
 import { toDisplay } from "../utils/types/date";
@@ -39,6 +38,7 @@ export async function getServerSideProps() {
 }
 
 export default function Page() {
+  const notify = useNotification();
   // const res = null;
   const { data: session, status } = useSession();
 
@@ -65,9 +65,6 @@ export default function Page() {
   const [rowData, setRowData] = useState<unknown[]>([]);
   const allowedRoles = ["ADMINISTRATOR", "MANAGEMENT"];
   const gridRef = useRef<unknown>(null);
-  const [message, setMessage] = useState("");
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmTitle, setConfirmTitle] = useState("");
   const [deleteCourseData, setDeleteCourseData] = useState<unknown>(null);
@@ -129,21 +126,15 @@ export default function Page() {
       });
       if (response.ok) {
         await getPageData();
-        setMessage(`${cellParams.data.course} was updated!`);
-        setSnackbarSeverity("success");
-        setAlertOpen(true);
+        notify(`${cellParams.data.course} was updated!`, "success");
       } else {
-        setMessage("Error updating the course.");
-        setSnackbarSeverity("error");
-        setAlertOpen(true);
+        notify("Error updating the course.", "error");
         isRevertingRef.current = true;
         cellParams.node.setDataValue(cellParams.colDef.field, cellParams.oldValue);
       }
     } catch (err) {
       console.error("Error updating course:", err);
-      setMessage("Error updating the course.");
-      setSnackbarSeverity("error");
-      setAlertOpen(true);
+      notify("Error updating the course.", "error");
       isRevertingRef.current = true;
       cellParams.node.setDataValue(cellParams.colDef.field, cellParams.oldValue);
     }
@@ -206,21 +197,17 @@ export default function Page() {
           throw new Error(errorText || "Failed to delete course");
         }
 
-        setMessage(`${courseName} was deleted.`);
-        setSnackbarSeverity("success");
-        setAlertOpen(true);
+        notify(`${courseName} was deleted.`, "success");
         await getPageData();
       } catch (error) {
         console.error("Error deleting the courses", error);
-        setMessage(`Failed to delete ${courseName}. Please try again.`);
-        setSnackbarSeverity("error");
-        setAlertOpen(true);
+        notify(`Failed to delete ${courseName}. Please try again.`, "error");
         await getPageData();
       } finally {
         setContentLoading(false);
       }
     },
-    [getPageData]
+    [getPageData, notify]
   );
 
   const handleDelete = useCallback((props) => {
@@ -272,9 +259,7 @@ export default function Page() {
       };
 
       if (!payload.course || !payload.duration || !payload.duration_type) {
-        setMessage("Please fill all required fields before submitting.");
-        setSnackbarSeverity("error");
-        setAlertOpen(true);
+        notify("Please fill all required fields before submitting.", "error");
         return;
       }
 
@@ -294,21 +279,17 @@ export default function Page() {
         }
 
         await getPageData();
-        setMessage(`${payload.course} was created successfully!`);
-        setSnackbarSeverity("success");
-        setAlertOpen(true);
+        notify(`${payload.course} was created successfully!`, "success");
         form.reset();
         setShowForm(false);
       } catch (error) {
         console.error("Error creating course", error);
-        setMessage("Failed to create course. Please try again.");
-        setSnackbarSeverity("error");
-        setAlertOpen(true);
+        notify("Failed to create course. Please try again.", "error");
       } finally {
         setContentLoading(false);
       }
     },
-    [getPageData]
+    [getPageData, notify]
   );
 
   useEffect(() => {
@@ -412,7 +393,6 @@ export default function Page() {
             </div>
 
             <div className={styles.gridcourses}>
-              <GlobalSnackbar open={alertOpen} message={message} setOpen={setAlertOpen} severity={snackbarSeverity} />
               <ConfirmationModal
                 open={confirmOpen}
                 handleClose={handleDeleteConfirmClose}

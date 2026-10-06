@@ -27,7 +27,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { AlertColor } from "@mui/material/Alert";
 import AccessibleSelectCellEditor from "../../components/AccessibleSelectCellEditor";
 import { DataGrid } from "../../components/DataGrid";
 import Navbar from "../../components/Navbar";
@@ -37,7 +36,7 @@ import styles from "../../styles/Home.module.css";
 import tableStyles from "../../styles/Table.module.css";
 
 //CODE BELOW IS ACTUALLY THE BATCH STATUS FORM ON THE BATCHES PAGE
-import GlobalSnackbar from "@/components/GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import { exportToCsv } from "@/utils/export-to-csv";
 import { mapAttendanceDataToCsv } from "@/utils/map-attendance-data-to-csv";
 import { convertNumberToYesNo } from "@/utils/students/convert-number-to-yes-no";
@@ -115,14 +114,12 @@ function staffHasAccess(batchInfo, userInfo) {
 /*----------------- MISC FUNCTIONS END ----------------*/
 
 export default function Page() {
+  const notify = useNotification();
   const router = useRouter();
   const { id } = router.query;
   const { data: session, status } = useSession();
 
   const [loading, setLoading] = useState(true);
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [alertSeverity, setAlertSeverity] = useState<AlertColor>("success");
   const [userResponse, setUserResponse] = useState<DynamicRow>({});
   const [batchData, setBatchData] = useState<BatchData>({
     students: [],
@@ -234,8 +231,6 @@ export default function Page() {
   );
   const [editAttendanceData, setEditAttendanceData] = useState<EditAttendancePayload | null>(null);
 
-  const [announcement, setAnnouncement] = useState("");
-
   const handleLeftGridEsc = (params) => {
     if (params.event.key === "Escape") {
       getElementById("skip-unassigned")?.focus();
@@ -249,8 +244,13 @@ export default function Page() {
   };
 
   const handleBatchStatusExport = useCallback(async () => {
-    await generateBatchStatusReport(id, batchName, courseName);
-  }, [id, batchName, courseName]);
+    try {
+      await generateBatchStatusReport(id, batchName, courseName);
+      notify("Batch status report downloaded successfully.", "success");
+    } catch (error) {
+      notify(error.message || "Failed to download report. Please try again.", "error");
+    }
+  }, [id, batchName, courseName, notify]);
 
   // Defer helper to avoid synchronous updates during render
   const defer = (fn) => (typeof queueMicrotask === "function" ? queueMicrotask(fn) : Promise.resolve().then(fn));
@@ -373,9 +373,7 @@ export default function Page() {
             console.error("Error refreshing grid:", error);
           }
         }, 100);
-        setMessage(`Attendance was updated!`);
-        setAlertSeverity("success");
-        setAlertOpen(true);
+        notify(`Attendance was updated!`, "success");
         setEditAttendanceData(null);
       } else {
         console.error("Error updating the attendance data", response.status, parsedBody ?? raw);
@@ -482,12 +480,9 @@ export default function Page() {
     if (!leftGridApi) return;
     const selectedRows = leftGridApi.getSelectedRows();
 
-    // If no rows selected, announce that to screen reader and exit function
+    // If no rows are selected, notify the user and exit.
     if (selectedRows.length === 0) {
-      setAnnouncement("");
-      setTimeout(() => {
-        setAnnouncement("Action not performed, no students selected to add to batch.");
-      }, 50);
+      notify("Action not performed, no students selected to add to batch.", "warning");
       return;
     }
 
@@ -496,26 +491,17 @@ export default function Page() {
     addStudentMulti(studentIds);
     leftGridApi.deselectAll();
 
-    // Accessibility announcement
     const message = count === 1 ? `${selectedRows[0].name} added to batch` : `${count} students added to batch`;
-
-    // force re-read even if same message
-    setAnnouncement("");
-    setTimeout(() => setAnnouncement(message), 50);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leftGridApi]);
+    notify(message, "success");
+  }, [leftGridApi, notify]);
 
   const moveToLeft = useCallback(() => {
     if (!rightGridApi) return;
     const selectedRows = rightGridApi.getSelectedRows();
 
-    // If no rows selected, announce that to screen reader and exit function
+    // If no rows are selected, notify the user and exit.
     if (selectedRows.length === 0) {
-      setAnnouncement("");
-      setTimeout(() => {
-        setAnnouncement("Action not performed. No students selected to remove from batch.");
-      }, 50);
+      notify("Action not performed. No students selected to remove from batch.", "warning");
       return;
     }
 
@@ -524,14 +510,9 @@ export default function Page() {
     deleteStudentMulti(studentIds);
     rightGridApi.deselectAll();
 
-    // Accessibility announcement
     const message = count === 1 ? `${selectedRows[0].name} removed from batch` : `${count} students removed from batch`;
-
-    setAnnouncement("");
-    setTimeout(() => setAnnouncement(message), 50);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rightGridApi]);
+    notify(message, "success");
+  }, [rightGridApi, notify]);
 
   const handleAssignmentTypeChange = (event) => {
     const v = event.target.value;
@@ -557,9 +538,7 @@ export default function Page() {
         setAssessmentEditRows([]);
       } else {
         console.error("Error deleting the assignment");
-        setMessage("Error deleting the assignment");
-        setAlertSeverity("error");
-        setAlertOpen(true);
+        notify("Error deleting the assignment", "error");
       }
     } finally {
       setContentLoading(false);
@@ -684,9 +663,7 @@ export default function Page() {
           ? `Total weight cannot exceed 100. Current total: ${totalWeight}%.`
           : `Total weight must equal 100%. Current total: ${totalWeight}%.`;
       setWeightValidationError(msg);
-      setMessage(msg);
-      setAlertSeverity("error");
-      setAlertOpen(true);
+      notify(msg, "error");
       return;
     }
     setWeightValidationError(null);
@@ -704,9 +681,7 @@ export default function Page() {
         setAssessmentEditRows([]);
         setEditingColumn(null);
         setIsEditing(false);
-        setMessage("Assessment changes saved successfully.");
-        setAlertSeverity("success");
-        setAlertOpen(true);
+        notify("Assessment changes saved successfully.", "success");
         await getBatchData();
       } finally {
         setContentLoading(false);
@@ -972,9 +947,7 @@ export default function Page() {
   const postAssignmentUpdate = async (assignmentData) => {
     const rowIdentifier = assignmentData.id ?? assignmentData.assignment_name;
     if (!rowIdentifier) {
-      setMessage("Cannot update assessment: missing row identifier.");
-      setAlertSeverity("error");
-      setAlertOpen(true);
+      notify("Cannot update assessment: missing row identifier.", "error");
       return false;
     }
     const payload = { ...assignmentData, id: rowIdentifier };
@@ -991,19 +964,16 @@ export default function Page() {
         return true;
       }
       const serverMessage = result.message || response.statusText || "";
-      setMessage(
+      notify(
         serverMessage
           ? `Failed to update assessment. ${serverMessage}`
-          : "Failed to update assessment. Please try again."
+          : "Failed to update assessment. Please try again.",
+        "error"
       );
-      setAlertSeverity("error");
-      setAlertOpen(true);
       return false;
     } catch (err) {
       console.error("Error updating the assignment", err);
-      setMessage("Failed to update assessment. Please try again.");
-      setAlertSeverity("error");
-      setAlertOpen(true);
+      notify("Failed to update assessment. Please try again.", "error");
       return false;
     }
   };
@@ -1011,9 +981,7 @@ export default function Page() {
   const updateAssignment = async (assignmentData) => {
     const rowIdentifier = assignmentData.id ?? assignmentData.assignment_name;
     if (!rowIdentifier) {
-      setMessage("Cannot update assessment: missing row identifier.");
-      setAlertSeverity("error");
-      setAlertOpen(true);
+      notify("Cannot update assessment: missing row identifier.", "error");
       setContentLoading(false);
       return false;
     }
@@ -1039,9 +1007,7 @@ export default function Page() {
         setBatchData({ ...batchData, grades: updatedGrades });
       }
       setAssessmentEditRows([]);
-      setMessage(`Assignment information was updated!`);
-      setAlertSeverity("success");
-      setAlertOpen(true);
+      notify(`Assignment information was updated!`, "success");
       await getBatchData();
       return true;
     } finally {
@@ -1132,9 +1098,7 @@ export default function Page() {
             event.node.setDataValue("assignment_weight", event.oldValue);
             const msg = `Total weight cannot exceed 100. Would be ${wouldBeTotal}%.`;
             setWeightValidationError(msg);
-            setMessage(msg);
-            setAlertSeverity("error");
-            setAlertOpen(true);
+            notify(msg, "error");
             setCurrentPostWeightTotal(wouldBeTotal);
             setLoading(false);
             setContentLoading(false);
@@ -1278,18 +1242,15 @@ export default function Page() {
     }
 
     if (currentAssessments.includes(assignment_name)) {
-      setMessage("Assessment already exists, please use a different name");
-      setAlertSeverity("error");
-      setAlertOpen(true);
+      notify("Assessment already exists, please use a different name", "error");
       setContentLoading(false);
     } else if (assignment_type === "Post" && total_weight + assignment_weight > 100) {
-      setMessage(
+      notify(
         "Total weight of Post assessments cannot exceed 100%. Current total is " +
           total_weight +
-          "%. Reduce the new assessment weight or adjust existing weights using Edit."
+          "%. Reduce the new assessment weight or adjust existing weights using Edit.",
+        "error"
       );
-      setAlertSeverity("error");
-      setAlertOpen(true);
     } else {
       setContentLoading(true);
       // const apiUrlEndpoint = `https://va-stats.vercel.app/api/addassignment`;
@@ -1311,17 +1272,14 @@ export default function Page() {
         setAssessmentEditRows([]);
         setShowForm(false);
         await getBatchData();
-        setMessage("Assessment added successfully.");
-        setAlertSeverity("success");
-        setAlertOpen(true);
+        notify("Assessment added successfully.", "success");
       } else {
         console.error("Error adding assignment", result.message || response.statusText);
         const serverMessage = result.message || response.statusText || "";
-        setMessage(
-          serverMessage ? `Failed to add assessment. ${serverMessage}` : "Failed to add assessment. Please try again."
+        notify(
+          serverMessage ? `Failed to add assessment. ${serverMessage}` : "Failed to add assessment. Please try again.",
+          "error"
         );
-        setAlertSeverity("error");
-        setAlertOpen(true);
       }
       setContentLoading(false);
     }
@@ -1483,7 +1441,7 @@ export default function Page() {
       });
 
       if (!someNotCancelled && confirmCancel) {
-        alert(`Class on ${formatAttendanceDate(props.displayName)} is already cancelled.`);
+        notify(`Class on ${formatAttendanceDate(props.displayName)} is already cancelled.`, "info");
       }
     };
 
@@ -2422,7 +2380,6 @@ export default function Page() {
       if (staffHasAccess(batchData, userResponse)) {
         return (
           <>
-            <GlobalSnackbar open={alertOpen} message={message} setOpen={setAlertOpen} severity={alertSeverity} />
             <ConfirmationModal
               open={confirmModalOpen}
               handleClose={handleConfirmModalClose}
@@ -2526,10 +2483,6 @@ export default function Page() {
               {/*------- BLUE BUTTON-BatchManagement content BEGINS ------*/}
               {showManagement && (
                 <div>
-                  {/* Screen reader announcements */}
-                  <div aria-live="polite" className="sr-only">
-                    {announcement}
-                  </div>
                   <div className={tableStyles.tableRow}>
                     <div className={tableStyles.tableColumn}>
                       <div className={tableStyles.genericTableHeader}>
@@ -2762,21 +2715,15 @@ export default function Page() {
                               const result = await response.json();
 
                               if (!response.ok) {
-                                setMessage(result.message || "Failed to update grade");
-                                setAlertSeverity("error");
-                                setAlertOpen(true);
+                                notify(result.message || "Failed to update grade", "error");
                                 // Revert the change by refreshing the data
                                 await getBatchData();
                               } else {
-                                setMessage("Grade updated successfully!");
-                                setAlertSeverity("success");
-                                setAlertOpen(true);
+                                notify("Grade updated successfully!", "success");
                               }
                             } catch (error) {
                               console.error("Error updating grade:", error);
-                              setMessage("Failed to update grade. Please try again.");
-                              setAlertSeverity("error");
-                              setAlertOpen(true);
+                              notify("Failed to update grade. Please try again.", "error");
                               // Revert the change by refreshing the data
                               await getBatchData();
                             }
@@ -2870,9 +2817,7 @@ export default function Page() {
                           body: JSON.stringify(payload),
                         });
                         await getBatchData();
-                        setMessage("Batch status updated successfully!");
-                        setAlertSeverity("success");
-                        setAlertOpen(true);
+                        notify("Batch status updated successfully!", "success");
                         setContentLoading(false);
                       }}
                     />
@@ -3135,7 +3080,6 @@ export default function Page() {
       } else {
         return (
           <>
-            <GlobalSnackbar open={alertOpen} message={message} setOpen={setAlertOpen} severity={alertSeverity} />
             <ConfirmationModal
               open={confirmModalOpen}
               handleClose={handleConfirmModalClose}

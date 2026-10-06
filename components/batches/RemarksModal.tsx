@@ -16,8 +16,7 @@ import { AgGridReact } from "ag-grid-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { smartComparator } from "@/utils/grid-comparators";
 import ConfirmationModal from "../ConfirmationModal";
-import GlobalSnackbar from "../GlobalSnackbar";
-import type { AlertColor } from "@mui/material/Alert";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 
 type Remark = {
   id?: string | number;
@@ -28,6 +27,7 @@ type Remark = {
 type SessionUser = { id?: string | number };
 
 const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
+  const notify = useNotification();
   const [remarks, setRemarks] = useState<Remark[]>([]);
   const [newRemark, setNewRemark] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,9 +35,6 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
   const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [remarkToDelete, setRemarkToDelete] = useState<Remark | null>(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
   const [dataChanged, setDataChanged] = useState(false);
 
   // Custom cell renderer for actions column
@@ -141,20 +138,14 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
         setRemarkToDelete(null);
         setDataChanged(true); // Mark that data has changed
         // Show success toast
-        setSnackbarMessage("Remark deleted successfully!");
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
+        notify("Remark deleted successfully!", "success");
       } else {
         console.error("Failed to delete remark");
-        setSnackbarMessage("Failed to delete remark. Please try again.");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        notify("Failed to delete remark. Please try again.", "error");
       }
     } catch (error) {
       console.error("Error deleting remark:", error);
-      setSnackbarMessage("Failed to delete remark. Please try again.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      notify("Failed to delete remark. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -181,22 +172,16 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
       if (response.ok) {
         setDataChanged(true); // Mark that data has changed
         // Show success message
-        setSnackbarMessage("Remark updated successfully!");
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
+        notify("Remark updated successfully!", "success");
       } else {
         console.error("Failed to update remark");
-        setSnackbarMessage("Failed to update remark. Please try again.");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        notify("Failed to update remark. Please try again.", "error");
         // Revert the change
         params.node.setDataValue(params.colDef.field, params.oldValue);
       }
     } catch (error) {
       console.error("Error updating remark:", error);
-      setSnackbarMessage("Failed to update remark. Please try again.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      notify("Failed to update remark. Please try again.", "error");
       // Revert the change
       params.node.setDataValue(params.colDef.field, params.oldValue);
     } finally {
@@ -216,19 +201,15 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
         setRemarks(data);
       } else {
         console.error("Failed to fetch remarks");
-        setSnackbarMessage("Failed to fetch remarks.");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        notify("Failed to fetch remarks.", "error");
       }
     } catch (error) {
       console.error("Error fetching remarks:", error);
-      setSnackbarMessage("Error loading remarks.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      notify("Error loading remarks.", "error");
     } finally {
       setLoading(false);
     }
-  }, [student?.id, batchId]);
+  }, [student?.id, batchId, notify]);
 
   // Submit new remark
   const handleSubmitRemark = async () => {
@@ -252,20 +233,14 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
         setNewRemark(""); // Clear the input
         await fetchRemarks(); // Refresh the remarks list
         setDataChanged(true); // Mark that data has changed
-        setSnackbarMessage("Remark added successfully!");
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
+        notify("Remark added successfully!", "success");
       } else {
         console.error("Failed to submit remark");
-        setSnackbarMessage("Failed to add remark. Please try again.");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        notify("Failed to add remark. Please try again.", "error");
       }
     } catch (error) {
       console.error("Error submitting remark:", error);
-      setSnackbarMessage("Failed to add remark. Please try again.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      notify("Failed to add remark. Please try again.", "error");
     } finally {
       setSubmitting(false);
     }
@@ -363,14 +338,6 @@ const RemarksModal = ({ open, onClose, student, batchId, onDataChange }) => {
         title="Delete Remark"
         message={`Are you sure you want to delete this remark? This action cannot be undone.`}
         confirmColor="error"
-      />
-
-      <GlobalSnackbar
-        open={snackbarOpen}
-        message={snackbarMessage}
-        setOpen={setSnackbarOpen}
-        severity={snackbarSeverity}
-        duration={3000}
       />
     </Dialog>
   );

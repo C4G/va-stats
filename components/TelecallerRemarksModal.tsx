@@ -16,9 +16,8 @@ import { AgGridReact } from "ag-grid-react";
 import { useState, useEffect, useCallback } from "react";
 import { smartComparator } from "@/utils/grid-comparators";
 import ConfirmationModal from "./ConfirmationModal";
-import GlobalSnackbar from "./GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import { dateTimeFormatter, parseDateTimeFromDB } from "@/utils/date-normalizers";
-import type { AlertColor } from "@mui/material/Alert";
 
 type Remark = {
   id?: string | number;
@@ -31,6 +30,7 @@ type Remark = {
 type SessionUser = { email?: string };
 
 const TelecallerRemarksModal = ({ open, onClose, student }) => {
+  const notify = useNotification();
   const [remarks, setRemarks] = useState<Remark[]>([]);
   const [newRemark, setNewRemark] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,9 +38,6 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
   const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [remarkToDelete, setRemarkToDelete] = useState<Remark | null>(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("success");
 
   // Custom cell renderer for actions column
   const ActionsCellRenderer = (props: ICellRendererParams<Remark>) => {
@@ -171,20 +168,14 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
         await fetchRemarks(); // Refresh the remarks list
         setRemarkToDelete(null);
         // Show success toast
-        setSnackbarMessage("Remark deleted successfully!");
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
+        notify("Remark deleted successfully!", "success");
       } else {
         console.error("Failed to delete remark");
-        setSnackbarMessage("Failed to delete remark. Please try again.");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        notify("Failed to delete remark. Please try again.", "error");
       }
     } catch (error) {
       console.error("Error deleting remark:", error);
-      setSnackbarMessage("Failed to delete remark. Please try again.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      notify("Failed to delete remark. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -210,24 +201,18 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
 
       if (response.ok) {
         // Show success message
-        setSnackbarMessage("Remark updated successfully!");
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
+        notify("Remark updated successfully!", "success");
         // Refresh the grid to get the updated timestamp
         await fetchRemarks();
       } else {
         console.error("Failed to update remark");
-        setSnackbarMessage("Failed to update remark. Please try again.");
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        notify("Failed to update remark. Please try again.", "error");
         // Revert the change
         params.node.setDataValue(params.colDef.field, params.oldValue);
       }
     } catch (error) {
       console.error("Error updating remark:", error);
-      setSnackbarMessage("Failed to update remark. Please try again.");
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
+      notify("Failed to update remark. Please try again.", "error");
       // Revert the change
       params.node.setDataValue(params.colDef.field, params.oldValue);
     }
@@ -270,16 +255,13 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
 
         console.error("Failed to fetch remarks:", errorMessage);
 
-        // Show user-friendly error message based on status code
-        if (response.status === 401) {
-          setSnackbarMessage("You are not authorized to view remarks. Please log in again.");
-        } else if (response.status === 400) {
-          setSnackbarMessage("Invalid request. Please refresh the page and try again.");
-        } else {
-          setSnackbarMessage("Failed to fetch remarks. Please try again.");
-        }
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
+        const userMessage =
+          response.status === 401
+            ? "You are not authorized to view remarks. Please log in again."
+            : response.status === 400
+              ? "Invalid request. Please refresh the page and try again."
+              : "Failed to fetch remarks. Please try again.";
+        notify(userMessage, "error");
         setRemarks([]); // Set empty array on error
         return;
       }
@@ -296,18 +278,17 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
       setRemarks(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching remarks:", error);
-      setSnackbarMessage(
+      notify(
         error.message?.includes("JSON")
           ? "Invalid response from server. Please try again."
-          : "Error loading remarks. Please try again."
+          : "Error loading remarks. Please try again.",
+        "error"
       );
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
       setRemarks([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
-  }, [student?.id]);
+  }, [student?.id, notify]);
 
   // Submit new remark
   const handleSubmitRemark = async () => {
@@ -424,14 +405,6 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
         title="Delete Remark"
         message={`Are you sure you want to delete this remark? This action cannot be undone.`}
         confirmColor="error"
-      />
-
-      <GlobalSnackbar
-        open={snackbarOpen}
-        message={snackbarMessage}
-        setOpen={setSnackbarOpen}
-        severity={snackbarSeverity}
-        duration={3000}
       />
     </Dialog>
   );

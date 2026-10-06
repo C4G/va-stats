@@ -15,13 +15,11 @@ import {
  * @param {string} batchName - The batch name (optional, will be fetched if not provided)
  * @param {string} courseName - The course name (optional, will be fetched if not provided)
  * @returns {Promise<void>}
+ * @throws {Error} when report data is unavailable or report generation fails
  */
 export const generateBatchStatusReport = async (batchId, batchName, courseName) => {
   if (!batchId) {
-    if (typeof window !== "undefined") {
-      window.alert("Batch ID is missing");
-    }
-    return;
+    throw new Error("Batch ID is missing.");
   }
 
   try {
@@ -36,10 +34,7 @@ export const generateBatchStatusReport = async (batchId, batchName, courseName) 
     const batchData = await response.json();
 
     if (!batchData.students || batchData.students.length === 0) {
-      if (typeof window !== "undefined") {
-        window.alert("No students found for this batch");
-      }
-      return;
+      throw new Error("No students found for this batch.");
     }
 
     // Use fetched batch name and course name if not provided
@@ -198,8 +193,9 @@ export const generateBatchStatusReport = async (batchId, batchName, courseName) 
     exportToCsv(fileName, rows, summaryRows);
   } catch (error) {
     console.error("Error generating batch status report:", error);
-    if (typeof window !== "undefined") {
-      window.alert("Failed to download report. Please try again.");
+    if (error instanceof Error && error.message === "No students found for this batch.") {
+      throw error;
     }
+    throw new Error("Failed to download report. Please try again.");
   }
 };
