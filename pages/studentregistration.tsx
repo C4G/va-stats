@@ -10,7 +10,7 @@ may cause problems if changes are not tested thoroughly
 // eslint-disable-next-line react-hooks/exhaustive-deps
 */
 
-import GlobalSnackbar from "@/components/GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import { searchAndUpdateStudentData } from "@/utils/students/search-and-update-student-data";
 import { useSession } from "@/lib/auth-client-compat";
 import Head from "next/head";
@@ -23,7 +23,6 @@ import Navbar from "../components/Navbar";
 import UpdateStudentForm from "../components/UpdateStudentForm";
 import styles from "../styles/StudentReg.module.css";
 import PageTitleWithUserGuideLink from "@/components/PageTitleWithUserGuideLink";
-import type { AlertColor } from "@mui/material/Alert";
 const getElementById = (id: string): unknown => document.getElementById(id);
 const querySelector = (selector: string): unknown => document.querySelector(selector);
 const querySelectorAll = (selector: string): unknown[] => Array.from(document.querySelectorAll(selector));
@@ -32,6 +31,7 @@ let worldData = require("../utils/countries+states.json");
 var regError = false;
 
 export default function Page() {
+  const notify = useNotification();
   const { data: session, status } = useSession();
   const [userRole, setUserRole] = useState<unknown>(null);
   useForm(); // Form reset
@@ -59,9 +59,6 @@ export default function Page() {
   const [, setSelectedVision] = useState("Blind");
   const [selectedEdu, setSelectedEdu] = useState("Below 10th Standard");
   const [, setSelectedEmpStatus] = useState("Unemployed");
-  const [message, setMessage] = useState("");
-  const [severity, setSeverity] = useState<AlertColor>("success"); // Default severity for snackbar
-  const [alertOpen, setAlertOpen] = useState(false);
 
   // Client-side only rendering
   const [isClient, setIsClient] = useState(false);
@@ -190,15 +187,13 @@ export default function Page() {
           // Apply controlled fields (country/state/city, disability, education,
           // percent vision) via React state; direct DOM assignment does not stick.
           applyPrefillFields();
-          setMessage("Student information was found and data has been pre-filled!");
-          setSeverity("success");
-          setAlertOpen(true);
+          notify("Student information was found and data has been pre-filled!", "success");
         }
       })
       .catch((error) => {
         console.error("Error searching for student:", error);
       });
-  }, [gender, dobYear, dobMonth, dobDay, phone_number, applyPrefillFields]);
+  }, [gender, dobYear, dobMonth, dobDay, phone_number, applyPrefillFields, notify]);
 
   // Handle date field updates
   useEffect(() => {
@@ -228,9 +223,7 @@ export default function Page() {
   }, [isClient]); // Add isClient dependency
 
   const showToast = () => {
-    setMessage("Error registering student");
-    setSeverity("error");
-    setAlertOpen(true);
+    notify("Error registering student", "error");
   };
 
   useEffect(() => {
@@ -476,24 +469,6 @@ export default function Page() {
     return true;
   };
 
-  // const checkValidPhone = () => {
-  //  var phoneinput = getElementById("phone_number");
-  //  if (phoneinput.value == 1112223333) {
-  //    alert("PHONE NUMBER must be 10 digits; number was reset to a PLACEHOLDER NUMBER, WHICH MUST BE CHANGED.");
-  //    phoneinput.value = 1112223333;
-  //    phoneinput.focus();
-  //  }
-  //}
-  // const checkValidAltPhone = () => {
-  //  var phoneinput = getElementById("alt_ph_num");
-  //  if (phoneinput.value != "") {
-  //    if (phoneinput.value == 1112223333) {
-  //      alert("PARENT/GUARDIAN PHONE NUMBER must be 10 digits; number was reset to a PLACEHOLDER NUMBER, WHICH MUST BE CHANGED.");
-  //      phoneinput.value = 1112223333;
-  //      phoneinput.focus();
-  //    }
-  //  }
-  //}
   /*----------------- PHONE VALIDATION (REG AND ALT) ENDS ------------*/
 
   // Line below may work FOR SSRPROVIDER ERRORS:
@@ -896,7 +871,6 @@ export default function Page() {
       if (response.ok) {
         if (window.isUpdateMode) {
           // If update mode, show success and redirect
-          // alert("Student updated successfully"); (alert("Student updated successfully");)
           setContentLoading(true);
 
           // // Reset update mode
@@ -2135,7 +2109,6 @@ export default function Page() {
       )}
       {/* Update Student Form */}
       {isClient && showUpdateForm && <UpdateStudentForm onClose={() => setShowUpdateForm(false)} />}
-      <GlobalSnackbar open={alertOpen} message={message} setOpen={setAlertOpen} severity={severity} />
     </>
   );
 }

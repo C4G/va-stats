@@ -20,6 +20,7 @@ import {
 } from "@/utils/batch-data-helper";
 import { generateBatchReportCSV, generateStudentDataReportCSV, downloadCSV } from "@/utils/csv-generation-helper";
 import PageTitleWithUserGuideLink from "@/components/PageTitleWithUserGuideLink";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 const getElementById = (id: string): unknown => document.getElementById(id);
 
 export const metadata = {
@@ -28,6 +29,7 @@ export const metadata = {
 };
 
 export default function Reports() {
+  const notify = useNotification();
   const router = useRouter();
   const { data: session, status } = useSession({
     required: true,
@@ -173,16 +175,17 @@ export default function Reports() {
     e.preventDefault();
 
     if (!singleBatchId) {
-      alert("⚠️ Please provide a Batch ID.");
+      notify("⚠️ Please provide a Batch ID.", "warning");
       return;
     }
 
     setLoading(true);
     try {
       await generateBatchStatusReport(singleBatchId, "", "");
+      notify("Batch status report downloaded successfully.", "success");
     } catch (error) {
       console.error("Error generating single batch report:", error);
-      alert("Failed to download report. Ensure the Batch ID is correct.");
+      notify(error.message || "Failed to download report. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -194,7 +197,7 @@ export default function Reports() {
     e.preventDefault();
 
     if ((dateRange === "custom" && (!startDate || !endDate)) || (dateRange === "quarter" && (!quarter || !year))) {
-      alert("⚠️ Please select a valid date range before downloading student data.");
+      notify("⚠️ Please select a valid date range before downloading student data.", "warning");
       setLoading(false);
       return;
     }
@@ -220,7 +223,7 @@ export default function Reports() {
         .map((batch) => batch.id);
 
       if (filteredBatchIds.length === 0) {
-        alert("No batches found for the selected date range.");
+        notify("No batches found for the selected date range.", "warning");
         setLoading(false);
         return;
       }
@@ -229,9 +232,10 @@ export default function Reports() {
 
       const filename = `student_data_${queryStartDate}_to_${queryEndDate}.csv`.replace(/\s+/g, "_");
       downloadCSV(filename, csvContent);
+      notify("Student data report downloaded successfully.", "success");
     } catch (error) {
       console.error("Error generating student data report:", error);
-      alert("Failed to download student data report. Please try again.");
+      notify("Failed to download student data report. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -243,7 +247,7 @@ export default function Reports() {
     e.preventDefault();
 
     if ((dateRange === "custom" && (!startDate || !endDate)) || (dateRange === "quarter" && (!quarter || !year))) {
-      alert("⚠️ Please select a valid date range before downloading.");
+      notify("⚠️ Please select a valid date range before downloading.", "warning");
       setLoading(false);
       return;
     }
@@ -265,7 +269,7 @@ export default function Reports() {
       const filteredBatches = data.batches || [];
 
       if (filteredBatches.length === 0) {
-        alert("No batches found for the selected date range.");
+        notify("No batches found for the selected date range.", "warning");
         setLoading(false);
         return;
       }
@@ -273,9 +277,10 @@ export default function Reports() {
       const csvContent = await generateBatchReportCSV(filteredBatches);
       const filename = `batch_report_${queryStartDate}_to_${queryEndDate}.csv`.replace(/\s+/g, "_");
       downloadCSV(filename, csvContent);
+      notify("Batch report downloaded successfully.", "success");
     } catch (error) {
       console.error("Error generating report:", error);
-      alert("Failed to download report. Please try again.");
+      notify("Failed to download report. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -287,25 +292,25 @@ export default function Reports() {
     e.preventDefault();
 
     if (!selectedPM) {
-      alert("⚠️ Please select a program manager.");
+      notify("⚠️ Please select a program manager.", "warning");
       setLoading(false);
       return;
     }
 
     if (pmDateRangeType === "custom") {
       if (!pmStartDate || !pmEndDate) {
-        alert("⚠️ Please select both Start Date and End Date.");
+        notify("⚠️ Please select both Start Date and End Date.", "warning");
         setLoading(false);
         return;
       }
       if (new Date(pmStartDate) > new Date(pmEndDate)) {
-        alert("⚠️ Start Date cannot be later than End Date.");
+        notify("⚠️ Start Date cannot be later than End Date.", "warning");
         setLoading(false);
         return;
       }
     } else {
       if (!pmQuarter || !pmYear) {
-        alert("⚠️ Please select Year and Quarter.");
+        notify("⚠️ Please select Year and Quarter.", "warning");
         setLoading(false);
         return;
       }
@@ -321,7 +326,7 @@ export default function Reports() {
       const filteredBatches = filterBatchesByDateRange(pmBatches, queryStartDate, queryEndDate);
 
       if (filteredBatches.length === 0) {
-        alert("No batches found for the selected program manager and date range.");
+        notify("No batches found for the selected program manager and date range.", "warning");
         setLoading(false);
         return;
       }
@@ -333,9 +338,10 @@ export default function Reports() {
           : `pm_report_${selectedPM.replace(/\s+/g, "_")}_${queryStartDate}_to_${queryEndDate}.csv`;
 
       downloadCSV(filename, csvContent);
+      notify("Program manager report downloaded successfully.", "success");
     } catch (error) {
       console.error("Error generating PM report:", error);
-      alert("Failed to download report. Please try again.");
+      notify("Failed to download report. Please try again.", "error");
     } finally {
       setLoading(false);
     }

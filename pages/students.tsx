@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import GlobalSnackbar from "../components/GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 // import { Button } from "@mui/material";
 import Navbar from "@/components/Navbar";
 import styles from "@/styles/Home.module.css";
@@ -31,6 +31,7 @@ function CircleLoadingOverlay() {
 }
 
 const Students = () => {
+  const notify = useNotification();
   const router = useRouter();
   const { data: session, status } = useSession();
 
@@ -39,11 +40,9 @@ const Students = () => {
   const [user, setUser] = useState<unknown>(undefined);
   const [rowData, setRowData] = useState<unknown[]>([]);
   const [allowedRoles] = useState(["ADMINISTRATOR", "MANAGEMENT", "TELECALLER", "TRAINERPLUSTELECALLER"]);
-  const [alertOpen, setAlertOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("");
   const [deleteStudentData, setDeleteStudentData] = useState<unknown>(null);
   const [confirmTitle, setConfirmTitle] = useState<unknown>(undefined);
   const [editConfirmOpen, setEditConfirmOpen] = useState(false);
@@ -81,10 +80,9 @@ const Students = () => {
       return normalized || null;
     }
     if (["id_proof", "disability_cert", "photo", "bank_details"].includes(field)) {
-      if (value === "Yes") return 1;
-      if (value === "No") return 0;
-      // Number or null is passed through
-      return value ?? null;
+      if (value === "Yes" || value === 1 || value === "1") return "Yes";
+      if (value === "No" || value === 0 || value === "0") return "No";
+      return value === "" ? null : (value ?? null);
     }
     return value === "" ? null : value;
   };
@@ -140,8 +138,7 @@ const Students = () => {
         const data = await r.json();
         if (data.success !== false) {
           setRowData((prev) => prev.map((row) => (row.id === payload.student_id ? { ...row, ...payload } : row)));
-          setMessage("Saved!");
-          setAlertOpen(true);
+          notify("Saved!", "success");
           const focused = lastFocusedCell.current;
           if (focused && gridRef.current?.api) {
             const { rowIndex, colKey } = focused;
@@ -160,8 +157,7 @@ const Students = () => {
       }
     } catch (e) {
       console.error("Error saving student:", e);
-      setMessage(`Save failed: ${e.message || "Unknown error"}`);
-      setAlertOpen(true);
+      notify(`Save failed: ${e.message || "Unknown error"}`, "error");
     } finally {
       setSaving(false);
     }
@@ -243,17 +239,14 @@ const Students = () => {
         });
 
         if (response.ok) {
-          setMessage("Telecaller remarks updated successfully!");
-          setAlertOpen(true);
+          notify("Telecaller remarks updated successfully!", "success");
           onGridReady();
         } else {
-          setMessage("Error updating remarks. Please try again.");
-          setAlertOpen(true);
+          notify("Error updating remarks. Please try again.", "error");
         }
       } catch (error) {
         console.error("Error updating telecaller remarks:", error);
-        setMessage("Error updating remarks. Please try again.");
-        setAlertOpen(true);
+        notify("Error updating remarks. Please try again.", "error");
       }
       return;
     }
@@ -262,8 +255,7 @@ const Students = () => {
     if (field === "enrollment_status") {
       const code = ENROLLMENT_STATUS.find((o) => o.value === rawNew || o.label === rawNew)?.value ?? null;
       if (rawNew && !code) {
-        setMessage("Invalid enrollment status");
-        setAlertOpen(true);
+        notify("Invalid enrollment status", "error");
         return;
       }
       value = code; // Send only code to server
@@ -329,19 +321,16 @@ const Students = () => {
           body: JSON.stringify({ student_id, remark: rawNew }),
         });
         if (response.ok) {
-          setMessage("Telecaller remarks updated successfully!");
-          setAlertOpen(true);
+          notify("Telecaller remarks updated successfully!", "success");
           onGridReady();
         } else {
-          setMessage("Error updating remarks. Please try again.");
-          setAlertOpen(true);
+          notify("Error updating remarks. Please try again.", "error");
           isRevertingCellRef.current = true;
           node.setDataValue(field, rawOld);
         }
       } catch (error) {
         console.error("Error updating telecaller remarks:", error);
-        setMessage("Error updating remarks. Please try again.");
-        setAlertOpen(true);
+        notify("Error updating remarks. Please try again.", "error");
         isRevertingCellRef.current = true;
         node.setDataValue(field, rawOld);
       }
@@ -419,9 +408,8 @@ const Students = () => {
       body: JSON.stringify({ id: deleteStudentData.id }),
     }).then(() => {
       const id = deleteStudentData.id;
-      setMessage(`${deleteStudentData.name} was deleted!`);
+      notify(`${deleteStudentData.name} was deleted!`, "success");
       setDeleteStudentData(null);
-      setAlertOpen(true);
       setRowData(rowData.filter((student) => student.id !== id));
       setLoading(false);
     });
@@ -513,7 +501,6 @@ const Students = () => {
           }
         `}</style>
         <div className={styles.gridcourses}>
-          <GlobalSnackbar open={alertOpen} message={message} setOpen={setAlertOpen} />
           <ConfirmationModal
             open={confirmOpen}
             handleClose={handleConfirmClose}

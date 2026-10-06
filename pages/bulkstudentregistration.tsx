@@ -3,7 +3,7 @@ import styles from "../styles/StudentReg.module.css";
 import Navbar from "../components/Navbar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "@/lib/auth-client-compat";
-import GlobalSnackbar from "@/components/GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import dynamic from "next/dynamic";
 import { useGetStudentColumnDefs } from "../utils/students/use-get-student-column-defs-bulk";
 import { smartComparator } from "@/utils/grid-comparators";
@@ -12,7 +12,6 @@ import Image from "next/image";
 import Link from "next/link";
 import tableStyles from "../styles/Table.module.css";
 import PageTitleWithUserGuideLink from "@/components/PageTitleWithUserGuideLink";
-import type { AlertColor } from "@mui/material/Alert";
 import { isGridEditing, shouldStartCellEditing, shouldSuppressSpaceNavigation } from "@/utils/grid-editing";
 
 const AgGridReact = dynamic(() => import("ag-grid-react").then((mod) => mod.AgGridReact), { ssr: false });
@@ -96,14 +95,12 @@ function IncludeFooter({}) {
 }
 
 export default function Page() {
+  const notify = useNotification();
   const [userRole, setUserRole] = useState<unknown>(null);
   const [contentLoading] = useState(false);
   const { data: session, status } = useSession();
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [message, setMessage] = useState("");
   const gridRef = useRef<unknown>(null);
   const [rowData, setRowData] = useState<unknown[]>([]);
-  const [severity, setSeverity] = useState<AlertColor>("success"); // Default severity for snackbar
   const [numberOfValidRows, setNumberOfValidRows] = useState(0);
   const allowedRoles = ["ADMINISTRATOR", "MANAGEMENT", "STAFF"];
 
@@ -536,9 +533,7 @@ export default function Page() {
       }
     } catch (e) {
       console.error("Error checking duplicates in database:", e);
-      setMessage("An error occurred while checking for duplicates in the database. Please try again.");
-      setSeverity("error");
-      setAlertOpen(true);
+      notify("An error occurred while checking for duplicates in the database. Please try again.", "error");
     }
 
     return rows;
@@ -571,15 +566,11 @@ export default function Page() {
         setNumberOfValidRows(
           rowData.filter((row) => !row._hasError && row._hasBeenValidated && !row._successfullyRegistered).length
         );
-        setMessage(`Successfully registered ${data.insertedCount} students!`);
-        setSeverity("success");
-        setAlertOpen(true);
+        notify(`Successfully registered ${data.insertedCount} students!`, "success");
       }
     } catch (e) {
       console.error("Error adding records to the database:", e);
-      setMessage("An error occurred while adding records to the database. Please try again.");
-      setSeverity("error");
-      setAlertOpen(true);
+      notify("An error occurred while adding records to the database. Please try again.", "error");
     }
   };
 
@@ -616,15 +607,12 @@ export default function Page() {
 
     // if there are any errors, show an error message, otherwise show a success message
     if (errors.length > 0) {
-      setMessage(
-        `Validation failed for ${rowData.map((row) => row._hasError).filter((hasError) => hasError).length} row(s). Please fix them and try again.`
+      notify(
+        `Validation failed for ${rowData.map((row) => row._hasError).filter((hasError) => hasError).length} row(s). Please fix them and try again.`,
+        "error"
       );
-      setSeverity("error");
-      setAlertOpen(true);
     } else {
-      setMessage("All validations passed. Please click 'Register Valid Rows' to upload to the database.");
-      setSeverity("success");
-      setAlertOpen(true);
+      notify("All validations passed. Please click 'Register Valid Rows' to upload to the database.", "success");
     }
     updateRowStatus();
   };
@@ -712,8 +700,6 @@ export default function Page() {
             }
           `}</style>
           <div className={styles.gridcourses}>
-            <GlobalSnackbar open={alertOpen} message={message} setOpen={setAlertOpen} severity={severity} />
-
             {/* AG Grid Container + AG Grid table */}
             <div className="ag-theme-alpine" style={{ height: "60dvh", width: "100%" }}>
               <AgGridReact<unknown>

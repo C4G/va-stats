@@ -4,6 +4,7 @@
 import Head from "next/head";
 import { SerwistProvider } from "@serwist/next/react";
 import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions, themeQuartz } from "ag-grid-community";
+import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 import "../styles/globals.css";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -31,7 +32,9 @@ const App = ({ Component, pageProps }) => (
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
     </Head>
     <SerwistProvider swUrl="/sw.js" disable={process.env.NODE_ENV === "development"}>
-      <Component {...pageProps} />
+      <NotificationProvider>
+        <Component {...pageProps} />
+      </NotificationProvider>
     </SerwistProvider>
   </>
 );

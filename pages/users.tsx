@@ -19,7 +19,7 @@ import Link from "next/link";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import ConfirmationModal from "../components/ConfirmationModal";
-import GlobalSnackbar from "../components/GlobalSnackbar";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import { getUsersColumnDefs } from "../utils/get-users-columns-defs";
 import { toDisplay } from "../utils/types/date";
 import { formatDateInput, normalizeUserDates, parseDateInput } from "@/utils/date-normalizers";
@@ -35,6 +35,7 @@ export async function getServerSideProps() {
 }
 
 export default function Page() {
+  const notify = useNotification();
   useForm();
   const { data: session, status } = useSession();
 
@@ -57,8 +58,6 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [contentLoading, setContentLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [alertOpen, setAlertOpen] = useState(false);
 
   const [courseResponse, setCourseResponse] = useState<unknown[]>(() => []);
   const [courseOptions1, setCourseOptions1] = useState<unknown[]>(() => []);
@@ -160,8 +159,7 @@ export default function Page() {
 
         if (response.ok) {
           await getPageData();
-          setMessage(`User: ${editedUser.name} updated!`);
-          setAlertOpen(true);
+          notify(`User: ${editedUser.name} updated!`, "success");
           setEditingId(null);
         } else {
           console.error("Error updating the user");
@@ -170,7 +168,7 @@ export default function Page() {
         setContentLoading(false);
       }
     },
-    [getPageData]
+    [getPageData, notify]
   );
 
   const onCellValueChanged = async (params) => {
@@ -270,8 +268,7 @@ export default function Page() {
 
       if (response.ok) {
         await getPageData();
-        setMessage("Staff member created successfully!");
-        setAlertOpen(true);
+        notify("Staff member created successfully!", "success");
 
         // Reset controlled form states so the next open starts clean
         setShowForm(false);
@@ -288,17 +285,15 @@ export default function Page() {
           // ignore JSON parse errors
         }
 
-        setMessage("Error creating staff: " + errMessage);
-        setAlertOpen(true);
+        notify("Error creating staff: " + errMessage, "error");
       }
     } catch (error) {
       console.error("Error creating staff:", error);
-      setMessage("Error creating staff: " + (error?.error || error?.message || "Unknown error"));
-      setAlertOpen(true);
+      notify("Error creating staff: " + (error?.error || error?.message || "Unknown error"), "error");
     } finally {
       setContentLoading(false);
     }
-  }, [pendingUserCreate, getPageData]);
+  }, [pendingUserCreate, getPageData, notify]);
 
   const onGridReady = useCallback((params) => {
     // Store grid API reference if needed
@@ -391,9 +386,8 @@ export default function Page() {
     setLoading(true);
     setConfirmOpen(false);
     handleDeleteUser(deleteUsersData.id).then(() => {
-      setMessage(`${deleteUsersData.name} was deleted!`);
+      notify(`${deleteUsersData.name} was deleted!`, "success");
       setDeleteUsersData(null);
-      setAlertOpen(true);
       setLoading(false);
     });
   };
@@ -571,7 +565,6 @@ export default function Page() {
             </button>
           </div>
           <div className={styles.gridcourses}>
-            <GlobalSnackbar open={alertOpen} message={message} setOpen={setAlertOpen} />
             <ConfirmationModal
               open={confirmOpen}
               handleClose={handleConfirmClose}
