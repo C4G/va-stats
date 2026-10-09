@@ -1,0 +1,133 @@
+components/ui/dialog.tsx
+  s_e372b848438a91::t_092cb4330f28e6 45
+  s_e372b848438a91::t_9a0c04219caab1 1-3,5-10,12-44,46-53,73
+  s_e372b848438a91::t_71ec097f2e9c9b 11
+  s_e372b848438a91::t_ff5f06977f7957 4,54-72
+openspec/specs/accessible-dialogs/spec.md
+  s_e372b848438a91::t_c420f187c3db93 1-73
+components/notifications/ConfirmationProvider.tsx
+  s_e372b848438a91::t_f933a736ca2597 25-27,49,107-112,120,145,149
+  s_e372b848438a91::t_407bce85ce3424 16,50-57,91-96
+  s_e372b848438a91::t_513e11eeae6e81 18-19,97
+  s_e372b848438a91::t_018cacbf6635ef 1-15,17,20-24,29-36,38-48,58-86,88-90,98-106,113-119,121-125,130,136,138-144,146-148,150-171
+  s_e372b848438a91::t_42193467bd2f6c 28,37,87,126-129,131-135,137
+  s_e372b848438a91::t_bf5302a69160dc 172-175
+components/TelecallerRemarksModal.tsx
+  s_e372b848438a91::t_9b9a1fd294a2c3 44,53-54,174-176,414,430
+  s_e372b848438a91::t_aa3d6b7bb39771 1,11-22,351-413,415-429,432-434
+  s_e372b848438a91::t_de2e8141b66983 5,10,43,350,431,435,437-439
+components/RegistrationResultDialog.tsx
+  s_e372b848438a91::t_1130d45ab4999f 1-49,55-75,82-90
+  s_e372b848438a91::t_092cb4330f28e6 76-81
+  s_e372b848438a91::t_3e0bef4cd9e760 50-54
+pages/studentregistration.tsx
+  s_e372b848438a91::t_1374f4edd59aa3 985-989,2015
+  s_e372b848438a91::t_88e4517e6f32f5 14,37,1943,1945-1947,1952-1958
+  s_e372b848438a91::t_1130d45ab4999f 15,2014,2016-2021
+pages/courses.tsx
+  s_e372b848438a91::t_7c0fa71446eb81 401,410
+components/ui/alert-dialog.tsx
+  s_e372b848438a91::t_9a0c04219caab1 1-3,5-9,11-43,45-57,67-68,70-75,77-79,81-84,86
+  s_e372b848438a91::t_71ec097f2e9c9b 10
+  s_e372b848438a91::t_42f3f582d6d0e8 4,76,80,85
+  s_e372b848438a91::t_092cb4330f28e6 44
+  s_e372b848438a91::t_3634e35fe7be39 58-66,69
+  s_e372b848438a91::t_6652389ee52993 87-95
+styles/StudentReg.module.css
+  s_e372b848438a91::t_3ceb091bc74917 692
+components/ConfirmationModal.tsx
+  s_e372b848438a91::t_d1d83dcdd09da1 1-23,26-35,38-39,48-49,52,54-56,58-60,71-84
+  s_e372b848438a91::t_9b9a1fd294a2c3 25,37,63,66-69
+  s_e372b848438a91::t_42f3f582d6d0e8 40-47,61-62,70
+  s_e372b848438a91::t_77fc024ec275ad 24,36,64-65
+pages/batches.tsx
+  s_e372b848438a91::t_c2482e808828f0 279-290
+  s_e372b848438a91::t_37e790f2d46556 88-89,272,291-293,655,657,669,1183-1188
+  s_e372b848438a91::t_77fc024ec275ad 278
+  s_e372b848438a91::t_726148c8182a62 1189
+components/notifications/__tests__/ConfirmationDialogs.test.tsx
+  s_e372b848438a91::t_34dac10c687f49 171-173,178-180,198-200,217-219,222,246-247,251
+  s_e372b848438a91::t_89b718d2195cdc 3,6,25-29,38-65,207-216,220-221,223-225,272-303,308-309
+  s_e372b848438a91::t_25e3ecf4dc9914 181-183
+  s_e372b848438a91::t_ec6d7ca4cbd3a1 123-124,134-138,145-148,153,255-271
+  s_e372b848438a91::t_0add40739b413c 2,4-5,7-24,30-37,66-69,96-122,125-133,142-144,149-152,154-170,174-175,177,184-197,201,203-206,239-245,248,250,252-254,310-311
+  s_e372b848438a91::t_a6a14cd5923b34 1,176,202,249
+  s_e372b848438a91::t_e9d246779a7ae4 305,307
+  s_e372b848438a91::t_dcc032465abd21 70-95,226-238
+  s_e372b848438a91::t_30fb79b295a094 139-141
+  s_e372b848438a91::t_4c519264f1aece 304,306
+  s_e372b848438a91::t_70ecc4db792bb4 312-313
+components/batches/RemarksModal.tsx
+  s_e372b848438a91::t_9b9a1fd294a2c3 42,51-52,143-145,348,364
+  s_e372b848438a91::t_4a1d6782d4c79e 2,10-21,286-300,302-305,307-319,321-337,339-347,349-357,359-363,366-368
+  s_e372b848438a91::t_5fe97c92bca765 5,9,41,285,365,369-374
+pages/batch/[id].tsx
+  s_e372b848438a91::t_3ceb091bc74917 580,605
+  s_e372b848438a91::t_1877582e641e2e 40,119,261-270,310,317-322,611
+  s_e372b848438a91::t_3634e35fe7be39 598-604,606-610
+  s_e372b848438a91::t_70b14a155b884f 2714-2720,2833-2839,2843,2857,3097-3102
+  s_e372b848438a91::t_3af0d24426c04c 1450,1452,1455,1457,1459-1467
+  s_e372b848438a91::t_7c0fa71446eb81 169
+  s_e372b848438a91::t_bcacd622d2e65c 323-324,581-582,612,698,1438,1468-1469,1884,2415,3103-3104,3133
+pages/students.tsx
+  s_e372b848438a91::t_7c0fa71446eb81 509,518
+pages/users.tsx
+  s_e372b848438a91::t_7c0fa71446eb81 573,582,595
+components/NavItem.tsx
+  s_e372b848438a91::t_3634e35fe7be39 2-3,15-17,20,27-45
+next.config.js
+  s_e372b848438a91::t_c039c4eba85538 5-12
+pages/_app.tsx
+  s_e372b848438a91::t_018cacbf6635ef 8,37-39
+pages/configurations.tsx
+  s_e372b848438a91::t_7c0fa71446eb81 820
+pages/bulkstudentregistration.tsx
+  s_e372b848438a91::t_88e4517e6f32f5 7,100,632-638,640-643
+  s_e372b848438a91::t_6d433007cae65e 104,152-153,585-590
+openspec/changes/archive/2026-10-09-accessible-shadcn-dialogs/.openspec.yaml
+  s_e372b848438a91::t_3d98f0569f2aa5 1-2
+openspec/changes/archive/2026-10-09-accessible-shadcn-dialogs/design.md
+  s_838aa9ded48fb5::t_41f60a6e0eaf1f 1-68
+openspec/changes/archive/2026-10-09-accessible-shadcn-dialogs/specs/accessible-dialogs/spec.md
+  s_e372b848438a91::t_290c36aad41e65 1-71
+openspec/changes/archive/2026-10-09-accessible-shadcn-dialogs/tasks.md
+  s_ec96ad74f304f6::t_360074ff803ad5 1-28
+AGENTS.md
+  s_e372b848438a91::t_50254752931f5d 1-9
+CLAUDE.md
+  s_e372b848438a91::t_18b01b11db288e 1
+openspec/changes/archive/2026-10-09-accessible-shadcn-dialogs/proposal.md
+  s_e372b848438a91::t_d61b47b82bd7f2 1-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6f454e19343bfa5578f5167a8a8cbd0088b81090",
+  "prompts": {},
+  "sessions": {
+    "s_838aa9ded48fb5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7698166c-7d38-4666-a5a7-28af068d3472",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    },
+    "s_e372b848438a91": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a11ec4-32c4-73e2-9a07-f274750e3715",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    },
+    "s_ec96ad74f304f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "87c3d0d6-3d15-4fda-93aa-0f411a386e02",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Justin McLellan <jmclellan9@gatech.edu>"
+    }
+  }
+}
