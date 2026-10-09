@@ -506,6 +506,7 @@ const Students = () => {
             handleClose={handleConfirmClose}
             handleConfirm={handleConfirmSuccess}
             confirmColor="error"
+            confirmLabel="Delete student"
             title={confirmTitle}
             message="Are you sure you want to delete this student? This action cannot be undone and will delete all fees, attendance, grades, and remarks for this student."
           />
@@ -514,6 +515,7 @@ const Students = () => {
             handleClose={handleEditConfirmClose}
             handleConfirm={handleEditConfirmSuccess}
             confirmColor="primary"
+            confirmLabel="Save changes"
             title="Confirm change"
             message={
               pendingEdit

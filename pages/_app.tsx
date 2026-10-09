@@ -5,6 +5,7 @@ import Head from "next/head";
 import { SerwistProvider } from "@serwist/next/react";
 import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions, themeQuartz } from "ag-grid-community";
 import { NotificationProvider } from "@/components/notifications/NotificationProvider";
+import { ConfirmationProvider } from "@/components/notifications/ConfirmationProvider";
 import "../styles/globals.css";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -33,7 +34,9 @@ const App = ({ Component, pageProps }) => (
     </Head>
     <SerwistProvider swUrl="/sw.js" disable={process.env.NODE_ENV === "development"}>
       <NotificationProvider>
-        <Component {...pageProps} />
+        <ConfirmationProvider>
+          <Component {...pageProps} />
+        </ConfirmationProvider>
       </NotificationProvider>
     </SerwistProvider>
   </>

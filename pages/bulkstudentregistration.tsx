@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession } from "@/lib/auth-client-compat";
 import { useNotification } from "@/components/notifications/NotificationProvider";
+import { useConfirm } from "@/components/notifications/ConfirmationProvider";
 import dynamic from "next/dynamic";
 import { useGetStudentColumnDefs } from "../utils/students/use-get-student-column-defs-bulk";
 import { smartComparator } from "@/utils/grid-comparators";
@@ -96,10 +97,11 @@ function IncludeFooter({}) {
 
 export default function Page() {
   const notify = useNotification();
+  const confirm = useConfirm();
   const [userRole, setUserRole] = useState<unknown>(null);
   const [contentLoading] = useState(false);
   const { data: session, status } = useSession();
-  const gridRef = useRef<unknown>(null);
+  const gridApiRef = useRef<{ stopEditing: () => void } | null>(null);
   const [rowData, setRowData] = useState<unknown[]>([]);
   const [numberOfValidRows, setNumberOfValidRows] = useState(0);
   const allowedRoles = ["ADMINISTRATOR", "MANAGEMENT", "STAFF"];
@@ -147,7 +149,8 @@ export default function Page() {
     );
   };
 
-  const onGridReady = useCallback(() => {
+  const onGridReady = useCallback((params) => {
+    gridApiRef.current = params.api;
     console.log("Grid is ready");
   }, []);
 
@@ -579,7 +582,12 @@ export default function Page() {
     let errors: ValidationError[] = [];
 
     // stop editing to make sure all changes are saved before validation
-    gridRef.current.api.stopEditing();
+    const gridApi = gridApiRef.current;
+    if (!gridApi) {
+      notify("The student grid is still loading. Please try again.", "error");
+      return;
+    }
+    gridApi.stopEditing();
 
     rowData.forEach((row) => {
       console.log(`Student ${row.id}:`, row);
@@ -621,15 +629,18 @@ export default function Page() {
     const validRows = rowData.filter((row) => !row._hasError && row._hasBeenValidated);
     console.log("All rows:", rowData);
     console.log("Registering students with data:", validRows);
-    const confirm = window.confirm(
-      `${validRows.length} ${validRows.length === 1 ? "row is" : "rows are"} valid. \n\nAre you sure you want to register these students? \n\nThis action cannot be undone.`
+    const confirmed = await confirm(
+      `${validRows.length} ${validRows.length === 1 ? "row is" : "rows are"} valid.\n\nAre you sure you want to register these students?\n\nThis action cannot be undone.`,
+      {
+        title: "Register valid students?",
+        confirmLabel: "Register students",
+        destructive: true,
+      }
     );
-    if (!confirm) {
-      return;
-    } else {
-      insertRowsToDatabase(validRows);
-      updateRowStatus();
-    }
+    if (!confirmed) return;
+
+    insertRowsToDatabase(validRows);
+    updateRowStatus();
   };
 
   // Whenever a cell is edited, mark it as having been changed since the last
@@ -704,7 +715,6 @@ export default function Page() {
             <div className="ag-theme-alpine" style={{ height: "60dvh", width: "100%" }}>
               <AgGridReact<unknown>
                 enableCellTextSelection={true}
-                ref={gridRef}
                 getRowId={(params) => String(params.data?.id ?? params.node?.id)}
                 autoSizeStrategy={{ type: "fitCellContents" }}
                 columnDefs={columnDefs}

@@ -570,6 +570,7 @@ export default function Page() {
               handleClose={handleConfirmClose}
               handleConfirm={handleConfirmSuccess}
               confirmColor="error"
+              confirmLabel="Delete staff member"
               title={confirmTitle}
               message="Are you sure you want to delete this staff member? This action cannot be undone."
             />
@@ -578,6 +579,7 @@ export default function Page() {
               handleClose={handleEditConfirmClose}
               handleConfirm={handleEditConfirmSuccess}
               confirmColor="primary"
+              confirmLabel="Save staff changes"
               title="Confirm change"
               message={
                 pendingUserEdit
@@ -590,6 +592,7 @@ export default function Page() {
               handleClose={handleCreateConfirmClose}
               handleConfirm={handleCreateConfirmSuccess}
               confirmColor="primary"
+              confirmLabel="Create staff member"
               title="Confirm change"
               message={
                 pendingUserCreate

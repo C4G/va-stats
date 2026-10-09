@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useConfirm } from "@/components/notifications/ConfirmationProvider";
 interface NavItemProps {
   text: string;
   href: string;
@@ -10,27 +12,37 @@ interface NavItemProps {
 }
 
 const NavItem = ({ text, href, active, description }: NavItemProps) => {
+  const confirm = useConfirm();
+  const router = useRouter();
+
   return (
     <Link
-      onClick={(event) => {
+      onClick={async (event) => {
         // Logic to prompt user if there are any unsaved changes i.e they are in the edit mode
 
         const editMode = localStorage.getItem("editMode");
 
         // If edit mode is on and user tries to go to a different nav item show the prompt
         if (editMode === "true") {
-          if (
-            confirm(
-              "You have unsaved changes, click on OK to go back and save them. If you click cancel the changes will be lost."
-            ) == true
-          ) {
-            // Prevent the navigation
-            event.preventDefault();
-            return;
-          } else {
-            // Allow navigation and set editmode to false
-            localStorage.setItem("editMode", "false");
-          }
+          event.preventDefault();
+          const navigationLink = event.currentTarget;
+          const keepEditing = await confirm(
+            "Your changes have not been saved. Keep editing to preserve them, or leave without saving to discard them.",
+            {
+              title: "Unsaved changes",
+              confirmLabel: "Keep editing",
+              cancelLabel: "Leave without saving",
+              cancelDestructive: true,
+              initialFocus: "confirm",
+              escapeResult: true,
+              focusTarget: () => navigationLink,
+            }
+          );
+
+          if (keepEditing) return;
+
+          localStorage.setItem("editMode", "false");
+          await router.push(href);
         }
       }}
       aria-current={active ? "page" : undefined}

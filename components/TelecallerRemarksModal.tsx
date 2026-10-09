@@ -1,23 +1,25 @@
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  Button,
-  Box,
-  Typography,
-  CircularProgress,
-  IconButton,
-} from "@mui/material";
+import { TextField, Box, Typography, CircularProgress, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { CellValueChangedEvent, ColDef, ICellRendererParams, ValueFormatterParams } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { smartComparator } from "@/utils/grid-comparators";
 import ConfirmationModal from "./ConfirmationModal";
 import { useNotification } from "@/components/notifications/NotificationProvider";
 import { dateTimeFormatter, parseDateTimeFromDB } from "@/utils/date-normalizers";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogButton,
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogPopup,
+  DialogPortal,
+  DialogTitle,
+  DialogViewport,
+} from "@/components/ui/dialog";
 
 type Remark = {
   id?: string | number;
@@ -38,6 +40,8 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
   const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [remarkToDelete, setRemarkToDelete] = useState<Remark | null>(null);
+  const deleteActionRef = useRef<HTMLElement | null>(null);
+  const parentCloseRef = useRef<HTMLButtonElement>(null);
 
   // Custom cell renderer for actions column
   const ActionsCellRenderer = (props: ICellRendererParams<Remark>) => {
@@ -46,7 +50,8 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
       return null;
     }
 
-    const handleDeleteClick = () => {
+    const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      deleteActionRef.current = event.currentTarget;
       setRemarkToDelete(row);
       setDeleteConfirmOpen(true);
     };
@@ -166,6 +171,9 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
 
       if (response.ok) {
         await fetchRemarks(); // Refresh the remarks list
+        requestAnimationFrame(() => {
+          if (!deleteActionRef.current?.isConnected) parentCloseRef.current?.focus();
+        });
         setRemarkToDelete(null);
         // Show success toast
         notify("Remark deleted successfully!", "success");
@@ -339,73 +347,96 @@ const TelecallerRemarksModal = ({ open, onClose, student }) => {
   }, [open]);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth aria-labelledby="telecaller-remarks-dialog-title">
-      <DialogTitle id="telecaller-remarks-dialog-title">
-        Telecaller Remarks - {student?.name || "Unknown Student"}
-      </DialogTitle>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
+      }}
+    >
+      <DialogPortal>
+        <DialogBackdrop />
+        <DialogViewport>
+          <DialogPopup className="max-w-5xl">
+            <DialogHeader>
+              <DialogTitle>Telecaller Remarks - {student?.name || "Unknown Student"}</DialogTitle>
+              <DialogDescription>
+                View, add, or delete telecaller remarks for {student?.name || "this student"}.
+              </DialogDescription>
+            </DialogHeader>
 
-      <DialogContent>
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Past Remarks
-          </Typography>
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Past Remarks
+              </Typography>
 
-          <div className="ag-theme-alpine" style={{ height: 300, width: "100%" }}>
-            <AgGridReact<Remark>
-              loading={loading}
-              rowData={remarks}
-              columnDefs={columnDefs}
-              defaultColDef={defaultColDef}
-              enableCellTextSelection={true}
-              onCellValueChanged={onCellValueChanged}
-              singleClickEdit={true}
-              stopEditingWhenCellsLoseFocus={true}
+              <div className="ag-theme-alpine" style={{ height: 300, width: "100%" }}>
+                <AgGridReact<Remark>
+                  loading={loading}
+                  rowData={remarks}
+                  columnDefs={columnDefs}
+                  defaultColDef={defaultColDef}
+                  enableCellTextSelection={true}
+                  onCellValueChanged={onCellValueChanged}
+                  singleClickEdit={true}
+                  stopEditingWhenCellsLoseFocus={true}
+                />
+              </div>
+            </Box>
+
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Add New Remark
+              </Typography>
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                variant="outlined"
+                placeholder="Enter your remark here..."
+                value={newRemark}
+                onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+                  setNewRemark(e.target.value)
+                }
+                disabled={submitting}
+              />
+            </Box>
+
+            <DialogFooter>
+              <DialogButton onClick={handleSubmitRemark} disabled={!newRemark.trim() || submitting}>
+                {submitting ? (
+                  <>
+                    <CircularProgress size={18} aria-hidden="true" />
+                    <span className="sr-only">Adding remark</span>
+                  </>
+                ) : (
+                  "Add remark"
+                )}
+              </DialogButton>
+              <DialogClose
+                ref={parentCloseRef}
+                disabled={submitting}
+                className="min-h-10 rounded-md border border-slate-400 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+              >
+                Close
+              </DialogClose>
+            </DialogFooter>
+
+            <ConfirmationModal
+              open={deleteConfirmOpen}
+              handleClose={() => {
+                setDeleteConfirmOpen(false);
+                setRemarkToDelete(null);
+              }}
+              handleConfirm={handleDeleteRemark}
+              title="Delete remark"
+              message="Are you sure you want to delete this remark? This action cannot be undone."
+              confirmColor="error"
+              confirmLabel="Delete remark"
+              fallbackFocus={() => parentCloseRef.current}
             />
-          </div>
-        </Box>
-
-        <Box>
-          <Typography variant="h6" gutterBottom>
-            Add New Remark
-          </Typography>
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            variant="outlined"
-            placeholder="Enter your remark here..."
-            value={newRemark}
-            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setNewRemark(e.target.value)}
-            disabled={submitting}
-          />
-        </Box>
-      </DialogContent>
-
-      <DialogActions>
-        <Button
-          onClick={handleSubmitRemark}
-          variant="contained"
-          disabled={!newRemark.trim() || submitting}
-          sx={{ textTransform: "none" }}
-        >
-          {submitting ? <CircularProgress size={20} /> : "Add Remark"}
-        </Button>
-        <Button onClick={onClose} disabled={submitting} sx={{ textTransform: "none" }}>
-          Close
-        </Button>
-      </DialogActions>
-
-      <ConfirmationModal
-        open={deleteConfirmOpen}
-        handleClose={() => {
-          setDeleteConfirmOpen(false);
-          setRemarkToDelete(null);
-        }}
-        handleConfirm={handleDeleteRemark}
-        title="Delete Remark"
-        message={`Are you sure you want to delete this remark? This action cannot be undone.`}
-        confirmColor="error"
-      />
+          </DialogPopup>
+        </DialogViewport>
+      </DialogPortal>
     </Dialog>
   );
 };

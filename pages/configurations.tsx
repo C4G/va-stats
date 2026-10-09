@@ -817,6 +817,7 @@ export default function ConfigurationsPage() {
               handleClose={() => setConfirmOpen(false)}
               handleConfirm={handleConfirmDelete}
               confirmColor="error"
+              confirmLabel="Remove dropdown value"
               title={confirmTitle}
               message="Are you sure? This will remove the value from the dropdown."
             />

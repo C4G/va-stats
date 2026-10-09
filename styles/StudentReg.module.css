@@ -689,8 +689,7 @@ Does not include:
     transform: rotate(0deg);
   }
 }
-/* Overlay for both modal and update form */
-.modalOverlay,
+/* Overlay for update form */
 .updateFormOverlay {
   position: fixed;
   top: 0;
@@ -704,16 +703,6 @@ Does not include:
   z-index: 1000;
 }
 
-/* Modal Content */
-.modalContent {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 500px;
-  width: 90%;
-  position: relative;
-}
-
 /* Update Form Card */
 .updateFormCard {
   background: white;
@@ -722,57 +711,6 @@ Does not include:
   width: 100%;
   max-width: 500px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Modal Summary (for Registration Details) */
-.modalSummary {
-  margin-top: 1rem;
-  max-height: 200px;
-  overflow-y: auto;
-  background: white;
-}
-
-/* Modal Buttons */
-.modalButtons {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.modalButtons button {
-  flex: 1;
-  max-width: 150px;
-  padding: 0.6rem 1.2rem;
-  background-color: green;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.modalButtons button:hover {
-  background-color: darkgreen;
-}
-
-/* Close Modal Button */
-.closeModalBtn {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  font-size: 1.8rem;
-  font-weight: bold;
-  background: none;
-  border: none;
-  color: #333;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.closeModalBtn:hover {
-  color: #000;
 }
 
 /* Update Form Instructions */

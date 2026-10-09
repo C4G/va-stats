@@ -11,6 +11,8 @@ may cause problems if changes are not tested thoroughly
 */
 
 import { useNotification } from "@/components/notifications/NotificationProvider";
+import { useConfirm } from "@/components/notifications/ConfirmationProvider";
+import { RegistrationResultDialog } from "@/components/RegistrationResultDialog";
 import { searchAndUpdateStudentData } from "@/utils/students/search-and-update-student-data";
 import { useSession } from "@/lib/auth-client-compat";
 import Head from "next/head";
@@ -32,6 +34,7 @@ var regError = false;
 
 export default function Page() {
   const notify = useNotification();
+  const confirm = useConfirm();
   const { data: session, status } = useSession();
   const [userRole, setUserRole] = useState<unknown>(null);
   useForm(); // Form reset
@@ -979,48 +982,11 @@ export default function Page() {
     link.click();
   };
 
-  // Confirm Modal Trap Focus
-  const modalRef = useRef<unknown>(null);
-  useEffect(() => {
-    if (!isClient) return; // Only run on client-side
-
-    if (showConfirmModal && modalRef.current) {
-      const currentModal = modalRef.current;
-      const focusableElements = currentModal.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      );
-
-      if (focusableElements.length > 0) {
-        focusableElements[0].focus();
-      }
-
-      const trapFocus = (e) => {
-        const focusables = Array.from(focusableElements).filter(
-          (element): element is HTMLElement => element instanceof HTMLElement
-        );
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        if (e.key === "Tab") {
-          if (e.shiftKey) {
-            if (document.activeElement === first) {
-              e.preventDefault();
-              last.focus();
-            }
-          } else {
-            if (document.activeElement === last) {
-              e.preventDefault();
-              first.focus();
-            }
-          }
-        }
-      };
-
-      currentModal.addEventListener("keydown", trapFocus);
-      return () => {
-        currentModal.removeEventListener("keydown", trapFocus);
-      };
-    }
-  }, [showConfirmModal, isClient]);
+  const handleRegistrationComplete = () => {
+    setShowConfirmModal(false);
+    const allowedRoles = ["ADMINISTRATOR", "MANAGEMENT", "TELECALLER", "TRAINERPLUSTELECALLER"];
+    void Router.push(userRole && allowedRoles.includes(userRole) ? "/students" : "/");
+  };
 
   // Effect to handle updates from UpdateStudentForm
   useEffect(() => {
@@ -1974,19 +1940,22 @@ export default function Page() {
                         SUBMIT
                       </button>
                       <button
-                        type="reset"
+                        type="button"
                         className={`${styles.btnreset} ${styles.btngetsfocus}`}
-                        onClick={(e) => {
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
                           const message = window.isUpdateMode
                             ? "Are you sure you want to exit update mode? This will clear all fields."
                             : "Are you sure you want to reset the form?";
 
-                          const flag = confirm(message);
-                          if (!flag) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return;
-                          }
+                          const confirmed = await confirm(message, {
+                            title: window.isUpdateMode ? "Exit update mode?" : "Reset registration form?",
+                            confirmLabel: window.isUpdateMode ? "Exit update mode" : "Reset form",
+                            destructive: true,
+                            focusTarget: (accepted) => (accepted ? document.getElementById("name") : null),
+                          });
+                          if (!confirmed) return;
 
                           // Reset form and clear all fields
                           setOption1("");
@@ -2042,71 +2011,14 @@ export default function Page() {
         </footer>
       </div>{" "}
       {/* Container closing tag */}
-      {/* Confirm Modal */}
-      {isClient && showConfirmModal && (
-        <div className={styles.modalOverlay}>
-          <div
-            className={styles.modalContent}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="success-title"
-            ref={modalRef}
-          >
-            <button
-              className={styles.closeModalBtn}
-              onClick={() => {
-                setShowConfirmModal(false);
-                // Check if user has access to students page
-                const allowedRoles = ["ADMINISTRATOR", "MANAGEMENT", "TELECALLER", "TRAINERPLUSTELECALLER"];
-                if (userRole && allowedRoles.includes(userRole)) {
-                  Router.push("/students");
-                } else {
-                  Router.push("/");
-                }
-              }}
-              aria-label="Close"
-            >
-              ×
-            </button>
-
-            <h3 id="success-title">{registerSuccessMsg}</h3>
-
-            <div className={styles.modalSummary}>
-              <ul>
-                {Object.entries(formSummaryData).map(([key, value]) => (
-                  <li key={key}>
-                    <strong>{labelMap[key] || key}:</strong> {value || "-"}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className={styles.modalButtons}>
-              <button
-                {...createAccessibleButtonProps(() => downloadCSV(formSummaryData))}
-                aria-label="Download Details"
-              >
-                Download Details
-              </button>
-              <button
-                {...createAccessibleButtonProps(() => {
-                  setShowConfirmModal(false);
-                  // Check if user has access to students page
-                  const allowedRoles = ["ADMINISTRATOR", "MANAGEMENT", "TELECALLER", "TRAINERPLUSTELECALLER"];
-                  if (userRole && allowedRoles.includes(userRole)) {
-                    Router.push("/students");
-                  } else {
-                    Router.push("/");
-                  }
-                })}
-                aria-label="OK"
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <RegistrationResultDialog
+        open={isClient && showConfirmModal}
+        title={registerSuccessMsg}
+        summaryData={formSummaryData}
+        labelMap={labelMap}
+        onDownload={() => downloadCSV(formSummaryData)}
+        onComplete={handleRegistrationComplete}
+      />
       {/* Update Student Form */}
       {isClient && showUpdateForm && <UpdateStudentForm onClose={() => setShowUpdateForm(false)} />}
     </>

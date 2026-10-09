@@ -2,6 +2,14 @@
 module.exports = {
   reactStrictMode: true,
   output: "standalone",
+  images: {
+    localPatterns: [
+      { pathname: "/images/**", search: "" },
+      { pathname: "/images/**", search: "?v=20251004" },
+      { pathname: "/icons/**", search: "" },
+      { pathname: "/vercel.svg", search: "" },
+    ],
+  },
   experimental: {
     useTypeScriptCli: false,
   },
