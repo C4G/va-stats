@@ -37,6 +37,7 @@ import tableStyles from "../../styles/Table.module.css";
 
 //CODE BELOW IS ACTUALLY THE BATCH STATUS FORM ON THE BATCHES PAGE
 import { useNotification } from "@/components/notifications/NotificationProvider";
+import { useConfirm } from "@/components/notifications/ConfirmationProvider";
 import { exportToCsv } from "@/utils/export-to-csv";
 import { mapAttendanceDataToCsv } from "@/utils/map-attendance-data-to-csv";
 import { convertNumberToYesNo } from "@/utils/students/convert-number-to-yes-no";
@@ -115,6 +116,7 @@ function staffHasAccess(batchInfo, userInfo) {
 
 export default function Page() {
   const notify = useNotification();
+  const confirm = useConfirm();
   const router = useRouter();
   const { id } = router.query;
   const { data: session, status } = useSession();
@@ -164,6 +166,7 @@ export default function Page() {
   const [confirmModalTitle, setConfirmModalTitle] = useState("");
   const [confirmModalMessage, setConfirmModalMessage] = useState("");
   const [confirmModalConfirmColor, setConfirmModalConfirmColor] = useState("primary");
+  const [confirmModalConfirmLabel, setConfirmModalConfirmLabel] = useState("Confirm action");
   const confirmModalConfirmRef = useRef<(() => void) | null>(null);
   const confirmModalCancelRef = useRef<(() => void) | null>(null);
   const skipNextMaxMarksChangeRef = useRef(false);
@@ -255,6 +258,16 @@ export default function Page() {
   // Defer helper to avoid synchronous updates during render
   const defer = (fn) => (typeof queueMicrotask === "function" ? queueMicrotask(fn) : Promise.resolve().then(fn));
 
+  const restoreGridFocus = (api, rowIndex, columnId) => {
+    try {
+      api?.setFocusedCell?.(rowIndex, columnId);
+    } catch {
+      // The original grid cell may no longer exist after the operation.
+    }
+    const focusedCell = document.querySelector(".ag-cell-focus");
+    return focusedCell instanceof HTMLElement ? focusedCell : null;
+  };
+
   const onAttendanceCellValueChanged = (event) => {
     // Convert the display value back to P/A/H/X/D if needed
     let value = event.newValue;
@@ -294,16 +307,21 @@ export default function Page() {
     setContentLoading(true);
 
     // Defer API trigger and show confirmation before persisting any attendance change
-    defer(() => {
+    defer(async () => {
       const labelOld = toLabel(oldCode);
       const labelNew = toLabel(value);
       let msg = `Do you want to save this attendance change?\n\n${event.data.name}, ${formatAttendanceDate(field)}: ${labelOld} → ${labelNew}`;
       if (value === "Dropout") msg += "\n\nThis will mark the student as dropped out and all subsequent classes.";
       // this is checked in the AttendanceHeaderWithCancel component's onCancel button logic, so if it's
       // an X, we know it's been confirmed by the user already
-      var confirmed;
-      if (value === "Cancelled") confirmed = true;
-      else confirmed = window.confirm(msg);
+      const confirmed =
+        value === "Cancelled" ||
+        (await confirm(msg, {
+          title: value === "Dropout" ? "Save dropout status?" : "Save attendance change?",
+          confirmLabel: value === "Dropout" ? "Mark as dropped out" : "Save attendance change",
+          destructive: value === "Dropout",
+          focusTarget: () => restoreGridFocus(event.api, event.rowIndex, event.column?.getColId()),
+        }));
 
       if (!confirmed) {
         try {
@@ -559,8 +577,9 @@ export default function Page() {
   };
 
   // SHOW A VIEW, DEPENDING ON WHICH BUTTON IS CLICKED
-  const batchPageLayoutHandler = (e) => {
-    const { name } = e.target;
+  const batchPageLayoutHandler = async (e) => {
+    const switchButton = e.currentTarget;
+    const { name } = switchButton;
 
     // Logic to prompt user if there are any unsaved changes i.e they are in the edit mode
     const editMode = localStorage.getItem("editMode");
@@ -576,15 +595,21 @@ export default function Page() {
 
     // If edit mode is on and user tries to go to a different component show the prompt
     if (editMode === "true" && !isSameComponent) {
-      if (
-        confirm(
-          "You have unsaved changes, click on OK to go back and save them. If you click cancel the changes will be lost."
-        ) == true
-      ) {
-        return;
-      } else {
-        localStorage.setItem("editMode", "false");
-      }
+      const keepEditing = await confirm(
+        "Your changes have not been saved. Keep editing to preserve them, or leave without saving to discard them.",
+        {
+          title: "Unsaved changes",
+          confirmLabel: "Keep editing",
+          cancelLabel: "Leave without saving",
+          cancelDestructive: true,
+          initialFocus: "confirm",
+          escapeResult: true,
+          focusTarget: () => switchButton,
+        }
+      );
+
+      if (keepEditing) return;
+      localStorage.setItem("editMode", "false");
     }
 
     setShowAttendance(false);
@@ -670,6 +695,7 @@ export default function Page() {
     setConfirmModalTitle("Save assessment changes");
     setConfirmModalMessage("Save weight and max marks changes? Post weights must total 100%.");
     setConfirmModalConfirmColor("primary");
+    setConfirmModalConfirmLabel("Save assessment changes");
     confirmModalConfirmRef.current = async () => {
       setContentLoading(true);
       try {
@@ -1409,7 +1435,7 @@ export default function Page() {
   function AttendanceHeaderWithCancel(props) {
     const rootRef = useRef<HTMLButtonElement>(null);
 
-    const onCancel = () => {
+    const onCancel = async () => {
       // get the current column name
       const field = props.column.getColDef().field;
       if (!field) return;
@@ -1421,28 +1447,26 @@ export default function Page() {
       // onAttendanceCellValueCahnged function. If all rows are already
       // cancelled, then we'll show an alert to indicate that the class is
       // already cancelled.
-      let someNotCancelled = false;
-      let confirmCancel = true; // default - will go through unless user cancels in the confirmation window
-
+      let targetNode = null;
       props.api.forEachNode((node) => {
-        if (someNotCancelled || !confirmCancel) return;
-
-        const cellValue = node.data[field];
-        if (cellValue !== "Cancelled") {
-          someNotCancelled = true;
-
-          confirmCancel = window.confirm(
-            `Are you sure you want to cancel the class on ${formatAttendanceDate(props.displayName)}? This will mark all students as "Cancelled" for this date.`
-          );
-          if (confirmCancel) {
-            node.setDataValue(field, "Cancelled");
-          }
-        }
+        if (!targetNode && node.data[field] !== "Cancelled") targetNode = node;
       });
 
-      if (!someNotCancelled && confirmCancel) {
+      if (!targetNode) {
         notify(`Class on ${formatAttendanceDate(props.displayName)} is already cancelled.`, "info");
+        return;
       }
+
+      const confirmed = await confirm(
+        `Are you sure you want to cancel the class on ${formatAttendanceDate(props.displayName)}? This will mark all students as "Cancelled" for this date.`,
+        {
+          title: "Cancel class?",
+          confirmLabel: "Cancel class",
+          destructive: true,
+          focusTarget: () => rootRef.current,
+        }
+      );
+      if (confirmed) targetNode.setDataValue(field, "Cancelled");
     };
 
     // Since the button within this custom header is not focusable
@@ -1857,6 +1881,7 @@ export default function Page() {
     setConfirmModalTitle("Delete assessment");
     setConfirmModalMessage(`Are you sure you want to delete "${assignmentName}"? This cannot be undone.`);
     setConfirmModalConfirmColor("error");
+    setConfirmModalConfirmLabel("Delete assessment");
     confirmModalConfirmRef.current = () => deleteAssignment(assignmentName);
     confirmModalCancelRef.current = null;
     setConfirmModalOpen(true);
@@ -2387,6 +2412,7 @@ export default function Page() {
               title={confirmModalTitle}
               message={confirmModalMessage}
               confirmColor={confirmModalConfirmColor}
+              confirmLabel={confirmModalConfirmLabel}
             />
             <div className={styles.mynavbar}>
               <Navbar user_role={userResponse?.role} className={styles.navstudents} />
@@ -2685,8 +2711,13 @@ export default function Page() {
 
                             const assignmentName = e.colDef.field;
                             const headerName = e.colDef.headerName ?? assignmentName;
-                            const confirmed = window.confirm(
-                              `Do you want to save this change?\n\n${headerName} for ${e.data.name}: "${e.oldValue ?? ""}" → "${e.newValue ?? ""}"`
+                            const confirmed = await confirm(
+                              `Do you want to save this change?\n\n${headerName} for ${e.data.name}: "${e.oldValue ?? ""}" → "${e.newValue ?? ""}"`,
+                              {
+                                title: "Save grade change?",
+                                confirmLabel: "Save grade",
+                                focusTarget: () => restoreGridFocus(e.api, e.rowIndex, e.column?.getColId()),
+                              }
                             );
                             if (!confirmed) {
                               e.node.setDataValue(assignmentName, e.oldValue);
@@ -2799,11 +2830,17 @@ export default function Page() {
                           await getBatchData();
                           return;
                         }
-                        const confirmed = window.confirm(
-                          "Do you want to save this batch status change? The modified row data will be persisted."
+                        const confirmed = await confirm(
+                          "Do you want to save this batch status change? The modified row data will be persisted.",
+                          {
+                            title: "Save batch status change?",
+                            confirmLabel: "Save status",
+                            focusTarget: () => restoreGridFocus(e.api, e.rowIndex, e.column?.getColId()),
+                          }
                         );
                         if (!confirmed) {
                           await getBatchData();
+                          restoreGridFocus(e.api, e.rowIndex, e.column?.getColId());
                           return;
                         }
                         if (e.data.risk_factor === "N/A") {
@@ -2817,6 +2854,7 @@ export default function Page() {
                           body: JSON.stringify(payload),
                         });
                         await getBatchData();
+                        restoreGridFocus(e.api, e.rowIndex, e.column?.getColId());
                         notify("Batch status updated successfully!", "success");
                         setContentLoading(false);
                       }}
@@ -3056,9 +3094,14 @@ export default function Page() {
                     singleClickEdit={true}
                     loading={loading}
                     rowData={documentsData}
-                    onCellValueChanged={(e) => {
-                      const confirmed = window.confirm(
-                        `Do you want to save this change?\n\n${e.colDef.headerName ?? e.colDef.field}: "${e.oldValue ?? ""}" → "${e.newValue ?? ""}"`
+                    onCellValueChanged={async (e) => {
+                      const confirmed = await confirm(
+                        `Do you want to save this change?\n\n${e.colDef.headerName ?? e.colDef.field}: "${e.oldValue ?? ""}" → "${e.newValue ?? ""}"`,
+                        {
+                          title: "Save document change?",
+                          confirmLabel: "Save change",
+                          focusTarget: () => restoreGridFocus(e.api, e.rowIndex, e.column?.getColId()),
+                        }
                       );
                       if (!confirmed) {
                         e.node.setDataValue(e.colDef.field, e.oldValue);
@@ -3087,6 +3130,7 @@ export default function Page() {
               title={confirmModalTitle}
               message={confirmModalMessage}
               confirmColor={confirmModalConfirmColor}
+              confirmLabel={confirmModalConfirmLabel}
             />
             <div className={styles.mynavbar}>
               <Navbar user_role={userResponse?.role} className={styles.navstudents} />

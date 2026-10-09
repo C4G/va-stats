@@ -85,6 +85,8 @@ export default function Page() {
   const [editConfirmOpen, setEditConfirmOpen] = useState(false);
   const [pendingBatchEdit, setPendingBatchEdit] = useState<unknown>(null);
   const gridRef = useRef<unknown>(null);
+  const batchGridFocusRef = useRef<HTMLDivElement>(null);
+  const deleteBatchFocusLabelRef = useRef("");
   const isRevertingCellRef = useRef(false);
   const lastFocusedCell = useRef<unknown>(null);
   const editConfirmOpenRef = useRef(false);
@@ -267,9 +269,26 @@ export default function Page() {
 
   const handleDelete = useCallback((props) => {
     const label = props.data?.batch ?? props.data?.id;
+    deleteBatchFocusLabelRef.current = `Delete batch ${label || "batch"}`;
     setDeleteBatchData({ id: props.data.id, batch: label });
     setConfirmTitle(`Delete batch ${label}`);
     setConfirmOpen(true);
+  }, []);
+
+  const getDeleteBatchReturnFocus = useCallback(() => {
+    const grid = batchGridFocusRef.current;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const label = deleteBatchFocusLabelRef.current;
+        const deleteButton = label
+          ? Array.from(document.querySelectorAll<HTMLButtonElement>("button[aria-label]")).find(
+              (button) => button.getAttribute("aria-label") === label
+            )
+          : null;
+        if (deleteButton?.isConnected) deleteButton.focus();
+      });
+    });
+    return grid;
   }, []);
 
   const handleConfirmClose = useCallback(() => {
@@ -633,7 +652,9 @@ export default function Page() {
                   handleClose={handleConfirmClose}
                   handleConfirm={handleConfirmSuccess}
                   confirmColor="error"
+                  confirmLabel="Delete batch"
                   title={confirmTitle}
+                  returnFocusTarget={getDeleteBatchReturnFocus}
                   message={
                     deleteBatchData
                       ? `Are you sure you want to delete batch "${deleteBatchData.batch ?? deleteBatchData.id}"? This will delete all fees, attendance, and grades for this batch.`
@@ -645,6 +666,7 @@ export default function Page() {
                   handleClose={handleEditConfirmClose}
                   handleConfirm={handleEditConfirmSuccess}
                   confirmColor="primary"
+                  confirmLabel="Save batch changes"
                   title="Confirm change"
                   message={
                     pendingBatchEdit
@@ -1158,7 +1180,13 @@ export default function Page() {
                   <></>
                 )}
                 {!showForm && (
-                  <div className="ag-theme-alpine h-[78dvh] w-full">
+                  <div
+                    ref={batchGridFocusRef}
+                    role="region"
+                    aria-label="Batches list"
+                    tabIndex={-1}
+                    className="ag-theme-alpine h-[78dvh] w-full"
+                  >
                     <AgGridReact<unknown>
                       enableCellTextSelection={true}
                       ref={gridRef}

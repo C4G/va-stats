@@ -398,6 +398,7 @@ export default function Page() {
                 handleClose={handleDeleteConfirmClose}
                 handleConfirm={handleDeleteConfirmSuccess}
                 confirmColor="error"
+                confirmLabel="Delete course"
                 title={confirmTitle}
                 message="Are you sure you want to delete this course? This action cannot be undone."
               />
@@ -406,6 +407,7 @@ export default function Page() {
                 handleClose={handleEditConfirmClose}
                 handleConfirm={handleEditConfirmSuccess}
                 confirmColor="primary"
+                confirmLabel="Save course changes"
                 title="Confirm change"
                 message={
                   pendingCourseEdit
